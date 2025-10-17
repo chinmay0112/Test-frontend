@@ -1,0 +1,104 @@
+<!-- Header -->
+<div class="p-3 flex justify-between">
+  <h2>{{ test?.title }}</h2>
+  <div class="flex">
+    <p class="mx-3 text-red-500 font-semibold">{{ test?.duration_minutes }} min</p>
+    <p>Aryan Sharma</p>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div>
+  @if (sections.length > 0) {
+  <p-tabs [(value)]="activeTabId" (valueChange)="onTabChange($event)">
+    <p-tablist>
+      @for (item of sections; track item.id) {
+      <p-tab [value]="item.id">{{ item.name }}</p-tab>
+      }
+    </p-tablist>
+
+    <p-tabpanels>
+      @for (section of sections; track section.id) {
+      <p-tabpanel [value]="section.id">
+        <div class="grid grid-cols-12 gap-2 p-4">
+          <!-- Left: Question Display -->
+          <div class="col-span-12 md:col-span-9">
+            @if (getCurrentQuestion(section); as q) {
+
+            <h3 class="font-semibold mb-2 min-h-[60px]">
+              Q{{ currentQuestionIndexes[section.id] + 1 }}. {{ q.question_text }}
+            </h3>
+            <div class="space-y-2 mt-2 h-[50vh]">
+              <label class="block" *ngFor="let opt of ['A', 'B', 'C', 'D']">
+                <input
+                  type="radio"
+                  [name]="'question' + q.id"
+                  [(ngModel)]="answers[q.id]"
+                  [value]="opt"
+                />
+                {{ opt }}. {{ q['option_' + opt.toLowerCase()] }}
+              </label>
+            </div>
+
+            <div class="flex justify-between mt-4">
+              <button
+                class="bg-gray-200 px-3 py-1 rounded"
+                (click)="prevQuestion(section)"
+                [disabled]="currentQuestionIndexes[section.id] === 0"
+              >
+                Previous
+              </button>
+              <button class="bg-purple-500 text-white px-3 py-1 rounded" (click)="markForReview(q)">
+                Mark for Review
+              </button>
+              <button
+                class="bg-indigo-500 text-white px-3 py-1 rounded"
+                (click)="nextQuestion(section)"
+                [disabled]="currentQuestionIndexes[section.id] === section.questions.length - 1"
+              >
+                Next
+              </button>
+            </div>
+
+            }
+          </div>
+
+          <!-- Right: Palette for this section -->
+          <div class="col-span-12 md:col-span-3">
+            <div class="bg-[#fafafb] p-4 h-full">
+              <h4 class="font-semibold mb-2">Questions</h4>
+              <div class="grid grid-cols-5 gap-2">
+                @for (q of section.questions; track $index) {
+                <button
+                  class="p-2 rounded border font-semibold"
+                  [class.text-white]="
+                    markedForReview[q.id] ||
+                    answers[q.id] ||
+                    (visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id])
+                  "
+                  [ngClass]="{
+                    'bg-purple-500': markedForReview[q.id],
+                    'bg-green-500': answers[q.id] && !markedForReview[q.id],
+                    'bg-red-500':
+                      visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id],
+                    
+                  }"
+                  (click)="jumpToQuestion(section, $index)"
+                >
+                  {{ $index + 1 }}
+                </button>
+
+                }
+              </div>
+              <button>Submit</button>
+            </div>
+          </div>
+        </div>
+      </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
+  } @else {
+  <p class="text-gray-400 text-center p-4">Loading test data...</p>
+  }
+</div>
