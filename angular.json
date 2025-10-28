@@ -25,6 +25,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
+              "src/_redirects",
               {
                 "glob": "**/*",
                 "input": "src/assets",
@@ -82,6 +83,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
+              "src/_redirects",
               {
                 "glob": "**/*",
                 "input": "src/assets",
