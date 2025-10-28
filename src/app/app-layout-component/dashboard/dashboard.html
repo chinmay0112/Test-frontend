@@ -1,0 +1,149 @@
+<div class="min-h-screen bg-slate-100 font-sans flex">
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+    <!-- Header -->
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-slate-800">Welcome back, Aryan!</h2>
+        <p class="text-slate-500 mt-1">Let's continue your journey to success.</p>
+      </div>
+      <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+        <button
+          pButton
+          icon="pi pi-bell"
+          class="p-button-rounded p-button-text p-button-secondary"
+        ></button>
+        <p-avatar
+          image="https://placehold.co/40x40/E2E8F0/475569?text=A"
+          size="large"
+          shape="circle"
+        ></p-avatar>
+      </div>
+    </header>
+
+    <!-- PERFORMANCE SNAPSHOT -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div
+        *ngFor="let stat of performanceStats"
+        class="bg-white p-6 rounded-xl shadow-sm flex items-center"
+      >
+        <div class="p-4 rounded-full mr-4" [ngClass]="stat.bgColor">
+          <svg
+            class="w-8 h-8"
+            [ngClass]="stat.iconColor"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            [innerHTML]="stat.icon | safeHtml"
+          ></svg>
+        </div>
+        <div>
+          <p class="text-sm text-slate-500">{{ stat.label }}</p>
+          <p class="text-2xl font-bold text-slate-800">{{ stat.value }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2">
+        <!-- CONTINUE LEARNING -->
+        <div class="mb-8" *ngIf="continueLearning">
+          <h3 class="text-2xl font-bold text-slate-800 mb-4">Continue Learning</h3>
+          <div
+            class="bg-white p-6 rounded-xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between"
+          >
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-indigo-500">
+                {{ continueLearning.category }}
+              </p>
+              <h4 class="text-xl font-bold text-slate-800 mt-1">{{ continueLearning.name }}</h4>
+              <p class="text-sm text-slate-500 mt-2">{{ continueLearning.description }}</p>
+            </div>
+            <button
+              pButton
+              label="Resume Test"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              class="p-button-sm mt-4 sm:mt-0 sm:ml-4 whitespace-nowrap"
+            ></button>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div>
+          <h3 class="text-2xl font-bold text-slate-800 mb-4">Recent Activity</h3>
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <p-table [value]="recentActivity" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Test Name</th>
+                  <th>Score</th>
+                  <th>Accuracy</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-activity>
+                <tr>
+                  <td>
+                    <span class="font-semibold">{{ activity.name }}</span
+                    ><br />
+                    <span class="text-xs text-slate-500">{{ activity.category }}</span>
+                  </td>
+                  <td>
+                    <span class="font-semibold text-indigo-600">{{ activity.score }}</span>
+                  </td>
+                  <td>
+                    <p-progressBar
+                      [value]="activity.accuracy"
+                      [showValue]="false"
+                      styleClass="h-2"
+                    ></p-progressBar>
+                  </td>
+                  <td>{{ activity.date }}</td>
+                  <td>
+                    <button pButton label="Analysis" class="p-button-text p-button-sm"></button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY TEST SERIES (Sidebar on large screens) -->
+      <div class="lg:col-span-1">
+        <h3 class="text-2xl font-bold text-slate-800 mb-4">My Test Series</h3>
+        <div class="space-y-4">
+          <div
+            *ngFor="let series of myTestSeries"
+            class="bg-white border rounded-xl shadow-sm overflow-hidden"
+          >
+            <div class="p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wider text-indigo-500">
+                    {{ series.category }}
+                  </p>
+                  <h4 class="text-md font-bold text-slate-800 mt-1">{{ series.name }}</h4>
+                </div>
+                <span class="text-xl">{{ series.icon }}</span>
+              </div>
+              <div class="mt-3">
+                <div class="flex justify-between text-xs text-slate-500 mb-1">
+                  <span>Progress</span>
+                  <span>{{ series.progress }}%</span>
+                </div>
+                <p-progressBar
+                  [value]="series.progress"
+                  [showValue]="false"
+                  styleClass="h-1.5"
+                ></p-progressBar>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

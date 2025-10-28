@@ -1,0 +1,154 @@
+<div class="bg-slate-50 font-sans text-slate-700">
+  <!-- Header -->
+  <app-header></app-header>
+  <!-- Hero Section with Background Image and Overlay -->
+  <section
+    class="relative py-20 lg:py-32 bg-cover bg-center"
+    [ngStyle]="{ 'background-image': 'url(\'assets/images/banner-bg.png\')' }"
+  >
+    <!-- Background Overlay for Text Readability -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent"></div>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 text-white">
+      <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight mb-6">
+        Ace Your Competitive Exams
+      </h1>
+      <p class="text-lg lg:text-xl max-w-3xl mx-auto mb-10 text-indigo-100">
+        Master every subject with realistic mock tests, detailed performance analysis, and expertly
+        crafted questions designed for SSC, Banking, UPSC, and more.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+        <button
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg text-lg inline-flex items-center transition-colors shadow-lg"
+          (click)="navigateTo('/register')"
+        >
+          Start Your Free Trial <i class="pi pi-arrow-right ml-2"></i>
+        </button>
+        <button
+          class="bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 font-semibold py-3 px-6 rounded-lg text-lg transition-colors shadow-lg"
+          (click)="scrollTo('#features')"
+        >
+          Explore Features
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 lg:py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-800 text-center mb-4">
+        Why Choose PrepMaster?
+      </h2>
+      <p class="text-center text-slate-500 max-w-2xl mx-auto mb-12">
+        Our platform provides everything you need to succeed, from realistic practice to actionable
+        insights.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div
+          *ngFor="let feature of features"
+          class="text-center p-8 bg-slate-50 rounded-xl border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+        >
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-6 ring-4 ring-indigo-50"
+          >
+            <i class="pi {{ feature.icon }} text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-slate-800 mb-3">{{ feature.title }}</h3>
+          <p class="text-slate-500 leading-relaxed">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Exams Covered -->
+  <section id="exams" class="py-16 lg:py-24 bg-slate-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-800 text-center mb-12">
+        Exams We Cover
+      </h2>
+      <div
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-4xl mx-auto"
+      >
+        <div
+          *ngFor="let exam of examsCovered"
+          class="flex flex-col items-center text-center p-4 bg-white rounded-lg shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+        >
+          <div class="text-4xl mb-3 text-indigo-500">{{ exam.icon }}</div>
+          <p class="font-medium text-slate-700">{{ exam.name }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--  How It Works -->
+  <section id="how-it-works" class="py-16 lg:py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-800 text-center mb-12">
+        Get Started in 3 Simple Steps
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto relative">
+        <div *ngFor="let step of howItWorksSteps; let i = index" class="relative text-center z-10">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-2xl mb-6 ring-8 ring-white shadow-lg"
+          >
+            {{ i + 1 }}
+          </div>
+          <h3 class="text-xl font-semibold text-slate-800 mb-3">{{ step.title }}</h3>
+          <p class="text-slate-500">{{ step.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-16 lg:py-24 bg-slate-100">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl lg:text-4xl font-bold text-slate-800 text-center mb-12">
+        Success Stories
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          *ngFor="let testimonial of testimonials"
+          class="bg-white p-8 rounded-xl shadow-md border border-slate-200"
+        >
+          <p class="text-slate-600 italic mb-6">"{{ testimonial.quote }}"</p>
+          <div class="flex items-center">
+            <img
+              [src]="testimonial.avatar"
+              alt="{{ testimonial.name }}"
+              class="w-16 h-16 rounded-full mr-4 border-2 border-indigo-100"
+            />
+            <div>
+              <p class="font-semibold text-slate-800">{{ testimonial.name }}</p>
+              <p class="text-sm text-slate-500">{{ testimonial.exam }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action (CTA) Section -->
+  <section
+    id="pricing"
+    class="py-20 lg:py-32 bg-gradient-to-br from-indigo-600 to-cyan-600 text-white"
+  >
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl lg:text-4xl font-bold mb-6">Ready to Start Your Success Journey?</h2>
+      <p class="text-lg lg:text-xl text-indigo-100 max-w-2xl mx-auto mb-10">
+        Join thousands of successful candidates. Sign up today and get access to our premium
+        features.
+      </p>
+      <button
+        class="bg-white text-indigo-700 font-semibold py-3 px-6 rounded-lg text-lg hover:bg-slate-100 transition-colors shadow-lg"
+        (click)="navigateTo('/register')"
+      >
+        Sign Up Now for Free
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

@@ -1,0 +1,230 @@
+<!-- This component assumes it's rendered inside your main app layout -->
+<div class="bg-slate-50 min-h-screen p-4 sm:p-6 md:p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- Page Header -->
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold text-slate-800">Account Settings</h1>
+      <p class="text-slate-500 mt-2">Manage your profile, password, and subscription.</p>
+    </header>
+
+    <!-- Main Layout (Sidebar + Content) -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Left Sidebar: Navigation -->
+      <aside class="lg:col-span-1">
+        <!-- Profile Card -->
+        <div
+          class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center mb-6"
+        >
+          <p-avatar
+            image="https://placehold.co/64x64/E0E7FF/4338CA?text=A"
+            size="xlarge"
+            shape="circle"
+            styleClass="mr-4 border-2 border-white ring-2 ring-indigo-300"
+          ></p-avatar>
+          <div>
+            <h3 class="font-bold text-lg text-slate-800">
+              {{ profileForm.value.fullName || 'Aryan Sharma' }}
+            </h3>
+            <p class="text-sm text-slate-500">
+              {{ profileForm.value.email || 'aryan@example.com' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav
+          class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-1"
+        >
+          <button (click)="setActiveTab('profile')" [ngClass]="getNavClass('profile')">
+            <i class="pi pi-user mr-3"></i> Profile
+          </button>
+          <button (click)="setActiveTab('security')" [ngClass]="getNavClass('security')">
+            <i class="pi pi-lock mr-3"></i> Password
+          </button>
+          <button (click)="setActiveTab('subscription')" [ngClass]="getNavClass('subscription')">
+            <i class="pi pi-star mr-3"></i> Subscription
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Right: Content Area -->
+      <main class="lg:col-span-3">
+        <!-- Profile Settings Panel -->
+        @if (activeTab === 'profile') {
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+          <header class="p-6 border-b border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800">Profile Information</h2>
+            <p class="text-sm text-slate-500 mt-1">Update your personal details.</p>
+          </header>
+          <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Full Name -->
+              <div class="mb-2">
+                <label for="fullName" class="block text-sm font-medium text-slate-600 mb-2"
+                  >Full Name</label
+                >
+                <input
+                  id="fullName"
+                  type="text"
+                  pInputText
+                  formControlName="fullName"
+                  class="w-full"
+                />
+              </div>
+              <!-- Username -->
+              <div class="mb-2">
+                <label for="username" class="block text-sm font-medium text-slate-600 mb-2"
+                  >Username</label
+                >
+                <input
+                  id="username"
+                  type="text"
+                  pInputText
+                  formControlName="username"
+                  class="w-full"
+                />
+              </div>
+              <!-- Email (Read-only) -->
+              <div class="mb-2">
+                <label for="email" class="block text-sm font-medium text-slate-600 mb-2"
+                  >Email Address</label
+                >
+                <input
+                  id="email"
+                  type="email"
+                  pInputText
+                  formControlName="email"
+                  class="w-full"
+                  [readOnly]="true"
+                />
+              </div>
+              <!-- Phone -->
+              <div class="mb-2">
+                <label for="phone" class="block text-sm font-medium text-slate-600 mb-2"
+                  >Phone</label
+                >
+                <input id="phone" type="tel" pInputText formControlName="phone" class="w-full" />
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <button
+                pButton
+                label="Save Changes"
+                type="submit"
+                [disabled]="!profileForm.dirty || !profileForm.valid"
+              ></button>
+            </div>
+          </form>
+        </div>
+        }
+
+        <!-- Security / Password Panel -->
+        @if (activeTab === 'security') {
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+          <header class="p-6 border-b border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800">Change Password</h2>
+            <p class="text-sm text-slate-500 mt-1">
+              For your security, please do not share your password.
+            </p>
+          </header>
+          <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="p-6 max-w-lg">
+            <!-- Current Password -->
+            <div class="mb-4">
+              <label for="currentPassword" class="block text-sm font-medium text-slate-600 mb-2"
+                >Current Password</label
+              >
+              <input
+                id="currentPassword"
+                type="password"
+                pInputText
+                formControlName="currentPassword"
+                class="w-full"
+                placeholder="••••••••"
+              />
+            </div>
+            <!-- New Password -->
+            <div class="mb-4">
+              <label for="newPassword" class="block text-sm font-medium text-slate-600 mb-2"
+                >New Password</label
+              >
+              <input
+                id="newPassword"
+                type="password"
+                pInputText
+                formControlName="newPassword"
+                class="w-full"
+                placeholder="••••••••"
+              />
+            </div>
+            <!-- Confirm Password -->
+            <div class="mb-4">
+              <label for="confirmPassword" class="block text-sm font-medium text-slate-600 mb-2"
+                >Confirm New Password</label
+              >
+              <input
+                id="confirmPassword"
+                type="password"
+                pInputText
+                formControlName="confirmPassword"
+                class="w-full"
+                placeholder="••••••••"
+              />
+              @if (passwordForm.errors?.['passwordMismatch'] &&
+              passwordForm.get('confirmPassword')?.touched) {
+              <p class="text-xs text-red-500 mt-1">Passwords do not match.</p>
+              }
+            </div>
+            <div class="mt-6 text-right">
+              <button
+                pButton
+                label="Update Password"
+                type="submit"
+                [disabled]="!passwordForm.valid"
+              ></button>
+            </div>
+          </form>
+        </div>
+        }
+
+        <!-- Subscription Panel -->
+        @if (activeTab === 'subscription') {
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+          <header class="p-6 border-b border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800">My Subscription</h2>
+            <p class="text-sm text-slate-500 mt-1">Manage your plan and billing details.</p>
+          </header>
+          <div class="p-6">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start bg-indigo-50 border border-indigo-200 rounded-lg p-6"
+            >
+              <div>
+                <h3 class="font-bold text-slate-800">Your Current Plan</h3>
+                <div class="flex items-center space-x-2 mt-2">
+                  <span class="text-xl font-bold text-indigo-700">Pro (Yearly)</span>
+                  <p-tag value="Best Value" severity="success"></p-tag>
+                </div>
+                <p class="text-sm text-slate-500 mt-1">Renews on: October 28, 2026</p>
+              </div>
+              <button
+                pButton
+                label="View Pricing"
+                class="p-button-outlined mt-4 sm:mt-0"
+                routerLink="/pricing"
+              ></button>
+            </div>
+            <div class="mt-6">
+              <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600"
+                >View billing history</a
+              >
+              <span class="mx-2 text-slate-300">|</span>
+              <a href="#" class="text-sm font-medium text-red-600 hover:text-red-800"
+                >Cancel subscription</a
+              >
+            </div>
+          </div>
+        </div>
+        }
+      </main>
+    </div>
+  </div>
+</div>

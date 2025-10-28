@@ -1,0 +1,81 @@
+<div class="bg-slate-100 min-h-screen font-sans p-4 sm:p-6 md:p-8">
+  <!-- Safety check: Only render if results exist -->
+  @if (results) {
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-slate-800 mb-2">Test Results</h1>
+    <p class="text-lg text-slate-600 mb-6">{{ results.test_details.title }}</p>
+
+    <!-- SUMMARY CARD -->
+    <div
+      class="bg-white rounded-xl shadow-md p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-8"
+    >
+      <div>
+        <p class="text-sm text-slate-500">Your Score</p>
+        <p class="text-3xl font-bold text-indigo-600">{{ results.score }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">Correct</p>
+        <p class="text-3xl font-bold text-green-600">{{ results.correct_count }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">Incorrect</p>
+        <p class="text-3xl font-bold text-red-600">{{ results.incorrect_count }}</p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">Unanswered</p>
+        <p class="text-3xl font-bold text-slate-500">{{ results.unanswered_count }}</p>
+      </div>
+    </div>
+
+    <!-- DETAILED QUESTION BREAKDOWN -->
+    <h2 class="text-2xl font-bold text-slate-800 mb-4">Question Analysis</h2>
+    <div class="space-y-6">
+      @for (question of results.full_results; track question.id) {
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <p class="font-semibold text-slate-800 mb-4">
+          Q. {{ $index + 1 }}: {{ question.question_text }}
+        </p>
+
+        <!-- Options -->
+        <div class="space-y-3 text-sm">
+          <div class="p-3 rounded-lg" [ngClass]="getOptionClass(question, 'a')">
+            A. {{ question.option_a }}
+          </div>
+          <div class="p-3 rounded-lg" [ngClass]="getOptionClass(question, 'b')">
+            B. {{ question.option_b }}
+          </div>
+          <div class="p-3 rounded-lg" [ngClass]="getOptionClass(question, 'c')">
+            C. {{ question.option_c }}
+          </div>
+          <div class="p-3 rounded-lg" [ngClass]="getOptionClass(question, 'd')">
+            D. {{ question.option_d }}
+          </div>
+        </div>
+
+        <!-- Result and Explanation -->
+        <div class="mt-4 pt-4 border-t border-slate-200 text-sm">
+          @if (question.is_correct) {
+          <p class="font-semibold text-green-600">Your answer was correct.</p>
+          } @else {
+          <p class="font-semibold text-red-600">Your answer was incorrect.</p>
+          <p class="text-slate-600 mt-1">
+            Correct Answer:
+            <span class="font-bold">{{ question.correct_option.toUpperCase() }}</span>
+          </p>
+          } @if (question.explanation) {
+          <div class="mt-2 p-3 bg-slate-50 rounded-md">
+            <h4 class="font-semibold text-slate-700">Explanation:</h4>
+            <p class="text-slate-600 mt-1">{{ question.explanation }}</p>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  } @else {
+  <div class="text-center py-20">
+    <p class="text-slate-500">No results to display. Please complete a test first.</p>
+  </div>
+  }
+</div>

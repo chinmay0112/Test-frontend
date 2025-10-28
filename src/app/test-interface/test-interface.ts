@@ -1,9 +1,17 @@
-import { ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TestService } from '../services/test-service';
 import { CommonModule } from '@angular/common';
 import { of } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TestResult } from '../services/test-result';
 
 @Component({
   selector: 'app-test-interface',
@@ -12,8 +20,14 @@ import { TabsModule } from 'primeng/tabs';
   templateUrl: './test-interface.html',
   styleUrl: './test-interface.scss',
 })
-export class TestInterface implements OnInit {
-  constructor(private testService: TestService, private cd: ChangeDetectorRef) {}
+export class TestInterface implements OnInit, OnDestroy {
+  constructor(
+    private testService: TestService,
+    private cd: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router,
+    private testResultService: TestResult
+  ) {}
   test: any;
   sections: any[] = [];
   questions: any[] = [];
@@ -22,13 +36,16 @@ export class TestInterface implements OnInit {
   markedForReview: { [key: number]: boolean } = {};
   answers: { [key: number]: string } = {};
   visitedQuestions: { [key: number]: boolean } = {};
-
+  remainingSeconds: any;
+  private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
-  getTestbyId(): void {
-    this.testService.getTestById(3).subscribe({
+  getTestbyId(id: number): void {
+    this.testService.getTestById(id).subscribe({
       next: (res: any) => {
         console.log('API Data:', res);
         this.test = res;
+        this.remainingSeconds = this.test.duration_minutes * 60;
+        this.startTimer();
         this.sections = res.sections || [];
         this.sections.forEach((s) => (this.currentQuestionIndexes[s.id] = 0));
         this.selectedTabIndex = 0;
@@ -43,7 +60,16 @@ export class TestInterface implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.getTestbyId();
+    this.route.paramMap.subscribe((params) => {
+      const getId = params.get('id');
+      if (getId) {
+        const testId = Number(getId);
+        this.getTestbyId(testId);
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    clearInterval(this.timerInterval);
   }
   getCurrentQuestion(section: any) {
     const index = this.currentQuestionIndexes[section.id];
@@ -70,11 +96,45 @@ export class TestInterface implements OnInit {
     const firstQ = section?.questions?.[this.currentQuestionIndexes[section.id]];
     if (firstQ) this.visitedQuestions[firstQ.id] = true;
   }
-  submitAnswer(section: any) {
-    const question = this.getCurrentQuestion(section);
-    console.log('Submitted answer for Q' + question.id, this.answers[question.id]);
-    // You can call your API here to save the answer
+  submitTest() {
+    const payload: {
+      user_id: number;
+      responses: {
+        question_id: number;
+        selected_answer: string | null;
+        marked_for_review: boolean;
+      }[];
+    } = {
+      user_id: 1, // Replace this with your actual logged-in user id
+      responses: [],
+    };
+
+    this.sections.forEach((section) => {
+      section.questions.forEach((q: any) => {
+        payload.responses.push({
+          question_id: q.id,
+          selected_answer: this.answers[q.id] || null,
+          marked_for_review: !!this.markedForReview[q.id],
+        });
+      });
+    });
+
+    console.log('📦 Sending Payload:', payload);
+
+    this.testService.submitTest(this.test.id, payload).subscribe({
+      next: (res) => {
+        console.log('✅ Test submitted successfully:', res);
+        alert('Test submitted successfully!');
+        this.testResultService.setResults(res);
+        this.router.navigate(['/results']);
+      },
+      error: (err) => {
+        console.error('❌ Error submitting test:', err);
+        alert('Failed to submit test. Please try again.');
+      },
+    });
   }
+
   jumpToQuestion(section: any, index: number) {
     this.currentQuestionIndexes[section.id] = index;
     this.visitedQuestions[this.getCurrentQuestion(section)?.id] = true;
@@ -84,5 +144,37 @@ export class TestInterface implements OnInit {
   }
   markForReview(question: any) {
     this.markedForReview[question.id] = !this.markedForReview[question.id];
+  }
+  startTimer() {
+    this.timerInterval = setInterval(() => {
+      if (this.remainingSeconds > 0) {
+        this.remainingSeconds--;
+      } else {
+        clearInterval(this.timerInterval);
+        this.submitTest();
+      }
+      this.cd.detectChanges();
+    }, 1000);
+  }
+  // Add this getter inside your TestInterface class
+  get formattedTime(): string {
+    if (
+      this.remainingSeconds === undefined ||
+      this.remainingSeconds === null ||
+      this.remainingSeconds < 0
+    ) {
+      return '00:00:00'; // Return default if time is not set or negative
+    }
+
+    const hours = Math.floor(this.remainingSeconds / 3600);
+    const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
+    const seconds = this.remainingSeconds % 60;
+
+    // Use padStart to add leading zeros if needed
+    const hoursStr = hours.toString().padStart(2, '0');
+    const minutesStr = minutes.toString().padStart(2, '0');
+    const secondsStr = seconds.toString().padStart(2, '0');
+
+    return `${hoursStr}:${minutesStr}:${secondsStr}`;
   }
 }

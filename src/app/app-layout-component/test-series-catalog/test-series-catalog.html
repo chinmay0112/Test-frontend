@@ -1,0 +1,143 @@
+<!-- This component assumes it is being rendered inside your main app layout -->
+<div class="min-h-screen bg-slate-100">
+  <!-- Page Header -->
+  <header class="p-4 sm:p-6 md:p-8">
+    <h1 class="text-4xl font-bold text-slate-800">Test Series Catalog</h1>
+    <p class="text-slate-500 mt-2">Find the perfect test series to boost your preparation.</p>
+  </header>
+
+  <!-- Sticky Filter & Search Bar -->
+  <div class="sticky top-0 z-40 bg-slate-100/80 backdrop-blur-md p-4 sm:p-6 md:p-8 -mt-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-grow">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search text-slate-400"></i>
+            <input
+              type="text"
+              pInputText
+              class="w-full"
+              placeholder="Search by series name or exam..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="filterSeries()"
+            />
+          </span>
+        </div>
+        <div class="w-full md:w-64">
+          <p-select
+            [options]="categories"
+            optionLabel="name"
+            optionValue="value"
+            placeholder="Filter by Category"
+            styleClass="w-full"
+            [(ngModel)]="selectedCategory"
+            (ngModelChange)="filterSeries()"
+            [showClear]="true"
+          ></p-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="p-4 sm:p-6 md:p-8">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+      <p-progressSpinner styleClass="w-16 h-16" strokeWidth="4"></p-progressSpinner>
+    </div>
+
+    <!-- Test Series Grid -->
+    <div *ngIf="!isLoading && filteredSeries.length > 0">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <!-- Test Series Card -->
+        <div
+          *ngFor="let series of filteredSeries"
+          class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-2xl"
+        >
+          <!-- Card Image -->
+          <div class="h-44 overflow-hidden">
+            <img
+              [src]="series.image"
+              alt="{{ series.name }}"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+          </div>
+
+          <div class="p-6 flex flex-col flex-grow">
+            <!-- Category Tag -->
+            <p-tag
+              [value]="series.category"
+              [severity]="getCategorySeverity(series.category)"
+              styleClass="mb-3"
+            ></p-tag>
+
+            <!-- Title -->
+            <h3 class="text-xl font-bold text-slate-800 mb-3 h-14">{{ series.name }}</h3>
+
+            <!-- Stats -->
+            <div
+              class="flex items-center text-sm text-slate-500 space-x-4 border-t border-b border-slate-200 py-3 my-3"
+            >
+              <div class="flex items-center">
+                <i class="pi pi-file-edit mr-2 text-indigo-500"></i>
+                <span>{{ series.testCount }} Tests</span>
+              </div>
+              <div class="flex items-center">
+                <i class="pi pi-question-circle mr-2 text-indigo-500"></i>
+                <span>{{ series.questionCount }} Qs</span>
+              </div>
+            </div>
+
+            <!-- Price & Action Button -->
+            <div class="mt-auto flex justify-between items-center">
+              <div>
+                <p class="text-2xl font-bold text-slate-800">
+                  {{ series.price | currency : 'INR' : 'symbol' }}
+                </p>
+                <p *ngIf="series.oldPrice" class="text-sm text-slate-400 line-through">
+                  {{ series.oldPrice | currency : 'INR' : 'symbol' }}
+                </p>
+              </div>
+              <button
+                pButton
+                label="View Details"
+                class="p-button-outlined"
+                (click)="navigateToSeries(series.id)"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredSeries.length === 0">
+      <div class="text-center py-20 bg-white rounded-xl shadow-sm border border-slate-200">
+        <svg
+          class="mx-auto h-12 w-12 text-slate-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          ></path>
+        </svg>
+        <h3 class="mt-2 text-lg font-semibold text-slate-800">No Test Series Found</h3>
+        <p class="mt-1 text-sm text-slate-500">
+          Your search for "{{ searchTerm }}" in {{ selectedCategory || 'All Categories' }} returned
+          no results.
+        </p>
+        <button
+          pButton
+          label="Clear Filters"
+          class="p-button-text mt-4"
+          (click)="clearFilters()"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>

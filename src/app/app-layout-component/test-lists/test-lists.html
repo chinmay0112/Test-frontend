@@ -1,0 +1,115 @@
+<!-- This component assumes it is being rendered inside your main app layout -->
+<div class="bg-slate-50 min-h-screen p-4 sm:p-6 md:p-8">
+  <!-- Page Header Card -->
+  <header class="mb-8 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <!-- Back Button -->
+    <button
+      (click)="goBack()"
+      class="flex items-center text-sm text-indigo-600 font-semibold hover:text-indigo-800 transition-colors mb-4"
+    >
+      <i class="pi pi-arrow-left mr-2 text-xs"></i>
+      Back to all series
+    </button>
+
+    <div *ngIf="testSeries">
+      <p class="text-sm font-semibold uppercase tracking-wider text-indigo-500 mb-1">
+        {{ testSeries.category }}
+      </p>
+      <h1 class="text-4xl font-bold text-slate-800">{{ testSeries.name }}</h1>
+      <p class="text-slate-500 mt-2 max-w-2xl">{{ testSeries.description }}</p>
+
+      <!-- Overall Progress -->
+      <div class="mt-4 max-w-sm">
+        <div class="flex justify-between text-sm text-slate-500 mb-2">
+          <span>Overall Progress</span>
+          <span class="font-medium"
+            >{{ testSeries.testsCompleted }} / {{ testSeries.testsTotal }} Tests</span
+          >
+        </div>
+        <!-- Custom Tailwind progress bar -->
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div
+            class="bg-indigo-600 h-2 rounded-full"
+            [style.width.%]="(testSeries.testsCompleted / testSeries.testsTotal) * 100"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- List of Individual Tests -->
+  <div *ngIf="testSeries" class="mt-10">
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">
+      Available Tests ({{ testSeries.tests.length }})
+    </h2>
+    <div class="space-y-4">
+      <!-- Test Item Card - REDESIGNED -->
+      <div
+        *ngFor="let test of testSeries.tests"
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center hover:shadow-md hover:border-indigo-300 transition-all duration-300"
+      >
+        <!-- New Icon Column -->
+        <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+          <i
+            class="pi text-4xl"
+            [ngClass]="{
+              'text-green-500 pi-check-circle': test.status === 'Completed',
+              'text-indigo-500 pi-play-circle': test.status === 'Not Started'
+            }"
+          ></i>
+        </div>
+
+        <!-- Test Details -->
+        <div class="flex-grow text-center md:text-left mb-4 md:mb-0">
+          <div class="flex items-center justify-center md:justify-start space-x-3">
+            <h3 class="text-xl font-bold text-slate-800">{{ test.title }}</h3>
+            <!-- Custom Tailwind tag -->
+            <span
+              *ngIf="test.status === 'Completed'"
+              class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800"
+              >Completed</span
+            >
+            <span
+              *ngIf="test.status === 'Not Started'"
+              class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800"
+              >New</span
+            >
+          </div>
+          <p class="text-sm text-slate-500 mt-2">
+            {{ test.duration_minutes }} Mins | {{ test.number_of_questions }} Questions | Max Marks:
+            {{ test.marks_correct * test.number_of_questions }}
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex-shrink-0 flex items-center space-x-3 w-full md:w-auto">
+          <!-- Standard button + Tailwind -->
+          <button
+            *ngIf="test.status === 'Completed'"
+            class="py-2 px-4 border border-slate-400 text-slate-600 font-semibold rounded-lg hover:bg-slate-100 transition-colors duration-200 text-sm"
+            (click)="navigateToResults(test.resultId)"
+          >
+            View Results
+          </button>
+          <!-- Standard button + Tailwind -->
+          <button
+            class="py-2 px-4 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center text-sm"
+            [ngClass]="{
+              ' bg-green-600 hover:bg-green-700 ': test.status === 'Completed',
+              'bg-indigo-600 hover:bg-indigo-700 ': test.status === 'Not Started'
+            }"
+            (click)="navigateToTest(test.id)"
+          >
+            <i class="pi pi-play mr-2 text-xs"></i>
+            {{ test.status === 'Completed' ? 'Retake Test' : 'Start Test' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!testSeries" class="text-center py-20">
+    <p class="text-slate-500">Loading test series...</p>
+  </div>
+</div>
