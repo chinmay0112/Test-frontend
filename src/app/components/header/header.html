@@ -76,30 +76,38 @@
     </div>
   </nav>
 
-  <!-- --- THIS IS THE CORRECTED MOBILE SIDEBAR --- -->
+  <!-- ---  MOBILE SIDEBAR --- -->
   <div
     *ngIf="isMobileMenuOpen"
     class="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 z-40"
   >
     <div class="container mx-auto px-4 sm:px-6">
       <!-- ... (Your nav links 'Features', 'Exams', etc. are correct) ... -->
-      <a href="#features" class="block py-2 px-3 ..." (click)="closeMobileMenu()">Features</a>
-      <a href="#exams" class="block py-2 px-3 ..." (click)="closeMobileMenu()">Exams</a>
-      <a href="#how-it-works" class="block py-2 px-3 ..." (click)="closeMobileMenu()"
+      <a href="#features" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
+        >Features</a
+      >
+      <a href="#exams" class="block py-2 px-3 text-black" (click)="closeMobileMenu()">Exams</a>
+      <a href="#how-it-works" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
         >How it Works</a
       >
-      <a href="#testimonials" class="block py-2 px-3 ..." (click)="closeMobileMenu()"
+      <a href="#testimonials" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
         >Testimonials</a
       >
-      <a href="#pricing" class="block py-2 px-3 ..." (click)="closeMobileMenu()">Pricing</a>
+      <a href="#pricing" class="block py-2 px-3 text-black" (click)="closeMobileMenu()">Pricing</a>
 
       <!-- 1. Logged-Out View (Mobile) -->
       @if (!(authService.isLoggedIn$ | async)) {
       <div class="border-t border-slate-200 mt-4 pt-4 flex flex-col space-y-3">
-        <button class="w-full text-center text-indigo-600 ..." (click)="navigateTo('/login')">
+        <button
+          class="w-full text-center text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors"
+          (click)="navigateTo('/login')"
+        >
           Login
         </button>
-        <button class="w-full text-center bg-indigo-600 ..." (click)="navigateTo('/register')">
+        <button
+          class="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+          (click)="navigateTo('/register')"
+        >
           Sign Up
         </button>
       </div>
