@@ -3,10 +3,11 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Auth } from '../services/auth';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, RouterModule, ProgressSpinnerModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -15,7 +16,8 @@ export class Login {
   loginFormUsingPhone: FormGroup;
   loginMode: 'email' | 'phone' = 'email'; // Track current mode
   otpSent = false; // Track if OTP has been sent
-
+  isLoading: boolean = false;
+  loginError: any = null;
   constructor(private fb: FormBuilder, private router: Router, private auth: Auth) {
     // Initialize form with all possible controls
     this.loginFormUsingEmail = this.fb.group({
@@ -42,15 +44,26 @@ export class Login {
   sendOtp(): void {}
 
   onSubmitusingEmail(): void {
+    this.isLoading = true;
+    this.loginError = null;
     const email = this.loginFormUsingEmail.value.email;
     const password = this.loginFormUsingEmail.value.password;
     this.auth.login(email, password).subscribe({
       next: (res) => {
         console.log('Login Successful', res);
+        this.isLoading = false;
         this.router.navigateByUrl('/app/dashboard');
+        this.loginFormUsingEmail.reset();
       },
       error: (err) => {
+        this.isLoading = false;
         console.error(err);
+
+        if (err.status === 401) {
+          this.loginError = err.error.detail || 'Invalid email or password.';
+        } else {
+          this.loginError = 'An unknown error occurred. Please try again.';
+        }
       },
     });
   }

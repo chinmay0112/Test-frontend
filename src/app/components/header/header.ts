@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
@@ -31,6 +31,8 @@ export class Header {
     this.isMobileMenuOpen = false;
   }
   logout() {
-    console.log('Logged out');
+    this.authService.logout();
+    this.router.navigate(['/login']);
+    this.closeMobileMenu();
   }
 }
