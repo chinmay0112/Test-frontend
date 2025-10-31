@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Auth } from '../services/auth';
 
 @Component({
   selector: 'app-login',
@@ -10,21 +11,22 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
   styleUrl: './login.scss',
 })
 export class Login {
-  loginForm: FormGroup;
+  loginFormUsingEmail: FormGroup;
+  loginFormUsingPhone: FormGroup;
   loginMode: 'email' | 'phone' = 'email'; // Track current mode
   otpSent = false; // Track if OTP has been sent
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private auth: Auth) {
     // Initialize form with all possible controls
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.email]],
-      password: ['', [Validators.minLength(6)]],
+    this.loginFormUsingEmail = this.fb.group({
+      email: ['', [Validators.email, Validators.required]],
+      password: ['', [Validators.required]],
+    });
+    this.loginFormUsingPhone = this.fb.group({
       phone: ['', [Validators.pattern('^[6-9]\\d{9}$')]], // Basic Indian mobile pattern
       otp: ['', [Validators.minLength(6), Validators.maxLength(6)]],
     });
-
     // Initial validation setup for email mode
-    this.updateValidators();
   }
 
   ngOnInit(): void {}
@@ -34,69 +36,22 @@ export class Login {
 
     this.loginMode = mode;
     this.otpSent = false; // Reset OTP status when switching modes
-    this.loginForm.reset(); // Clear form values when switching
-    this.updateValidators(); // Update which fields are required
+    this.loginFormUsingEmail.reset(); // Clear form values when switching
   }
 
-  updateValidators(): void {
-    const emailControl = this.loginForm.controls['email'];
-    const passwordControl = this.loginForm.controls['password'];
-    const phoneControl = this.loginForm.controls['phone'];
-    const otpControl = this.loginForm.controls['otp'];
+  sendOtp(): void {}
 
-    if (this.loginMode === 'email') {
-      emailControl.setValidators([Validators.required, Validators.email]);
-      passwordControl.setValidators([Validators.required, Validators.minLength(6)]);
-      phoneControl.clearValidators();
-      otpControl.clearValidators();
-    } else {
-      // Phone mode
-      emailControl.clearValidators();
-      passwordControl.clearValidators();
-      phoneControl.setValidators([Validators.required, Validators.pattern('^[6-9]\\d{9}$')]);
-      // OTP is only required *after* it's been sent
-      otpControl.setValidators(
-        this.otpSent
-          ? [Validators.required, Validators.minLength(6), Validators.maxLength(6)]
-          : null
-      );
-    }
-
-    // Update the validity of controls after changing validators
-    emailControl.updateValueAndValidity();
-    passwordControl.updateValueAndValidity();
-    phoneControl.updateValueAndValidity();
-    otpControl.updateValueAndValidity();
-  }
-
-  sendOtp(): void {
-    if (this.loginForm.controls['phone'].valid) {
-      console.log('Sending OTP to:', this.loginForm.value.phone);
-      // --- HERE YOU WOULD CALL YOUR AuthService TO SEND OTP ---
-      // this.authService.sendLoginOtp(this.loginForm.value.phone).subscribe(...)
-
-      // Simulate OTP sent
-      this.otpSent = true;
-      this.updateValidators(); // Make OTP field required now
-      alert('OTP Sent (simulation)');
-    }
-  }
-
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      if (this.loginMode === 'email') {
-        console.log('Submitting Email/Password Login:', this.loginForm.value);
-        // --- CALL AuthService for Email/Password login ---
-        // this.authService.loginEmailPassword(this.loginForm.value.email, this.loginForm.value.password).subscribe(...)
-      } else {
-        // Phone mode
-        console.log('Submitting Phone/OTP Login:', this.loginForm.value);
-        // --- CALL AuthService for Phone/OTP verification ---
-        // this.authService.verifyLoginOtp(this.loginForm.value.phone, this.loginForm.value.otp).subscribe(...)
-      }
-    } else {
-      console.log('Form is invalid');
-      this.loginForm.markAllAsTouched(); // Show validation errors
-    }
+  onSubmitusingEmail(): void {
+    const email = this.loginFormUsingEmail.value.email;
+    const password = this.loginFormUsingEmail.value.password;
+    this.auth.login(email, password).subscribe({
+      next: (res) => {
+        console.log('Login Successful', res);
+        this.router.navigateByUrl('/app/dashboard');
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 }

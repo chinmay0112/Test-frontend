@@ -49,9 +49,11 @@
       </div>
 
       <!-- Form: Changes based on loginMode -->
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Login mode using email -->
+      @if(loginMode === 'email'){
+      <form [formGroup]="loginFormUsingEmail" (ngSubmit)="onSubmitusingEmail()">
         <!-- EMAIL / PASSWORD MODE -->
-        @if (loginMode === 'email') {
+
         <div>
           <!-- Email Input -->
           <div class="mb-6 relative">
@@ -118,10 +120,21 @@
             </div>
           </div>
         </div>
-        }
+        <button
+          type="submit"
+          [disabled]="!loginFormUsingEmail.valid"
+          class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors duration-200 mt-4"
+        >
+          Sign In
+        </button>
+      </form>
+      }
 
+      <!-- Login mode using phone -->
+      @if (loginMode === 'phone') {
+      <form [formGroup]="loginFormUsingPhone">
         <!-- PHONE / OTP MODE -->
-        @if (loginMode === 'phone') {
+
         <div>
           <!-- Phone Input -->
           <div class="mb-6 relative">
@@ -143,7 +156,7 @@
               <button
                 type="button"
                 (click)="sendOtp()"
-                [disabled]="otpSent || loginForm.controls['phone'].invalid"
+                [disabled]="otpSent || loginFormUsingPhone.controls['phone'].invalid"
                 class="ml-2 px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap"
                 [ngClass]="
                   otpSent
@@ -171,17 +184,17 @@
             </div>
           </div>
         </div>
-        }
 
-        <!-- Common Sign In Button -->
+        <!-- Sign In Button for phone -->
         <button
           type="submit"
-          [disabled]="!loginForm.valid"
+          [disabled]="!loginFormUsingPhone.valid"
           class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 transition-colors duration-200 mt-4"
         >
           Sign In
         </button>
       </form>
+      }
 
       <!-- Divider & Google Sign In (Common to both modes) -->
       <div class="my-8 flex items-center">
