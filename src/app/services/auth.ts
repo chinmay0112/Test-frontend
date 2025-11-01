@@ -10,12 +10,14 @@ export class Auth {
   http = inject(HttpClient);
   private loggedInStatus = new BehaviorSubject<boolean>(false);
   isLoggedIn$: Observable<boolean> = this.loggedInStatus.asObservable();
+  public currentUser = new BehaviorSubject<any>(null);
   constructor() {
     const access = localStorage.getItem('access_token');
     const refresh = localStorage.getItem('refresh_token');
     if (access && refresh) {
       this.loggedInStatus.next(true);
     }
+    this.fetchCurrentUser().subscribe();
   }
   // To check if a user is logged in or not
 
@@ -34,7 +36,7 @@ export class Auth {
         // we will set items
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
-
+        this.fetchCurrentUser().subscribe();
         //Changing the logged in status
         this.loggedInStatus.next(true);
       })
@@ -67,5 +69,28 @@ export class Auth {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     this.loggedInStatus.next(false);
+  }
+  //
+  //This method will get user name
+  fetchCurrentUser(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/users/name/`).pipe(
+      tap((user: any) => {
+        //get Full name here
+        if (user.full_name) {
+          user.firstName = user.full_name.split(' ')[0];
+        } else {
+          user.firstName = 'User';
+        }
+
+        // 2. Update the "User Details Scoreboard"
+        this.currentUser.next(user);
+      }),
+      catchError((err) => {
+        // If getting the user fails (maybe bad token), log them out
+        console.error('Failed to fetch user, logging out.', err);
+        this.logout();
+        return throwError(() => err);
+      })
+    );
   }
 }

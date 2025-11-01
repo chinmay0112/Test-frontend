@@ -12,8 +12,7 @@ import { Auth } from '../../services/auth';
 export class Header {
   isMobileMenuOpen = false; // State for mobile menu
 
-  constructor(private router: Router) {}
-  authService = inject(Auth);
+  constructor(private router: Router, public authService: Auth) {}
 
   ngOnInit(): void {}
 
