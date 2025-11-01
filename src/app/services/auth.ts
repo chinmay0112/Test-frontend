@@ -10,11 +10,16 @@ export class Auth {
   http = inject(HttpClient);
   private loggedInStatus = new BehaviorSubject<boolean>(false);
   isLoggedIn$: Observable<boolean> = this.loggedInStatus.asObservable();
-
+  constructor() {
+    const access = localStorage.getItem('access_token');
+    const refresh = localStorage.getItem('refresh_token');
+    if (access && refresh) {
+      this.loggedInStatus.next(true);
+    }
+  }
   // To check if a user is logged in or not
 
   isUserLoggedIn() {
-    console.log(this.loggedInStatus);
     return this.loggedInStatus.value;
   }
 

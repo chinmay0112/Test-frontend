@@ -52,7 +52,7 @@ export class Login {
       next: (res) => {
         console.log('Login Successful', res);
         this.isLoading = false;
-        this.router.navigateByUrl('/app/dashboard');
+        this.router.navigate(['/app/dashboard'], { replaceUrl: true });
         this.loginFormUsingEmail.reset();
       },
       error: (err) => {
