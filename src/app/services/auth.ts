@@ -16,8 +16,8 @@ export class Auth {
     const refresh = localStorage.getItem('refresh_token');
     if (access && refresh) {
       this.loggedInStatus.next(true);
+      this.fetchCurrentUser().subscribe();
     }
-    this.fetchCurrentUser().subscribe();
   }
   // To check if a user is logged in or not
 
