@@ -30,7 +30,7 @@ export class Auth {
       email: email,
       password: password,
     };
-    return this.http.post(`${environment.apiUrl}/login/`, body).pipe(
+    return this.http.post(`${environment.apiUrl}/auth/login/`, body).pipe(
       //tap is like spy data, runs on every successful api response
       tap((response: any) => {
         // we will set items
