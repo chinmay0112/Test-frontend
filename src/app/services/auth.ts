@@ -1,85 +1,96 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
-  // --- Mock State ---
-  // Use BehaviorSubject to make the login status reactive.
-  // Initialize to 'false' (logged out).
+  http = inject(HttpClient);
   private loggedInStatus = new BehaviorSubject<boolean>(false);
-
-  // Expose the login status as an Observable so components can subscribe.
   isLoggedIn$: Observable<boolean> = this.loggedInStatus.asObservable();
-
-  // Store mock user data (can be null if logged out)
-  private mockUser: { firstName: string; email: string } | null = null;
-
+  public currentUser = new BehaviorSubject<any>(null);
   constructor() {
-    // Check localStorage in case of page refresh during testing
-    // In a real app, you'd validate the token here.
-    if (localStorage.getItem('mock_logged_in') === 'true') {
+    const access = localStorage.getItem('access_token');
+    const refresh = localStorage.getItem('refresh_token');
+    if (access && refresh) {
       this.loggedInStatus.next(true);
-      this.mockUser = { firstName: 'Aryan', email: 'aryan@example.com' };
+      this.fetchCurrentUser().subscribe();
     }
   }
+  // To check if a user is logged in or not
 
-  // --- Mock Methods ---
-
-  /**
-   * Simulates a successful login.
-   * In a real service, this would make an API call and save tokens.
-   */
-  login(credentials: any): Observable<any> {
-    console.log('AuthService (Mock): Logging in with', credentials);
-    // Simulate success
-    this.loggedInStatus.next(true);
-    this.mockUser = { firstName: 'Aryan', email: credentials.email || 'aryan@example.com' };
-    localStorage.setItem('mock_logged_in', 'true'); // Simulate session persistence
-
-    // Return an Observable that completes immediately (like a successful HTTP request)
-    return of({ success: true, message: 'Mock login successful' });
-  }
-
-  /**
-   * Simulates registration.
-   * In a real service, this would make an API call.
-   */
-  register(userData: any): Observable<any> {
-    console.log('AuthService (Mock): Registering user', userData);
-    // Simulate success
-    // Optionally, log the user in immediately after registration
-    // return this.login(userData);
-    return of({ success: true, message: 'Mock registration successful' });
-  }
-
-  /**
-   * Simulates logging out.
-   * In a real service, this might call a logout API and clear tokens.
-   */
-  logout(): void {
-    console.log('AuthService (Mock): Logging out');
-    this.loggedInStatus.next(false);
-    this.mockUser = null;
-    localStorage.removeItem('mock_logged_in'); // Clear simulated session
-    // You would typically navigate to the login page here via the Router
-  }
-
-  /**
-   * Returns the current mock login status directly.
-   * Components can use this for simple checks in their templates.
-   */
-  isUserLoggedIn(): boolean {
+  isUserLoggedIn() {
     return this.loggedInStatus.value;
   }
 
-  /**
-   * Returns the mock user data if logged in.
-   */
-  getCurrentUser(): { firstName: string; email: string } | null {
-    return this.mockUser;
+  login(email: any, password: any) {
+    const body = {
+      email: email,
+      password: password,
+    };
+    return this.http.post(`${environment.apiUrl}/auth/login/`, body).pipe(
+      //tap is like spy data, runs on every successful api response
+      tap((response: any) => {
+        // we will set items
+        localStorage.setItem('access_token', response.access);
+        localStorage.setItem('refresh_token', response.refresh);
+        this.fetchCurrentUser().subscribe();
+        //Changing the logged in status
+        this.loggedInStatus.next(true);
+      })
+    );
+  }
+  refreshToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+    const payload = {
+      refresh: refreshToken,
+    };
+    return this.http.post(`${environment.apiUrl}/token/refresh`, payload).pipe(
+      tap((response: any) => {
+        localStorage.setItem('access_token', response.access);
+        this.loggedInStatus.next(true);
+      }),
+      catchError((err) => {
+        console.error(err);
+        this.logout();
+        return throwError(() => err);
+      })
+    );
   }
 
-  // --- You would add other methods like sendPasswordReset later ---
+  logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    this.loggedInStatus.next(false);
+  }
+  //
+  //This method will get user name
+  fetchCurrentUser(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/users/name/`).pipe(
+      tap((user: any) => {
+        //get Full name here
+        if (user.full_name) {
+          user.firstName = user.full_name.split(' ')[0];
+        } else {
+          user.firstName = 'User';
+        }
+
+        // 2. Update the "User Details Scoreboard"
+        this.currentUser.next(user);
+      }),
+      catchError((err) => {
+        // If getting the user fails (maybe bad token), log them out
+        console.error('Failed to fetch user, logging out.', err);
+        this.logout();
+        return throwError(() => err);
+      })
+    );
+  }
 }
