@@ -73,7 +73,7 @@ export class Auth {
   //
   //This method will get user name
   fetchCurrentUser(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/users/name/`).pipe(
+    return this.http.get(`${environment.apiUrl}/users/me/`).pipe(
       tap((user: any) => {
         //get Full name here
         if (user.full_name) {
