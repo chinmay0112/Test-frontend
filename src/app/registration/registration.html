@@ -24,10 +24,10 @@
         <p class="text-slate-500 mb-8">Let's get you started on your path to success.</p>
 
         <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-          <!-- Username Input -->
+          <!-- first name Input -->
           <div class="mb-4 relative">
-            <label for="username" class="block text-sm font-medium text-slate-600 mb-2"
-              >Username</label
+            <label for="firstName" class="block text-sm font-medium text-slate-600 mb-2"
+              >First Name</label
             >
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -47,10 +47,41 @@
               </span>
               <input
                 type="text"
-                id="username"
-                formControlName="username"
+                id="firstName"
+                formControlName="first_name"
                 class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-150"
-                placeholder="your_username"
+                placeholder="first name"
+              />
+            </div>
+          </div>
+
+          <!-- last name -->
+          <div class="mb-4 relative">
+            <label for="lastName" class="block text-sm font-medium text-slate-600 mb-2"
+              >Last Name</label
+            >
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg
+                  class="w-5 h-5 text-slate-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  ></path>
+                </svg>
+              </span>
+              <input
+                type="text"
+                id="lastName"
+                formControlName="last_name"
+                class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-150"
+                placeholder="last name"
               />
             </div>
           </div>
@@ -140,7 +171,7 @@
               <input
                 type="password"
                 id="password"
-                formControlName="password"
+                formControlName="password1"
                 class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-150"
                 placeholder="••••••••"
               />
@@ -171,7 +202,7 @@
               <input
                 type="password"
                 id="confirmPassword"
-                formControlName="confirmPassword"
+                formControlName="password2"
                 class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-150"
                 placeholder="••••••••"
               />
