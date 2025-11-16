@@ -58,7 +58,7 @@ export class Auth {
   loginWithGoogle(): void {
     // This simply redirects the user to Google's login page.
     window.location.href =
-      'https://accounts.google.com/o/oauth2/v2/auth?client_id=513830597696-3769ch6r4m755e2pgd2tir0jigooc9am&redirect_uri=http://localhost:4200/google-callback&response_type=code&scope=openid%20email%20profile&access_type=offline';
+      'https://accounts.google.com/o/oauth2/v2/auth?client_id=513830597696-3769ch6r4m755e2pgd2tir0jigooc9am&redirect_uri=https://examprepare.netlify.app/google-callback&response_type=code&scope=openid%20email%20profile&access_type=offline';
   }
 
   // --- 5. THIS IS CALLED BY YOUR CALLBACK COMPONENT ---
