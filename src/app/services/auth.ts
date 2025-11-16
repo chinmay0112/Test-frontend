@@ -1,7 +1,11 @@
+// auth.ts
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthApi } from './auth-api';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { authConfig } from '../app.config';
 
 /* ---------- Types (adjust to your backend shape) ---------- */
 export interface LoginResponse {
@@ -43,7 +47,7 @@ export class Auth {
 
   public currentUser = new BehaviorSubject<User | null>(null);
 
-  constructor() {
+  constructor(private authApiService: AuthApi, private oAuthService: OAuthService) {
     const access = localStorage.getItem('access_token');
     const refresh = localStorage.getItem('refresh_token');
     if (access && refresh) {
@@ -51,7 +55,32 @@ export class Auth {
       this.fetchCurrentUser().subscribe();
     }
   }
+  loginWithGoogle(): void {
+    // This simply redirects the user to Google's login page.
+    window.location.href =
+      'https://accounts.google.com/o/oauth2/v2/auth?client_id=513830597696-3769ch6r4m755e2pgd2tir0jigooc9am&redirect_uri=http://localhost:4200/google-callback&response_type=code&scope=openid%20email%20profile&access_type=offline';
+  }
 
+  // --- 5. THIS IS CALLED BY YOUR CALLBACK COMPONENT ---
+  handleGoogleCallback(code: string): Observable<any> {
+    // The library has processed the URL and has the "code" (the "valet key")
+
+    if (!code) {
+      return throwError(() => new Error('No code found from Google callback'));
+    }
+
+    // Now, we send this code to our OWN backend at /api/auth/google/
+    return this.http.post(`${environment.apiUrl}/auth/google/`, { code: code }).pipe(
+      tap((response: any) => {
+        // SUCCESS! Our backend swapped the code for our OWN tokens.
+        // We save them just like a normal email login.
+        localStorage.setItem('access_token', response.access);
+        localStorage.setItem('refresh_token', response.refresh);
+        this.loggedInStatus.next(true);
+        this.fetchCurrentUser().subscribe();
+      })
+    );
+  }
   /* ------------ Auth helpers ------------ */
 
   isUserLoggedIn() {
@@ -61,23 +90,7 @@ export class Auth {
   /* ------------ REGISTER ------------ */
   register(payload: RegisterRequest): Observable<RegisterResponse> {
     // NOTE: endpoint ko apne backend ke hisaab se change karo
-    return this.http
-      .post<RegisterResponse>(`${environment.apiUrl}/auth/registration/`, payload)
-      .pipe(
-        tap((res) => {
-          // Agar API registration par token bhi de deti hai:
-          const token = res.token ?? res.access;
-          if (token) {
-            localStorage.setItem('access_token', token);
-            if (res.refresh) localStorage.setItem('refresh_token', res.refresh);
-            this.loggedInStatus.next(true);
-            this.fetchCurrentUser().subscribe();
-          }
-        }),
-        catchError((err) => {
-          return throwError(() => err);
-        })
-      );
+    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/registration/`, payload);
   }
 
   /* ------------ LOGIN ------------ */
@@ -96,21 +109,32 @@ export class Auth {
   /* ------------ REFRESH ------------ */
   refreshToken(): Observable<{ access: string }> {
     const refreshToken = localStorage.getItem('refresh_token');
-
     if (!refreshToken) {
       this.logout();
-      return throwError(() => new Error('No refresh token available'));
+      return throwError(() => new Error('No refresh token'));
     }
-    const payload = { refresh: refreshToken };
 
-    // Consistent trailing slash (Django style). Change if your API differs.
-    return this.http.post<{ access: string }>(`${environment.apiUrl}/token/refresh/`, payload).pipe(
+    return this.authApiService.refreshToken(refreshToken).pipe(
       tap((response) => {
         localStorage.setItem('access_token', response.access);
         this.loggedInStatus.next(true);
       }),
       catchError((err) => {
-        console.error(err);
+        console.error('Refresh failed:', err);
+        this.logout();
+        return throwError(() => err);
+      })
+    );
+  }
+
+  fetchCurrentUser(): Observable<User> {
+    return this.authApiService.getCurrentUser().pipe(
+      tap((user) => {
+        user.firstName = user['first_name'] ?? 'User';
+        this.currentUser.next(user);
+      }),
+      catchError((err) => {
+        console.error('Failed to fetch user, logging out.', err);
         this.logout();
         return throwError(() => err);
       })
@@ -123,18 +147,29 @@ export class Auth {
     this.loggedInStatus.next(false);
     this.currentUser.next(null);
   }
+  completeProfile(data: any) {
+    return this.http.post<any>(`${environment.apiUrl}/auth/complete-profile/`, data).pipe(
+      tap((res) => {
+        const oldUser = this.currentUser.value;
 
-  /* ------------ CURRENT USER ------------ */
-  fetchCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${environment.apiUrl}/users/me/`).pipe(
-      tap((user) => {
-        user.firstName = user['first_name'] ? user['first_name'] : 'User';
-        this.currentUser.next(user);
-      }),
-      catchError((err) => {
-        console.error('Failed to fetch user, logging out.', err);
-        this.logout();
-        return throwError(() => err);
+        if (!oldUser) return;
+
+        // ---- Build a fully typed updated user ----
+        const updatedUser: User = {
+          id: oldUser.id,
+          email: oldUser.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone,
+
+          // UI convenience fields
+          firstName: data.first_name,
+          full_name: `${data.first_name} ${data.last_name}`,
+        };
+
+        // ---- Update BehaviorSubject and localStorage ----
+        this.currentUser.next(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
       })
     );
   }

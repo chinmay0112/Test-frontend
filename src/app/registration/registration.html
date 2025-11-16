@@ -1,3 +1,49 @@
+<!-- Modal starts -->
+@if (isRegistrationSuccessful) {
+<!-- 1. The semi-transparent overlay -->
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
+  [@modalFade]
+>
+  <!-- 2. The modal card -->
+  <div class="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl text-center" [@modalPop]>
+    <!-- 3. The Animated "Tick" Icon -->
+    <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
+      <svg
+        class="w-12 h-12 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        [@tickAnimation]
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+    </div>
+
+    <!-- 4. The Content -->
+    <h2 class="text-3xl font-bold text-slate-800 mb-2">Account Created!</h2>
+    <p class="text-slate-500 mb-8">
+      Your account has been successfully created. Please log in to continue.
+    </p>
+
+    <!-- 5. The CTA Button -->
+    <button
+      (click)="closeModalAndLogin()"
+      class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+    >
+      Go to Login
+    </button>
+  </div>
+</div>
+}
+
+<!-- Modal ends -->
+
 <div class="bg-slate-100 flex items-center justify-center p-4 py-8 md:py-12">
   <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex overflow-hidden">
     <!-- Left Side: Image Panel (hidden on small screens) -->

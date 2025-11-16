@@ -67,4 +67,9 @@ export class Login {
       },
     });
   }
+  loginWithGoogle(): void {
+    console.log('Google clicked');
+    this.isLoading = true; // Show spinner
+    this.auth.loginWithGoogle();
+  }
 }

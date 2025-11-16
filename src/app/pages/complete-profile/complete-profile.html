@@ -1,0 +1,97 @@
+<p-toast />
+
+<div class="min-h-screen flex justify-center px-4 py-10 bg-slate-100">
+  <div
+    class="w-full max-w-lg bg-white shadow-xl rounded-2xl p-8 border border-slate-200 animate-fadeIn"
+  >
+    <!-- Header -->
+    <h1 class="text-2xl font-semibold text-slate-800">Complete Your Profile</h1>
+    <p class="text-slate-500 text-sm mt-1">
+      We just need a few more details to finish setting up your account.
+    </p>
+
+    <!-- Form -->
+    <form [formGroup]="profileForm" class="mt-8 space-y-6">
+      <!-- First Name -->
+      <div>
+        <label class="block font-medium text-sm text-slate-700">First Name</label>
+        <input
+          formControlName="first_name"
+          type="text"
+          pInputText
+          class="custom-input"
+          placeholder="Enter first name"
+        />
+        <p
+          *ngIf="profileForm.get('first_name')?.touched && profileForm.get('first_name')?.invalid"
+          class="error-text"
+        >
+          First name is required.
+        </p>
+      </div>
+
+      <!-- Last Name -->
+      <div>
+        <label class="block font-medium text-sm text-slate-700">Last Name</label>
+        <input
+          formControlName="last_name"
+          type="text"
+          pInputText
+          class="custom-input"
+          placeholder="Enter last name"
+        />
+        <p
+          *ngIf="profileForm.get('last_name')?.touched && profileForm.get('last_name')?.invalid"
+          class="error-text"
+        >
+          Last name is required.
+        </p>
+      </div>
+
+      <!-- Phone -->
+      <div>
+        <label class="block font-medium text-sm text-slate-700">Phone Number</label>
+
+        <input
+          pInputText
+          formControlName="phone"
+          type="text"
+          class="custom-input"
+          placeholder="9876543210"
+        />
+
+        <!-- Angular validation error -->
+        <p
+          *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid"
+          class="error-text text-red-500"
+        >
+          Enter a valid 10-digit phone number.
+        </p>
+      </div>
+
+      <!-- Gender -->
+      <!-- <div>
+        <label class="block font-medium text-sm text-slate-700">Gender</label>
+        <select formControlName="gender" class="custom-input">
+          <option value="" selected disabled>Select gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div> -->
+
+      <!-- Submit Button -->
+      <div class="flex justify-center">
+        <button
+          type="button"
+          (click)="submitProfile()"
+          [disabled]="isSubmitting"
+          class="btn-primary"
+        >
+          <p-button pRipple label="Save and Continue" />
+          <!-- <span>Save & Continue</span> -->
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

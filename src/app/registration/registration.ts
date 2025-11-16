@@ -44,7 +44,7 @@ export class Registration {
   // UI state
   loading = signal(false);
   serverError = signal<string | null>(null);
-
+  isRegistrationSuccessful = false;
   // Form group
   registrationForm: FormGroup = this.fb.group(
     {
@@ -109,8 +109,10 @@ export class Registration {
         next: (res: RegisterResponse) => {
           if (res?.token || (res as any)?.access) {
             const token = res.token ?? (res as any).access;
-            localStorage.setItem('token', token as string);
-            this.router.navigate(['/dashboard']);
+            // localStorage.setItem('token', token as string);
+            this.isRegistrationSuccessful = true;
+            this.registrationForm.reset();
+            // this.router.navigate(['/login']);
           } else {
             this.router.navigate(['/verify-email'], { queryParams: { email: payload.email } });
           }
@@ -136,7 +138,10 @@ export class Registration {
         },
       });
   }
-
+  closeModalAndLogin(): void {
+    this.isRegistrationSuccessful = false;
+    this.router.navigate(['/login']);
+  }
   onGoogleSignUp(): void {
     console.log('Google Sign Up clicked');
   }

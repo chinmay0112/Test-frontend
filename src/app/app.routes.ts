@@ -8,6 +8,7 @@ import { Home } from './home/home';
 import { ForgotPassword } from './forgot-password/forgot-password';
 import { authGuard } from './services/auth-guard';
 import { publicGuard } from './services/public-guard';
+import { GoogleCallback } from './pages/google-callback/google-callback';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'login', component: Login, canActivate: [publicGuard] },
   { path: 'register', component: Registration, canActivate: [publicGuard] },
+  { path: 'google-callback', component: GoogleCallback },
 
   {
     path: 'app',
