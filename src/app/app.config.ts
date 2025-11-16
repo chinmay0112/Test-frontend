@@ -20,7 +20,7 @@ export const authConfig: AuthConfig = {
 
   // This MUST match the "Authorized redirect URI" in your Google Cloud Console
   // This is the page Google sends the user back to with the "valet key"
-  redirectUri: `${environment.apiUrl}/google-callback`,
+  redirectUri: `https://examprepare.netlify.app/google-callback`,
 
   // This is your "Client ID" from the Google Cloud Console
   // !! REPLACE THIS WITH YOUR REAL CLIENT ID !!
