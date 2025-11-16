@@ -10,9 +10,9 @@ export class TestService {
   http = inject(HttpClient);
 
   getTestById(id: number): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/tests/${id}/`);
+    return this.http.get(`${environment.apiUrl}/api/tests/${id}/`);
   }
   submitTest(testId: number, data: any) {
-    return this.http.post(`${environment.apiUrl}/tests/${testId}/submit/`, data);
+    return this.http.post(`${environment.apiUrl}/api/tests/${testId}/submit/`, data);
   }
 }

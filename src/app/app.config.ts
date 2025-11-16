@@ -12,6 +12,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptor/auth-interceptor';
 import { AuthConfig, OAuthModule, provideOAuthClient } from 'angular-oauth2-oidc';
+import { environment } from '../environments/environment';
 export const authConfig: AuthConfig = {
   // This is the URL for Google's "discovery document"
   // It tells the library all the URLs it needs (for login, tokens, etc.)
@@ -19,7 +20,7 @@ export const authConfig: AuthConfig = {
 
   // This MUST match the "Authorized redirect URI" in your Google Cloud Console
   // This is the page Google sends the user back to with the "valet key"
-  redirectUri: 'http://localhost:4200/google-callback',
+  redirectUri: `${environment.apiUrl}/google-callback`,
 
   // This is your "Client ID" from the Google Cloud Console
   // !! REPLACE THIS WITH YOUR REAL CLIENT ID !!

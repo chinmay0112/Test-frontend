@@ -11,12 +11,12 @@ export class AuthApi {
   constructor(private http: HttpClient) {}
 
   refreshToken(refresh: string): Observable<{ access: string }> {
-    return this.http.post<{ access: string }>(`${environment.apiUrl}/auth/token/refresh/`, {
+    return this.http.post<{ access: string }>(`${environment.apiUrl}/api/auth/token/refresh/`, {
       refresh,
     });
   }
 
   getCurrentUser(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/users/me/`);
+    return this.http.get(`${environment.apiUrl}/api/users/me/`);
   }
 }

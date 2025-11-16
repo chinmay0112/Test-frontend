@@ -70,7 +70,7 @@ export class Auth {
     }
 
     // Now, we send this code to our OWN backend at /api/auth/google/
-    return this.http.post(`${environment.apiUrl}/auth/google/`, { code: code }).pipe(
+    return this.http.post(`${environment.apiUrl}/api/auth/google/`, { code: code }).pipe(
       tap((response: any) => {
         // SUCCESS! Our backend swapped the code for our OWN tokens.
         // We save them just like a normal email login.
@@ -90,13 +90,16 @@ export class Auth {
   /* ------------ REGISTER ------------ */
   register(payload: RegisterRequest): Observable<RegisterResponse> {
     // NOTE: endpoint ko apne backend ke hisaab se change karo
-    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/registration/`, payload);
+    return this.http.post<RegisterResponse>(
+      `${environment.apiUrl}/api/auth/registration/`,
+      payload
+    );
   }
 
   /* ------------ LOGIN ------------ */
   login(email: string, password: string): Observable<LoginResponse> {
     const body = { email, password };
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login/`, body).pipe(
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/api/auth/login/`, body).pipe(
       tap((response) => {
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
@@ -148,7 +151,7 @@ export class Auth {
     this.currentUser.next(null);
   }
   completeProfile(data: any) {
-    return this.http.post<any>(`${environment.apiUrl}/auth/complete-profile/`, data).pipe(
+    return this.http.post<any>(`${environment.apiUrl}/api/auth/complete-profile/`, data).pipe(
       tap((res) => {
         const oldUser = this.currentUser.value;
 
