@@ -176,4 +176,15 @@ export class Auth {
       })
     );
   }
+  createRazorpayOrder(planId: string) {
+    return this.http.post<any>(`${environment.apiUrl}/api/payments/create-order/`, {
+      plan_id: planId,
+    });
+  }
+  verifyPayment(paymentDetails: any): Observable<{ status: string; message: string }> {
+    return this.http.post<{ status: string; message: string }>(
+      `${environment.apiUrl}/api/payments/verify/`,
+      paymentDetails
+    );
+  }
 }

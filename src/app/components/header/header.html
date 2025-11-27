@@ -36,9 +36,23 @@
     }
 
     <!-- 2. Logged-In View (Desktop) -->
-    @else {
+    @else { @if(authService.currentUser | async; as user) {
     <div class="hidden lg:flex items-center space-x-4">
-      @if(authService.currentUser | async; as user) {
+      @if (user['is_pro_member']) {
+      <div
+        class="flex items-center space-x-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full border border-amber-200 shadow-sm"
+      >
+        <span class="text-xs font-bold">PRO</span>
+      </div>
+      } @else {
+      <button
+        class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+        (click)="navigateTo('/app/prices')"
+      >
+        Buy Plans
+      </button>
+      }
+
       <span class="text-sm text-slate-600"> Welcome, {{ user.firstName || 'User' }}! </span>
 
       <div
@@ -48,13 +62,12 @@
           {{ user.firstName ? user.firstName[0] : 'U' }}
         </span>
       </div>
-      }
 
       <button class="text-red-500 hover:text-red-700 text-sm font-medium" (click)="logout()">
         Logout
       </button>
     </div>
-    }
+    } }
 
     <!-- Mobile Menu Button -->
     <div class="lg:hidden">
@@ -134,6 +147,20 @@
           <span class="text-sm text-slate-600 ml-3"> Welcome, {{ user.firstName || 'User' }} </span>
           }
         </div>
+        @if (authService.currentUser | async; as user) { @if (user['is_pro_member']) {
+        <div
+          class="w-full text-center bg-amber-100 text-amber-800 text-sm font-bold py-2 px-4 rounded-lg border border-amber-200"
+        >
+          <span class="text-xs font-bold">PRO</span>
+        </div>
+        } @else {
+        <button
+          class="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+          (click)="navigateTo('/app/prices')"
+        >
+          Buy Plans
+        </button>
+        } }
         <button
           class="w-full text-center text-red-500 hover:text-red-700 text-sm font-medium py-2 px-4 rounded-lg border border-red-500 hover:bg-red-50 transition-colors"
           (click)="logout()"

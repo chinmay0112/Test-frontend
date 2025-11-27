@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Header } from '../components/header/header';
 import { Footer } from '../components/footer/footer';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Header, Footer],
+  imports: [CommonModule, Header, Footer, ButtonModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
