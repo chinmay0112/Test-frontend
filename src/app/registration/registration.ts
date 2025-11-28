@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 import {
   AbstractControl,
   FormBuilder,
@@ -31,7 +32,7 @@ export const passwordMatchValidator: ValidatorFn = (
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registration.html',
-  styleUrls: ['./registration.scss'], // ✅ array form
+  styleUrls: ['./registration.scss'],
 })
 export class Registration {
   // 2) NonNullableFormBuilder -> safer controls (no null)
