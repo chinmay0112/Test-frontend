@@ -7,9 +7,10 @@ import { AppLayoutComponent } from './app-layout-component/app-layout-component'
 import { MyTestSeries } from './app-layout-component/my-test-series/my-test-series';
 import { TestLists } from './app-layout-component/test-lists/test-lists';
 import { TestSeriesCatalog } from './app-layout-component/test-series-catalog/test-series-catalog';
-import { PricingPage } from './app-layout-component/pricing-page/pricing-page';
+// import { PricingPage } from './app-layout-component/pricing-page/pricing-page';
 import { AccountSettingsPage } from './app-layout-component/account-settings-page/account-settings-page';
 import { CompleteProfile } from './pages/complete-profile/complete-profile';
+import { Catalog } from './app-layout-component/catalog/catalog';
 
 export const AUTHENTICATED_ROUTES: Routes = [
   {
@@ -20,10 +21,11 @@ export const AUTHENTICATED_ROUTES: Routes = [
       { path: 'dashboard', component: Dashboard },
       { path: 'my-tests', component: MyTestSeries },
       { path: 'tests', component: TestLists },
-      { path: 'prices', component: PricingPage },
+      // { path: 'prices', component: PricingPage },
       { path: 'all-tests', component: TestSeriesCatalog },
       { path: 'results', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
+      { path: 'catalog', component: Catalog },
 
       // { path: 'analysis', component: AnalysisComponent },
 
@@ -31,6 +33,6 @@ export const AUTHENTICATED_ROUTES: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
-  { path: 'app/test/:id', component: TestInterface },
+  { path: 'test/:id', component: TestInterface },
   { path: 'complete-profile', component: CompleteProfile },
 ];

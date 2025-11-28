@@ -1,23 +1,51 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { Subscription } from 'rxjs';
+import { Header } from '../../components/header/header';
 
 declare var Razorpay: any;
 
 @Component({
   selector: 'app-pricing-page',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, Header],
   templateUrl: './pricing-page.html',
   styleUrl: './pricing-page.scss',
 })
-export class PricingPage {
+export class PricingPage implements OnInit, OnDestroy {
   isYearly = false;
+  showSuccessModal = false;
+  couponCode: string = '';
+  paymentId: string = '';
+  isProMember = false;
+  showCouponInput = false;
+  isApplyingCoupon = false;
+  couponSuccess = false;
+  couponError = '';
+  appliedDiscountPercentage = 0;
 
-  constructor(private router: Router, private authService: Auth) {}
+  // Constants (for easy math)
+  readonly MONTHLY_PRICE = 249;
+  readonly YEARLY_PRICE = 2399;
+  userSubscription: Subscription | undefined;
+  constructor(private router: Router, public authService: Auth, private ngZone: NgZone) {}
 
-  ngOnInit(): void {}
-
+  ngOnInit(): void {
+    this.userSubscription = this.authService.currentUser.subscribe((user) => {
+      if (user && user.is_pro_member) {
+        this.isProMember = true;
+      } else {
+        this.isProMember = false;
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
   navigateTo(route: string): void {
     console.log('Navigating to:', route);
     this.router.navigate([route]);
@@ -25,7 +53,7 @@ export class PricingPage {
 
   initiatePayment(planType: string) {
     const planId = this.isYearly ? 'pro_yearly' : 'pro_monthly'; // Replace with actual plan IDs
-    this.authService.createRazorpayOrder(planId).subscribe({
+    this.authService.createRazorpayOrder(planId, this.couponCode).subscribe({
       next: (order) => {
         const options = {
           key: order.key_id,
@@ -35,7 +63,10 @@ export class PricingPage {
           description: `Subscription for ${planType}`,
           order_id: order.order_id,
           handler: (response: any) => {
-            this.verifyPayment(response);
+            this.ngZone.run(() => {
+              console.log('Razorpay payment success callback received', response);
+              this.verifyPayment(response);
+            });
           },
           prefill: {
             name: 'User Name', // You might want to get this from AuthService
@@ -57,12 +88,15 @@ export class PricingPage {
   }
 
   verifyPayment(response: any) {
+    console.log('Verifying payment with response:', response);
+    this.paymentId = response.razorpay_payment_id;
     this.authService.verifyPayment(response).subscribe({
       next: (res) => {
         if (res.status === 'success') {
-          alert('Payment successful!');
+          console.log('Payment verification successful, showing modal');
+          this.showSuccessModal = true;
           this.authService.fetchCurrentUser().subscribe();
-          this.router.navigate(['/app/dashboard']);
+          // this.router.navigate(['/app/dashboard']);
         } else {
           alert('Payment verification failed.');
         }
@@ -72,5 +106,47 @@ export class PricingPage {
         alert('Payment verification failed.');
       },
     });
+  }
+  closeModalAndNavigate() {
+    this.showSuccessModal = false;
+    this.router.navigate(['/app/dashboard']);
+  }
+  get currentPrice(): number {
+    const base = this.isYearly ? this.YEARLY_PRICE : this.MONTHLY_PRICE;
+    if (this.couponSuccess) {
+      return Math.round(base - base * (this.appliedDiscountPercentage / 100));
+    }
+    return base;
+  }
+
+  toggleCouponInput() {
+    this.showCouponInput = !this.showCouponInput;
+    if (!this.showCouponInput) {
+      this.clearCoupon();
+    }
+  }
+
+  applyCoupon() {
+    if (!this.couponCode.trim()) return;
+
+    this.isApplyingCoupon = true;
+    this.couponError = '';
+
+    // Simulate API call - REPLACE THIS with your actual service call
+    this.isApplyingCoupon = false;
+    if (this.couponCode.toUpperCase() === 'SAVE20') {
+      this.couponSuccess = true;
+      this.appliedDiscountPercentage = 20; // 20% OFF
+    } else {
+      this.couponError = 'Invalid or expired coupon code';
+      this.couponSuccess = false;
+    }
+  }
+
+  clearCoupon() {
+    this.couponCode = '';
+    this.couponSuccess = false;
+    this.couponError = '';
+    this.appliedDiscountPercentage = 0;
   }
 }

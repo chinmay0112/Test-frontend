@@ -1,0 +1,158 @@
+<div class="bg-slate-50 min-h-screen">
+  <div class="bg-indigo-700 py-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-white mb-4">Explore Test Series</h1>
+      <p class="text-indigo-100 mb-8 max-w-2xl">
+        Practice with the latest pattern questions for SSC, Banking, Railways, and more.
+      </p>
+
+      <div class="relative max-w-xl">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="pi pi-search text-slate-400"></i>
+        </div>
+        <input
+          type="text"
+          class="block w-full pl-10 pr-3 py-3 rounded-lg border-none focus:ring-2 focus:ring-indigo-400 shadow-lg"
+          placeholder="Search for exams (e.g. CGL, CHSL, PO)..."
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="w-full lg:w-64 flex-shrink-0">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-24">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-slate-800">Filters</h3>
+            <button class="text-xs text-indigo-600 font-medium hover:underline">Clear</button>
+          </div>
+
+          <div class="space-y-3">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+              Exam Category
+            </p>
+
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
+                >SSC Exams</span
+              >
+            </label>
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
+                >Banking</span
+              >
+            </label>
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
+                >Railways</span
+              >
+            </label>
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
+                >Teaching</span
+              >
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-slate-800">
+            All Test Series
+            <span class="text-slate-400 font-normal text-base ml-2">(12 Found)</span>
+          </h2>
+
+          <button
+            class="lg:hidden flex items-center text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+          >
+            <i class="pi pi-filter mr-2"></i> Filters
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div
+            class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow flex flex-col h-full group overflow-hidden"
+          >
+            <div
+              class="p-5 border-b border-slate-50 bg-gradient-to-r from-slate-50 to-white flex items-start justify-between"
+            >
+              <div class="flex items-center">
+                <div
+                  class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg mr-3"
+                >
+                  S
+                </div>
+                <div>
+                  <h3
+                    class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
+                  >
+                    SSC CGL 2025
+                  </h3>
+                  <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full"
+                    >SSC Exams</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 flex-grow">
+              <p class="text-sm text-slate-600 mb-4 line-clamp-2">
+                Comprehensive test series for Tier-1 and Tier-2 with latest pattern questions.
+              </p>
+
+              <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-4">
+                <div class="flex items-center">
+                  <i class="pi pi-file text-slate-400 mr-2"></i> 20 Full Tests
+                </div>
+                <div class="flex items-center">
+                  <i class="pi pi-clock text-slate-400 mr-2"></i> Latest Pattern
+                </div>
+                <div class="flex items-center">
+                  <i class="pi pi-language text-slate-400 mr-2"></i> Eng & Hindi
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 grid grid-cols-2 gap-3">
+              <button
+                class="w-full py-2 px-3 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors"
+              >
+                Free Demo
+              </button>
+
+              <button
+                class="w-full py-2 px-3 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                View Pack
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 text-center">
+          <button class="text-indigo-600 font-medium text-sm hover:underline">
+            Load More Results
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

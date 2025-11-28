@@ -35,6 +35,7 @@ export interface User {
   email: string;
   full_name?: string;
   firstName?: string; // we set this client-side
+  is_pro_member?: boolean;
   [k: string]: any;
 }
 
@@ -164,7 +165,7 @@ export class Auth {
           first_name: data.first_name,
           last_name: data.last_name,
           phone: data.phone,
-
+          is_pro_member: oldUser.is_pro_member,
           // UI convenience fields
           firstName: data.first_name,
           full_name: `${data.first_name} ${data.last_name}`,
@@ -176,9 +177,10 @@ export class Auth {
       })
     );
   }
-  createRazorpayOrder(planId: string) {
+  createRazorpayOrder(planId: string, couponCode?: string) {
     return this.http.post<any>(`${environment.apiUrl}/api/payments/create-order/`, {
       plan_id: planId,
+      coupon_code: couponCode,
     });
   }
   verifyPayment(paymentDetails: any): Observable<{ status: string; message: string }> {
