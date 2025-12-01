@@ -15,4 +15,10 @@ export class TestService {
   submitTest(testId: number, data: any) {
     return this.http.post(`${environment.apiUrl}/api/tests/${testId}/submit/`, data);
   }
+  getListOfTests(id: number) {
+    return this.http.get(`${environment.apiUrl}/api/test-series/${id}/`);
+  }
+  getTestSeries() {
+    return this.http.get(`${environment.apiUrl}/api/test-series/`);
+  }
 }

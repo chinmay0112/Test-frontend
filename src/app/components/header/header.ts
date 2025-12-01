@@ -1,11 +1,12 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
+import { SkeletonModule } from 'primeng/skeleton';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SkeletonModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

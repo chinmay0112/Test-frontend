@@ -1,31 +1,16 @@
 <div class="bg-slate-50 min-h-screen">
-  <div class="bg-indigo-700 py-12">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold text-white mb-4">Explore Test Series</h1>
-      <p class="text-indigo-100 mb-8 max-w-2xl">
-        Practice with the latest pattern questions for SSC, Banking, Railways, and more.
-      </p>
-
-      <div class="relative max-w-xl">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <i class="pi pi-search text-slate-400"></i>
-        </div>
-        <input
-          type="text"
-          class="block w-full pl-10 pr-3 py-3 rounded-lg border-none focus:ring-2 focus:ring-indigo-400 shadow-lg"
-          placeholder="Search for exams (e.g. CGL, CHSL, PO)..."
-        />
-      </div>
-    </div>
-  </div>
-
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="w-full lg:w-64 flex-shrink-0">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-24">
           <div class="flex justify-between items-center mb-4">
             <h3 class="font-bold text-slate-800">Filters</h3>
-            <button class="text-xs text-indigo-600 font-medium hover:underline">Clear</button>
+            <button
+              (click)="clearFilters()"
+              class="text-xs text-indigo-600 font-medium hover:underline"
+            >
+              Clear
+            </button>
           </div>
 
           <div class="space-y-3">
@@ -33,41 +18,19 @@
               Exam Category
             </p>
 
-            <label class="flex items-center space-x-3 cursor-pointer group">
+            <label
+              *ngFor="let cat of categories"
+              class="flex items-center space-x-3 cursor-pointer group"
+            >
               <input
                 type="checkbox"
+                [checked]="selectedCategories.has(cat)"
+                (change)="toggleCategory(cat)"
                 class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
               />
-              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
-                >SSC Exams</span
-              >
-            </label>
-            <label class="flex items-center space-x-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
-                >Banking</span
-              >
-            </label>
-            <label class="flex items-center space-x-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
-                >Railways</span
-              >
-            </label>
-            <label class="flex items-center space-x-3 cursor-pointer group">
-              <input
-                type="checkbox"
-                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors"
-                >Teaching</span
-              >
+              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
+                cat
+              }}</span>
             </label>
           </div>
         </div>
@@ -77,18 +40,73 @@
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold text-slate-800">
             All Test Series
-            <span class="text-slate-400 font-normal text-base ml-2">(12 Found)</span>
+            <span class="text-slate-400 font-normal text-base ml-2"
+              >({{ filteredTestSeries.length }} Found)</span
+            >
           </h2>
+        </div>
 
+        <div
+          *ngIf="errorMessage"
+          class="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <i class="pi pi-exclamation-circle text-4xl text-red-500 mb-4"></i>
+          <p class="text-slate-600 mb-4">{{ errorMessage }}</p>
           <button
-            class="lg:hidden flex items-center text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm"
+            (click)="loadTestSeries()"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
-            <i class="pi pi-filter mr-2"></i> Filters
+            Retry
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div
+          *ngIf="loading && !errorMessage"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        >
           <div
+            *ngFor="let i of [1, 2, 3, 4, 5, 6]"
+            class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col h-full"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center">
+                <p-skeleton
+                  width="2.5rem"
+                  height="2.5rem"
+                  borderRadius="0.5rem"
+                  styleClass="mr-3"
+                ></p-skeleton>
+                <div>
+                  <p-skeleton width="8rem" height="1.25rem" styleClass="mb-2"></p-skeleton>
+                  <p-skeleton width="4rem" height="0.75rem" borderRadius="1rem"></p-skeleton>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex-grow mb-4">
+              <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
+              <p-skeleton width="80%" height="1rem" styleClass="mb-4"></p-skeleton>
+
+              <div class="grid grid-cols-2 gap-2 mt-4">
+                <p-skeleton width="5rem" height="0.75rem"></p-skeleton>
+                <p-skeleton width="6rem" height="0.75rem"></p-skeleton>
+                <p-skeleton width="4rem" height="0.75rem"></p-skeleton>
+              </div>
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+              <p-skeleton width="4rem" height="1rem"></p-skeleton>
+              <p-skeleton width="6rem" height="2rem" borderRadius="0.5rem"></p-skeleton>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loading && !errorMessage"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        >
+          <div
+            *ngFor="let series of filteredTestSeries"
             class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow flex flex-col h-full group overflow-hidden"
           >
             <div
@@ -98,35 +116,36 @@
                 <div
                   class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg mr-3"
                 >
-                  S
+                  {{ series.name.charAt(0) }}
                 </div>
                 <div>
                   <h3
-                    class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
+                    class="uppercase font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
                   >
-                    SSC CGL 2025
+                    {{ series.name }}
                   </h3>
-                  <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full"
-                    >SSC Exams</span
-                  >
+                  <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">{{
+                    series.category
+                  }}</span>
                 </div>
               </div>
             </div>
 
             <div class="p-5 flex-grow">
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">
-                Comprehensive test series for Tier-1 and Tier-2 with latest pattern questions.
-              </p>
+              <p class="text-sm text-slate-600 mb-4 line-clamp-2">{{ series.description }}</p>
 
               <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-4">
                 <div class="flex items-center">
-                  <i class="pi pi-file text-slate-400 mr-2"></i> 20 Full Tests
+                  <i class="pi pi-file text-slate-400 mr-2"></i> {{ series.total_tests || 20 }} Full
+                  Tests
                 </div>
                 <div class="flex items-center">
-                  <i class="pi pi-clock text-slate-400 mr-2"></i> Latest Pattern
+                  <i class="pi pi-clock text-slate-400 mr-2"></i>
+                  {{ series.pattern_type || 'Latest Pattern' }}
                 </div>
                 <div class="flex items-center">
-                  <i class="pi pi-language text-slate-400 mr-2"></i> Eng & Hindi
+                  <i class="pi pi-language text-slate-400 mr-2"></i>
+                  {{ series.language || 'Eng & Hindi' }}
                 </div>
               </div>
             </div>
@@ -139,17 +158,23 @@
               </button>
 
               <button
+                (click)="viewSeries(series.id)"
                 class="w-full py-2 px-3 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
               >
-                View Pack
+                View Test
               </button>
             </div>
           </div>
         </div>
 
-        <div class="mt-8 text-center">
-          <button class="text-indigo-600 font-medium text-sm hover:underline">
-            Load More Results
+        <div
+          *ngIf="!loading && !errorMessage && filteredTestSeries.length === 0"
+          class="text-center py-20"
+        >
+          <i class="pi pi-search text-4xl text-slate-300 mb-4"></i>
+          <p class="text-slate-500">No test series found matching your criteria.</p>
+          <button (click)="clearFilters()" class="text-indigo-600 font-medium hover:underline mt-2">
+            Clear all filters
           </button>
         </div>
       </div>

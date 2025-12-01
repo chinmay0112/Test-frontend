@@ -55,6 +55,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               // 6. Refresh was successful!
               console.log('Refresh successful:', newTokens);
               isRefreshing = false;
+              localStorage.setItem('access_token', newTokens.access);
+              if (newTokens.refresh) {
+                localStorage.setItem('refresh_token', newTokens.refresh);
+              }
               refreshTokenSubject.next(newTokens.access); // Unlock other requests
 
               // 7. Re-try the original, failed request with the NEW pass

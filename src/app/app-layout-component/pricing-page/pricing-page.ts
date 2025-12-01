@@ -15,16 +15,9 @@ declare var Razorpay: any;
   styleUrl: './pricing-page.scss',
 })
 export class PricingPage implements OnInit, OnDestroy {
-  isYearly = false;
   showSuccessModal = false;
-  couponCode: string = '';
   paymentId: string = '';
   isProMember = false;
-  showCouponInput = false;
-  isApplyingCoupon = false;
-  couponSuccess = false;
-  couponError = '';
-  appliedDiscountPercentage = 0;
 
   // Constants (for easy math)
   readonly MONTHLY_PRICE = 249;
@@ -52,8 +45,8 @@ export class PricingPage implements OnInit, OnDestroy {
   }
 
   initiatePayment(planType: string) {
-    const planId = this.isYearly ? 'pro_yearly' : 'pro_monthly'; // Replace with actual plan IDs
-    this.authService.createRazorpayOrder(planId, this.couponCode).subscribe({
+    const planId = 'pro_yearly';
+    this.authService.createRazorpayOrder(planId).subscribe({
       next: (order) => {
         const options = {
           key: order.key_id,
@@ -110,43 +103,5 @@ export class PricingPage implements OnInit, OnDestroy {
   closeModalAndNavigate() {
     this.showSuccessModal = false;
     this.router.navigate(['/app/dashboard']);
-  }
-  get currentPrice(): number {
-    const base = this.isYearly ? this.YEARLY_PRICE : this.MONTHLY_PRICE;
-    if (this.couponSuccess) {
-      return Math.round(base - base * (this.appliedDiscountPercentage / 100));
-    }
-    return base;
-  }
-
-  toggleCouponInput() {
-    this.showCouponInput = !this.showCouponInput;
-    if (!this.showCouponInput) {
-      this.clearCoupon();
-    }
-  }
-
-  applyCoupon() {
-    if (!this.couponCode.trim()) return;
-
-    this.isApplyingCoupon = true;
-    this.couponError = '';
-
-    // Simulate API call - REPLACE THIS with your actual service call
-    this.isApplyingCoupon = false;
-    if (this.couponCode.toUpperCase() === 'SAVE20') {
-      this.couponSuccess = true;
-      this.appliedDiscountPercentage = 20; // 20% OFF
-    } else {
-      this.couponError = 'Invalid or expired coupon code';
-      this.couponSuccess = false;
-    }
-  }
-
-  clearCoupon() {
-    this.couponCode = '';
-    this.couponSuccess = false;
-    this.couponError = '';
-    this.appliedDiscountPercentage = 0;
   }
 }

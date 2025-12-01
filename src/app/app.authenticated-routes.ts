@@ -6,8 +6,6 @@ import { Dashboard } from './app-layout-component/dashboard/dashboard';
 import { AppLayoutComponent } from './app-layout-component/app-layout-component';
 import { MyTestSeries } from './app-layout-component/my-test-series/my-test-series';
 import { TestLists } from './app-layout-component/test-lists/test-lists';
-import { TestSeriesCatalog } from './app-layout-component/test-series-catalog/test-series-catalog';
-// import { PricingPage } from './app-layout-component/pricing-page/pricing-page';
 import { AccountSettingsPage } from './app-layout-component/account-settings-page/account-settings-page';
 import { CompleteProfile } from './pages/complete-profile/complete-profile';
 import { Catalog } from './app-layout-component/catalog/catalog';
@@ -19,10 +17,10 @@ export const AUTHENTICATED_ROUTES: Routes = [
     // canActivate: [authGuard], // Protects all child routes
     children: [
       { path: 'dashboard', component: Dashboard },
-      { path: 'my-tests', component: MyTestSeries },
+      // { path: 'my-tests', component: MyTestSeries },
       { path: 'tests', component: TestLists },
       // { path: 'prices', component: PricingPage },
-      { path: 'all-tests', component: TestSeriesCatalog },
+      { path: 'test-series/:id', component: TestLists },
       { path: 'results', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
       { path: 'catalog', component: Catalog },

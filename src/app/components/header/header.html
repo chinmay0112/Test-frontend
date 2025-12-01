@@ -102,6 +102,13 @@
         Logout
       </button>
     </div>
+    } @else {
+    <div class="hidden lg:flex items-center space-x-4">
+      <p-skeleton width="6rem" height="2.5rem" borderRadius="0.5rem"></p-skeleton>
+      <p-skeleton width="8rem" height="1rem"></p-skeleton>
+      <p-skeleton shape="circle" size="2rem"></p-skeleton>
+      <p-skeleton width="4rem" height="1rem"></p-skeleton>
+    </div>
     } }
 
     <!-- Mobile Menu Button -->
@@ -212,6 +219,9 @@
             </span>
           </div>
           <span class="text-sm text-slate-600 ml-3"> Welcome, {{ user.firstName || 'User' }} </span>
+          } @else {
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+          <p-skeleton width="8rem" height="1rem" styleClass="ml-3"></p-skeleton>
           }
         </div>
         @if (authService.currentUser | async; as user) { @if (user['is_pro_member']) {
@@ -227,7 +237,9 @@
         >
           Our Plans
         </button>
-        } }
+        } } @else {
+        <p-skeleton width="100%" height="2.5rem" borderRadius="0.5rem"></p-skeleton>
+        }
         <button
           class="w-full text-center text-red-500 hover:text-red-700 text-sm font-medium py-2 px-4 rounded-lg border border-red-500 hover:bg-red-50 transition-colors"
           (click)="logout()"
