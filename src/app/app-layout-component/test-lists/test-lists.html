@@ -71,6 +71,7 @@
             class="pi text-4xl"
             [ngClass]="{
               'text-green-500 pi-check-circle': test.status === 'Completed',
+              'text-yellow-500 pi-arrow-circle-right': test.status === 'Continue',
               'text-indigo-500 pi-play-circle': test.status === 'Not Started'
             }"
           ></i>
