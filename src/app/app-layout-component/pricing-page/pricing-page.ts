@@ -5,12 +5,15 @@ import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { Subscription } from 'rxjs';
 import { Header } from '../../components/header/header';
+import { ModalComponent } from '../../components/modal/modal';
+
+import { SkeletonModule } from 'primeng/skeleton';
 
 declare var Razorpay: any;
 
 @Component({
   selector: 'app-pricing-page',
-  imports: [CommonModule, FormsModule, Header],
+  imports: [CommonModule, FormsModule, Header, ModalComponent, SkeletonModule],
   templateUrl: './pricing-page.html',
   styleUrl: './pricing-page.scss',
 })
@@ -18,6 +21,7 @@ export class PricingPage implements OnInit, OnDestroy {
   showSuccessModal = false;
   paymentId: string = '';
   isProMember = false;
+  loading = true;
 
   // Constants (for easy math)
   readonly MONTHLY_PRICE = 249;
@@ -27,10 +31,19 @@ export class PricingPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userSubscription = this.authService.currentUser.subscribe((user) => {
-      if (user && user.is_pro_member) {
-        this.isProMember = true;
+      const isLoggedIn = this.authService.isUserLoggedIn();
+      if (user) {
+        this.loading = false;
+        this.isProMember = !!user.is_pro_member;
       } else {
-        this.isProMember = false;
+        // If logged in but user is null, we are still fetching.
+        // If not logged in, we are done (guest).
+        if (isLoggedIn) {
+          this.loading = true;
+        } else {
+          this.loading = false;
+          this.isProMember = false;
+        }
       }
     });
   }

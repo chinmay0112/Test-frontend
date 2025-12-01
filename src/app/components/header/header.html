@@ -88,7 +88,9 @@
       </button>
       }
 
-      <span class="text-sm text-slate-600"> Welcome, {{ user.firstName || 'User' }}! </span>
+      <span class="text-sm text-slate-600 capitalize">
+        Welcome, {{ user.firstName || 'User' }}!
+      </span>
 
       <div
         class="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center cursor-pointer"

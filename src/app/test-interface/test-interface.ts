@@ -5,13 +5,13 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TestService } from '../services/test-service';
 import { CommonModule } from '@angular/common';
-import { of } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TestResult } from '../services/test-result';
+import { Auth } from '../services/auth';
 
 @Component({
   selector: 'app-test-interface',
@@ -26,7 +26,8 @@ export class TestInterface implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
-    private testResultService: TestResult
+    private testResultService: TestResult,
+    public authService: Auth
   ) {}
   test: any;
   sections: any[] = [];
@@ -37,6 +38,8 @@ export class TestInterface implements OnInit, OnDestroy {
   answers: { [key: number]: string } = {};
   visitedQuestions: { [key: number]: boolean } = {};
   remainingSeconds: any;
+  private saveProgressInterval: any; // NEW: To save every minute
+
   private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
   getTestbyId(id: number): void {
@@ -45,8 +48,17 @@ export class TestInterface implements OnInit, OnDestroy {
         console.log('API Data:', res);
         this.test = res;
         this.remainingSeconds = this.test.duration_minutes * 60;
-        this.startTimer();
+
         this.sections = res.sections || [];
+
+        if (res.saved_time_remaining && res.saved_time_remaining > 0) {
+          console.log('Resuming test with time:', res.saved_time_remaining);
+          this.remainingSeconds = res.saved_time_remaining;
+        } else {
+          this.remainingSeconds = this.test.duration_minutes * 60;
+        }
+        this.startTimer();
+        this.startAutoSave();
         this.sections.forEach((s) => (this.currentQuestionIndexes[s.id] = 0));
         this.selectedTabIndex = 0;
         //  Ensures UI updates even if async zone missed
@@ -59,6 +71,7 @@ export class TestInterface implements OnInit, OnDestroy {
       error: (err) => console.error('Error fetching test:', err),
     });
   }
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const getId = params.get('id');
@@ -74,6 +87,17 @@ export class TestInterface implements OnInit, OnDestroy {
   getCurrentQuestion(section: any) {
     const index = this.currentQuestionIndexes[section.id];
     return section.questions[index];
+  }
+  startAutoSave() {
+    // Save progress every 30 seconds
+    this.saveProgressInterval = setInterval(() => {
+      if (this.test && this.remainingSeconds > 0) {
+        this.testService.getProgress(this.test.id, this.remainingSeconds).subscribe({
+          next: () => console.log('Auto-saved progress'),
+          error: (err) => console.error('Auto-save failed', err),
+        });
+      }
+    }, 30000);
   }
 
   nextQuestion(section: any) {
@@ -146,6 +170,9 @@ export class TestInterface implements OnInit, OnDestroy {
     this.markedForReview[question.id] = !this.markedForReview[question.id];
   }
   startTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
     this.timerInterval = setInterval(() => {
       if (this.remainingSeconds > 0) {
         this.remainingSeconds--;

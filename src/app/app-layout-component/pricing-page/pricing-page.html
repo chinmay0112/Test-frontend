@@ -2,6 +2,61 @@
 
 <div class="bg-slate-50 font-sans min-h-screen py-16 lg:py-24">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    @if (loading) {
+    <!-- Skeleton Loader -->
+    <div class="max-w-3xl mx-auto text-center mb-12">
+      <div class="flex flex-col items-center">
+        <p-skeleton width="60%" height="3rem" styleClass="mb-4"></p-skeleton>
+        <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <!-- Skeleton Card 1 -->
+      <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 flex flex-col">
+        <p-skeleton width="30%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton width="50%" height="1rem" styleClass="mb-6"></p-skeleton>
+        <p-skeleton width="40%" height="3rem" styleClass="mb-8"></p-skeleton>
+        <div class="space-y-3 flex-grow">
+          <p-skeleton width="90%" height="1rem"></p-skeleton>
+          <p-skeleton width="80%" height="1rem"></p-skeleton>
+          <p-skeleton width="85%" height="1rem"></p-skeleton>
+        </div>
+        <p-skeleton width="100%" height="3rem" styleClass="mt-8 rounded-lg"></p-skeleton>
+      </div>
+
+      <!-- Skeleton Card 2 (Pro) -->
+      <div
+        class="bg-white rounded-2xl shadow-2xl border-2 border-slate-200 p-8 flex flex-col relative overflow-hidden"
+      >
+        <p-skeleton width="40%" height="2rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton width="60%" height="1rem" styleClass="mb-6"></p-skeleton>
+        <p-skeleton width="50%" height="3rem" styleClass="mb-8"></p-skeleton>
+        <div class="space-y-3 flex-grow">
+          <p-skeleton width="95%" height="1rem"></p-skeleton>
+          <p-skeleton width="90%" height="1rem"></p-skeleton>
+          <p-skeleton width="85%" height="1rem"></p-skeleton>
+          <p-skeleton width="90%" height="1rem"></p-skeleton>
+          <p-skeleton width="80%" height="1rem"></p-skeleton>
+        </div>
+        <p-skeleton width="100%" height="3rem" styleClass="mt-8 rounded-lg"></p-skeleton>
+      </div>
+
+      <!-- Skeleton Card 3 -->
+      <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 flex flex-col">
+        <p-skeleton width="35%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+        <p-skeleton width="55%" height="1rem" styleClass="mb-6"></p-skeleton>
+        <p-skeleton width="45%" height="3rem" styleClass="mb-8"></p-skeleton>
+        <div class="space-y-3 flex-grow">
+          <p-skeleton width="90%" height="1rem"></p-skeleton>
+          <p-skeleton width="85%" height="1rem"></p-skeleton>
+          <p-skeleton width="80%" height="1rem"></p-skeleton>
+          <p-skeleton width="90%" height="1rem"></p-skeleton>
+        </div>
+        <p-skeleton width="100%" height="3rem" styleClass="mt-8 rounded-lg"></p-skeleton>
+      </div>
+    </div>
+    } @else {
     <!-- Header -->
     <div class="max-w-3xl mx-auto text-center mb-12">
       <h1 class="text-4xl lg:text-5xl font-extrabold text-slate-800 mb-4">
@@ -193,82 +248,22 @@
       </div>
       }
     </div>
+    }
   </div>
 </div>
-<div
-  *ngIf="showSuccessModal"
-  class="fixed inset-0 z-[100] overflow-y-auto"
-  aria-labelledby="modal-title"
-  role="dialog"
-  aria-modal="true"
+<!-- Success Modal -->
+<app-modal
+  [isOpen]="showSuccessModal"
+  title="Welcome to Pro!"
+  message="Your annual subscription is active. Start practicing now."
+  type="success"
+  primaryActionLabel="Go to Dashboard"
+  [showCloseButton]="false"
+  (primaryAction)="closeModalAndNavigate()"
+  (close)="closeModalAndNavigate()"
 >
-  <div
-    class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-  >
-    <div
-      class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity backdrop-blur-sm"
-      aria-hidden="true"
-    ></div>
-
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"
-      >&#8203;</span
-    >
-
-    <div
-      class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm w-full"
-    >
-      <div class="h-2 bg-green-500 w-full"></div>
-
-      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div class="flex flex-col items-center justify-center">
-          <div
-            class="mx-auto flex-shrink-0 flex items-center justify-center h-20 w-20 rounded-full bg-green-50 mb-6 animate-bounce-slight"
-          >
-            <svg
-              class="h-10 w-10 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-
-          <div class="text-center">
-            <h3 class="text-2xl leading-6 font-bold text-slate-900 mb-2" id="modal-title">
-              Payment Successful!
-            </h3>
-            <div class="mt-2">
-              <p class="text-sm text-slate-500">
-                You have successfully upgraded to <strong>Pro Access</strong>. All premium features
-                have been unlocked.
-              </p>
-
-              <div
-                class="mt-4 py-2 px-3 bg-slate-50 rounded-lg border border-slate-100 inline-block"
-              >
-                <p class="text-xs text-slate-400 uppercase tracking-wide">Transaction ID</p>
-                <p class="text-xs font-mono text-slate-600 select-all">{{ paymentId }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-        <button
-          type="button"
-          (click)="closeModalAndNavigate()"
-          class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-3 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm transition-all transform hover:-translate-y-0.5"
-        >
-          Go to Dashboard
-        </button>
-      </div>
-    </div>
+  <div class="mt-4 py-2 px-3 bg-slate-50 rounded-lg border border-slate-100 inline-block">
+    <p class="text-[10px] text-slate-400 uppercase tracking-wide">Transaction ID</p>
+    <p class="text-xs font-mono text-slate-600 select-all">{{ paymentId }}</p>
   </div>
-</div>
+</app-modal>

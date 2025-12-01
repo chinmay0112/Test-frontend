@@ -3,7 +3,9 @@
   <h2>{{ test?.title }}</h2>
   <div class="flex">
     <p class="mx-3 text-red-500 font-semibold">{{ formattedTime }} min</p>
-    <p>Aryan Sharma</p>
+    @if (authService.currentUser | async; as user) {
+    <p class="capitalize">{{ user['first_name'] }} {{ user['last_name'] }}</p>
+    }
   </div>
 </div>
 

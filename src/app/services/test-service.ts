@@ -21,4 +21,9 @@ export class TestService {
   getTestSeries() {
     return this.http.get(`${environment.apiUrl}/api/test-series/`);
   }
+  getProgress(testId: number, timeRemaining: number) {
+    return this.http.post(`${environment.apiUrl}/api/tests/${testId}/save-progress/`, {
+      time_remaining: timeRemaining,
+    });
+  }
 }

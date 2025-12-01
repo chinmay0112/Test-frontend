@@ -85,6 +85,12 @@
             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800"
               >Completed</span
             >
+
+            } @else if (test.status === 'In Progress') {
+            <span
+              class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
+              >In Progress</span
+            >
             } @else {
             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800"
               >New</span
@@ -112,13 +118,22 @@
           <button
             class="py-2 px-4 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center text-sm"
             [ngClass]="{
-              ' bg-green-600 hover:bg-green-700 ': test.status === 'Completed',
-              'bg-indigo-600 hover:bg-indigo-700 ': test.status === 'Not Started'
+              'bg-green-600 hover:bg-green-700': test.status === 'Completed',
+              'bg-yellow-500 hover:bg-yellow-600': test.status === 'Continue',
+              'bg-indigo-600 hover:bg-indigo-700': test.status === 'Not Started'
             }"
             (click)="navigateToTest(test.id)"
           >
-            <i class="pi pi-play mr-2 text-xs"></i>
-            {{ test.status === 'Completed' ? 'Retake Test' : 'Start Test' }}
+            <i
+              class="pi mr-2 text-xs"
+              [ngClass]="{
+                'pi-refresh': test.status === 'Completed',
+                'pi-arrow-right': test.status === 'Continue',
+                'pi-play': test.status === 'Not Started'
+              }"
+            ></i>
+            @if (test.status === 'Completed') { Retake Test } @else if (test.status === 'Continue')
+            { Continue } @else { Start Test }
           </button>
         </div>
       </div>
