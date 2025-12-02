@@ -83,6 +83,7 @@ export class TestInterface implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     clearInterval(this.timerInterval);
+    clearInterval(this.saveProgressInterval);
   }
   getCurrentQuestion(section: any) {
     const index = this.currentQuestionIndexes[section.id];
@@ -104,8 +105,18 @@ export class TestInterface implements OnInit, OnDestroy {
     const index = this.currentQuestionIndexes[section.id];
     if (index < section.questions.length - 1) {
       this.currentQuestionIndexes[section.id]++;
+      this.visitedQuestions[this.getCurrentQuestion(section)?.id] = true;
+    } else {
+      // Check if there is a next section
+      const currentSectionIndex = this.sections.findIndex((s) => s.id === section.id);
+      if (currentSectionIndex < this.sections.length - 1) {
+        const nextSection = this.sections[currentSectionIndex + 1];
+        this.activeTabId = nextSection.id; // Switch tab
+        this.selectedTabIndex = currentSectionIndex + 1; // Update selected index
+        this.currentQuestionIndexes[nextSection.id] = 0; // Go to first question of next section
+        this.visitedQuestions[nextSection.questions[0].id] = true; // Mark as visited
+      }
     }
-    this.visitedQuestions[this.getCurrentQuestion(section)?.id] = true;
   }
 
   prevQuestion(section: any) {
@@ -121,6 +132,8 @@ export class TestInterface implements OnInit, OnDestroy {
     if (firstQ) this.visitedQuestions[firstQ.id] = true;
   }
   submitTest() {
+    clearInterval(this.timerInterval);
+    clearInterval(this.saveProgressInterval);
     const payload: {
       user_id: number;
       responses: {
@@ -166,8 +179,9 @@ export class TestInterface implements OnInit, OnDestroy {
   get activeSection() {
     return this.sections[this.selectedTabIndex];
   }
-  markForReview(question: any) {
+  markForReview(question: any, section: any) {
     this.markedForReview[question.id] = !this.markedForReview[question.id];
+    this.nextQuestion(section);
   }
   startTimer() {
     if (this.timerInterval) {
@@ -203,5 +217,29 @@ export class TestInterface implements OnInit, OnDestroy {
     const secondsStr = seconds.toString().padStart(2, '0');
 
     return `${hoursStr}:${minutesStr}:${secondsStr}`;
+  }
+  clearResponse(section: any) {
+    const currentQ = this.getCurrentQuestion(section);
+    if (currentQ) {
+      delete this.answers[currentQ.id];
+    }
+  }
+
+  isFullScreen = false;
+
+  toggleFullScreen() {
+    const elem = document.documentElement;
+
+    if (!this.isFullScreen) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      }
+      this.isFullScreen = true;
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+      this.isFullScreen = false;
+    }
   }
 }

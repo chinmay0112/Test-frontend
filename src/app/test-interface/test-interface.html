@@ -1,8 +1,23 @@
 <!-- Header -->
-<div class="p-3 flex justify-between">
-  <h2>{{ test?.title }}</h2>
-  <div class="flex">
-    <p class="mx-3 text-red-500 font-semibold">{{ formattedTime }} min</p>
+<div class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white">
+  <h2 class="font-semibold">{{ test?.title }}</h2>
+  <div class="flex items-center">
+    <button
+      (click)="toggleFullScreen()"
+      class="flex justify-center items-center mr-3 focus:outline-none border p-2 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out"
+      title="Toggle Full Screen"
+    >
+      <i
+        class="pi"
+        [ngClass]="
+          isFullScreen
+            ? 'pi-arrow-down-left-and-arrow-up-right-to-center'
+            : 'pi-arrow-up-right-and-arrow-down-left-from-center'
+        "
+        style="font-size: 1.2rem"
+      ></i>
+    </button>
+    <p class="mx-3 font-semibold">{{ formattedTime }} min</p>
     @if (authService.currentUser | async; as user) {
     <p class="capitalize">{{ user['first_name'] }} {{ user['last_name'] }}</p>
     }
@@ -14,6 +29,7 @@
   @if (sections.length > 0) {
   <p-tabs [(value)]="activeTabId" (valueChange)="onTabChange($event)">
     <p-tablist>
+      <span class="tablist-text">Sections</span>
       @for (item of sections; track item.id) {
       <p-tab [value]="item.id">{{ item.name }}</p-tab>
       }
@@ -24,7 +40,7 @@
       <p-tabpanel [value]="section.id">
         <div class="grid grid-cols-12 gap-2 p-4">
           <!-- Left: Question Display -->
-          <div class="col-span-12 md:col-span-9">
+          <div class="col-span-12 md:col-span-7 lg:col-span-9">
             @if (getCurrentQuestion(section); as q) {
 
             <h3 class="font-semibold mb-2 min-h-[60px]">
@@ -42,23 +58,27 @@
               </label>
             </div>
 
-            <div class="flex justify-between mt-4">
+            <div class="flex flex-wrap justify-between mt-4">
+              <div class="flex flex-wrap w-full md:w-auto">
+                <button
+                  class="bg-[#c7dcef] hover:bg-[#b3d6f6] my-1 md:my-0 px-3 py-1 w-full md:w-auto"
+                  (click)="clearResponse(section)"
+                >
+                  Clear Response
+                </button>
+                <button
+                  class="bg-[#c7dcef] hover:bg-[#b3d6f6] my-1 md:my-0 md:mx-5 px-3 py-1 w-full md:w-auto"
+                  (click)="markForReview(q, section)"
+                >
+                  Mark for Review & Next
+                </button>
+              </div>
+
               <button
-                class="bg-gray-200 px-3 py-1 rounded"
-                (click)="prevQuestion(section)"
-                [disabled]="currentQuestionIndexes[section.id] === 0"
-              >
-                Previous
-              </button>
-              <button class="bg-purple-500 text-white px-3 py-1 rounded" (click)="markForReview(q)">
-                Mark for Review
-              </button>
-              <button
-                class="bg-indigo-500 text-white px-3 py-1 rounded"
+                class="bg-[#c7dcef] hover:bg-[#b3d6f6] my-1 md:my-0 px-3 py-1 w-full md:w-auto"
                 (click)="nextQuestion(section)"
-                [disabled]="currentQuestionIndexes[section.id] === section.questions.length - 1"
               >
-                Next
+                Save & Next
               </button>
             </div>
 
@@ -66,36 +86,59 @@
           </div>
 
           <!-- Right: Palette for this section -->
-          <div class="col-span-12 md:col-span-3">
-            <div class="bg-[#fafafb] p-4 h-full">
-              <h4 class="font-semibold mb-2">Questions</h4>
-              <div class="grid grid-cols-5 gap-2">
-                @for (q of section.questions; track $index) {
-                <button
-                  class="p-2 rounded border font-semibold"
-                  [class.text-white]="
-                    markedForReview[q.id] ||
-                    answers[q.id] ||
-                    (visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id])
-                  "
-                  [ngClass]="{
-                    'bg-purple-500': markedForReview[q.id],
-                    'bg-green-500': answers[q.id] && !markedForReview[q.id],
-                    'bg-red-500':
-                      visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id],
-                    
-                  }"
-                  (click)="jumpToQuestion(section, $index)"
-                >
-                  {{ $index + 1 }}
-                </button>
+          <div class="col-span-12 md:col-span-5 lg:col-span-3">
+            <div class="bg-[#fafafb] p-4 h-full flex flex-col">
+              <h4 class="font-semibold mb-2">Question Palette</h4>
+              <div class="flex-grow overflow-y-auto mb-4">
+                <div class="grid grid-cols-5 gap-2">
+                  @for (q of section.questions; track $index) {
+                  <button
+                    class="p-2 rounded border font-semibold"
+                    [class.text-white]="
+                      markedForReview[q.id] ||
+                      answers[q.id] ||
+                      (visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id])
+                    "
+                    [ngClass]="{
+                      'bg-purple-500': markedForReview[q.id],
+                      'bg-green-500': answers[q.id] && !markedForReview[q.id],
+                      'bg-red-500':
+                        visitedQuestions[q.id] && !answers[q.id] && !markedForReview[q.id],
+                      'bg-[#d5d2d2]':
+                        !markedForReview[q.id] && !answers[q.id] && !visitedQuestions[q.id]
+                    }"
+                    (click)="jumpToQuestion(section, $index)"
+                  >
+                    {{ $index + 1 }}
+                  </button>
 
-                }
+                  }
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 right-btns">
+                <div class="p-1">
+                  <button class="w-full hover:bg-[#b3d6f6] bg-[#c7dcef] px-4 py-2">Profile</button>
+                </div>
+                <div class="p-1">
+                  <button class="w-full hover:bg-[#b3d6f6] bg-[#c7dcef] px-4 py-2">
+                    Instructions
+                  </button>
+                </div>
+                <div class="p-1">
+                  <button class="w-full hover:bg-[#b3d6f6] bg-[#c7dcef] px-4 py-2">
+                    Question Paper
+                  </button>
+                </div>
+                <div class="p-1">
+                  <button
+                    (click)="submitTest()"
+                    class="w-full hover:bg-[#b3d6f6] bg-[#c7dcef] px-4 py-2"
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
             </div>
-            <button (click)="submitTest()" class="bg-green-600 text-white px-4 py-2 rounded">
-              Submit
-            </button>
           </div>
         </div>
       </p-tabpanel>

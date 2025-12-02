@@ -96,6 +96,7 @@ export class PricingPage implements OnInit, OnDestroy {
   verifyPayment(response: any) {
     console.log('Verifying payment with response:', response);
     this.paymentId = response.razorpay_payment_id;
+    this.loading = true; // Show skeleton while verifying
     this.authService.verifyPayment(response).subscribe({
       next: (res) => {
         if (res.status === 'success') {
@@ -105,11 +106,13 @@ export class PricingPage implements OnInit, OnDestroy {
           // this.router.navigate(['/app/dashboard']);
         } else {
           alert('Payment verification failed.');
+          this.loading = false;
         }
       },
       error: (err) => {
         console.error('Payment verification error:', err);
         alert('Payment verification failed.');
+        this.loading = false;
       },
     });
   }

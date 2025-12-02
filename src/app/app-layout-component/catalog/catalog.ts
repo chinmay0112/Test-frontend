@@ -13,7 +13,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 export class Catalog {
   allTestSeries: any[] = [];
   filteredTestSeries: any[] = [];
-  categories: string[] = ['SSC', 'Banking', 'Railways', 'Teaching'];
+  categories: string[] = [];
   selectedCategories: Set<string> = new Set();
   loading = true;
   errorMessage: string | null = null;
@@ -26,8 +26,23 @@ export class Catalog {
 
   ngOnInit() {
     this.loadTestSeries();
+    this.getExamNames();
   }
-
+  getExamNames() {
+    this.testService.getExamNames().subscribe({
+      next: (res: any) => {
+        if (Array.isArray(res)) {
+          this.categories = res.map((item: any) => item.name);
+        } else if (res.name) {
+          this.categories = res.name;
+        }
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching exam names:', err);
+      },
+    });
+  }
   loadTestSeries() {
     this.loading = true;
     this.errorMessage = null;

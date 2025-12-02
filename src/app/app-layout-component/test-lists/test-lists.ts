@@ -3,6 +3,8 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TestService } from '../../services/test-service';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Auth } from '../../services/auth';
+
 @Component({
   selector: 'app-test-lists',
   imports: [CommonModule, SkeletonModule],
@@ -11,15 +13,24 @@ import { SkeletonModule } from 'primeng/skeleton';
 })
 export class TestLists {
   testSeries: any; // Will hold the data for the specific series
+  isProMember = false;
+  userSubscription: any;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private testService: TestService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public authService: Auth
   ) {}
 
   ngOnInit(): void {
+    this.userSubscription = this.authService.currentUser.subscribe((user) => {
+      if (user) {
+        this.isProMember = !!user.is_pro_member;
+      }
+    });
+
     this.route.paramMap.subscribe((params) => {
       const seriesId = params.get('id');
       console.log('Loading tests for series ID:', seriesId);
@@ -37,6 +48,12 @@ export class TestLists {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   navigateToTest(testId: number): void {
@@ -57,6 +74,15 @@ export class TestLists {
    * Navigates back to the "My Test Series" library page.
    */
   goBack(): void {
-    this.router.navigate(['/app/catalog']);
+    this.router.navigate(['/app/my-tests']);
+  }
+
+  isTestLocked(index: number): boolean {
+    // Lock if user is NOT pro AND it's not the first test (index > 0)
+    return !this.isProMember && index > 0;
+  }
+
+  handleLockClick() {
+    this.router.navigate(['/app/prices']);
   }
 }

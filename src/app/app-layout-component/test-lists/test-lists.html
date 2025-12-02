@@ -62,11 +62,14 @@
     <div class="space-y-4">
       <!-- Test Item Card - REDESIGNED -->
       <div
-        *ngFor="let test of testSeries.tests"
+        *ngFor="let test of testSeries.tests; let i = index"
         class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center hover:shadow-md hover:border-indigo-300 transition-all duration-300"
       >
         <!-- New Icon Column -->
         <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+          @if (isTestLocked(i)) {
+          <i class="pi pi-lock text-4xl text-slate-400"></i>
+          } @else {
           <i
             class="pi text-4xl"
             [ngClass]="{
@@ -75,6 +78,7 @@
               'text-indigo-500 pi-play-circle': test.status === 'Not Started'
             }"
           ></i>
+          }
         </div>
 
         <!-- Test Details -->
@@ -82,7 +86,11 @@
           <div class="flex items-center justify-center md:justify-start space-x-3">
             <h3 class="text-xl font-bold text-slate-800">{{ test.title }}</h3>
             <!-- Custom Tailwind tag -->
-            @if (test.status === 'Completed') {
+            @if (isTestLocked(i)) {
+            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600"
+              >Locked</span
+            >
+            } @else if (test.status === 'Completed') {
             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800"
               >Completed</span
             >
@@ -107,7 +115,7 @@
         <!-- Action Buttons -->
         <div class="flex-shrink-0 flex items-center space-x-3 w-full md:w-auto">
           <!-- Standard button + Tailwind -->
-          @if (test.status === 'Completed') {
+          @if (test.status === 'Completed' && !isTestLocked(i)) {
           <button
             class="py-2 px-4 border border-slate-400 text-slate-600 font-semibold rounded-lg hover:bg-slate-100 transition-colors duration-200 text-sm"
             (click)="navigateToResults(test.resultId)"
@@ -116,6 +124,15 @@
           </button>
           }
           <!-- Standard button + Tailwind -->
+          @if (isTestLocked(i)) {
+          <button
+            class="py-2 px-4 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center text-sm bg-slate-500 hover:bg-slate-600"
+            (click)="handleLockClick()"
+          >
+            <i class="pi pi-lock mr-2 text-xs"></i>
+            Unlock
+          </button>
+          } @else {
           <button
             class="py-2 px-4 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center text-sm"
             [ngClass]="{
@@ -136,6 +153,7 @@
             @if (test.status === 'Completed') { Retake Test } @else if (test.status === 'Continue')
             { Continue } @else { Start Test }
           </button>
+          }
         </div>
       </div>
     </div>

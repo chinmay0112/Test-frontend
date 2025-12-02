@@ -1,0 +1,35 @@
+:host ::ng-deep {
+  .p {
+    &-tablist-active-bar {
+      background-color: transparent;
+    }
+    &-tablist-tab-list {
+      margin: 25px 10px;
+      border: 1px solid #ccc;
+      padding: 20px;
+
+      .tablist-text {
+        position: absolute;
+        top: -15%;
+        left: 1%;
+        background-color: #fff;
+      }
+    }
+    &-tab {
+      background-color: #2e72b8;
+      margin: 0px 12px;
+      color: #fff;
+      padding: 10px 25px;
+      font-weight: 400;
+      border: 0;
+
+      &-active {
+        font-weight: 600;
+      }
+      &:not(.p-tab-active):not(.p-disabled):hover {
+        background-color: #23598e;
+        color: #fff;
+      }
+    }
+  }
+}

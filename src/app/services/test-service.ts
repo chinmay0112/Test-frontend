@@ -26,4 +26,7 @@ export class TestService {
       time_remaining: timeRemaining,
     });
   }
+  getExamNames() {
+    return this.http.get(`${environment.apiUrl}/api/exam-names/`);
+  }
 }
