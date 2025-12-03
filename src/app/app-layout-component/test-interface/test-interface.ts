@@ -6,17 +6,17 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TestService } from '../services/test-service';
+import { TestService } from '../../services/test-service';
 import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TestResult } from '../services/test-result';
-import { Auth } from '../services/auth';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TestResult } from '../../services/test-result';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-test-interface',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [ReactiveFormsModule, CommonModule, TabsModule, FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, TabsModule, FormsModule, RouterLink],
   templateUrl: './test-interface.html',
   styleUrl: './test-interface.scss',
 })
@@ -32,6 +32,8 @@ export class TestInterface implements OnInit, OnDestroy {
   test: any;
   sections: any[] = [];
   questions: any[] = [];
+  isLocked = false;
+  isLoading = true; // Add loading state
   selectedTabIndex = 0; // default tab index
   activeTabId: any = null; // current active tab value (section id)
   markedForReview: { [key: number]: boolean } = {};
@@ -43,6 +45,8 @@ export class TestInterface implements OnInit, OnDestroy {
   private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
   getTestbyId(id: number): void {
+    this.isLocked = false;
+    this.isLoading = true; // Start loading
     this.testService.getTestById(id).subscribe({
       next: (res: any) => {
         console.log('API Data:', res);
@@ -66,9 +70,22 @@ export class TestInterface implements OnInit, OnDestroy {
           this.activeTabId = this.sections[0].id;
         }
         this.visitedQuestions[this.sections[0]?.questions[0]?.id] = true;
+        this.isLoading = false; // Stop loading on success
         this.cd.detectChanges();
       },
-      error: (err) => console.error('Error fetching test:', err),
+      error: (err) => {
+        this.isLoading = false; // Stop loading on error
+        this.isLocked = true;
+        console.error('Error fetching test:', err);
+        if (err.status === 403) {
+          this.isLocked = true;
+        } else if (err.status === 404) {
+          alert('Test Not found');
+        } else {
+          alert('Network Error. Please try again');
+        }
+        this.cd.detectChanges();
+      },
     });
   }
 
@@ -88,6 +105,9 @@ export class TestInterface implements OnInit, OnDestroy {
   getCurrentQuestion(section: any) {
     const index = this.currentQuestionIndexes[section.id];
     return section.questions[index];
+  }
+  navigateToPricing() {
+    this.router.navigate(['/app/prices']);
   }
   startAutoSave() {
     // Save progress every 30 seconds

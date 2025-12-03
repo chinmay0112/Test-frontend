@@ -82,7 +82,7 @@ export class TestLists {
     return !this.isProMember && index > 0;
   }
 
-  handleLockClick() {
-    this.router.navigate(['/app/prices']);
+  handleLockClick(testId: number) {
+    this.router.navigate(['/app/test', testId]);
   }
 }

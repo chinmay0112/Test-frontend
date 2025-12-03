@@ -1,32 +1,69 @@
-<!-- Header -->
-<div class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white">
-  <h2 class="font-semibold">{{ test?.title }}</h2>
-  <div class="flex items-center">
-    <button
-      (click)="toggleFullScreen()"
-      class="flex justify-center items-center mr-3 focus:outline-none border p-2 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out"
-      title="Toggle Full Screen"
-    >
-      <i
-        class="pi"
-        [ngClass]="
-          isFullScreen
-            ? 'pi-arrow-down-left-and-arrow-up-right-to-center'
-            : 'pi-arrow-up-right-and-arrow-down-left-from-center'
-        "
-        style="font-size: 1.2rem"
-      ></i>
-    </button>
-    <p class="mx-3 font-semibold">{{ formattedTime }} min</p>
-    @if (authService.currentUser | async; as user) {
-    <p class="capitalize">{{ user['first_name'] }} {{ user['last_name'] }}</p>
-    }
-  </div>
-</div>
-
 <!-- Tabs -->
 <div>
-  @if (sections.length > 0) {
+  @if (isLocked) {
+  <div class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div
+      class="bg-white max-w-md w-full rounded-2xl shadow-xl border border-slate-100 overflow-hidden text-center p-8"
+    >
+      <!-- Lock Icon with Glow -->
+      <div
+        class="mx-auto w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6 relative group"
+      >
+        <div
+          class="absolute inset-0 bg-indigo-400 rounded-full opacity-20 group-hover:animate-ping"
+        ></div>
+        <i class="pi pi-lock text-4xl text-indigo-600"></i>
+      </div>
+
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Premium Content</h2>
+      <p class="text-slate-500 mb-8">
+        This mock test is part of our <span class="font-semibold text-indigo-600">Pro Plan</span>.
+        Unlock unlimited access to this and 500+ other tests.
+      </p>
+
+      <div class="space-y-3">
+        <button
+          (click)="navigateToPricing()"
+          class="premium-shine-btn w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-[1.02]"
+        >
+          Unlock Now for ₹299
+        </button>
+
+        <button
+          routerLink="/app/dashboard"
+          class="w-full py-3 px-4 bg-white border border-slate-200 text-slate-600 font-medium rounded-xl hover:bg-slate-50 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+  } @else if (sections.length > 0) {
+  <!-- Header -->
+  <div class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white">
+    <h2 class="font-semibold">{{ test?.title }}</h2>
+    <div class="flex items-center">
+      <button
+        (click)="toggleFullScreen()"
+        class="flex justify-center items-center mr-3 focus:outline-none border p-2 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out"
+        title="Toggle Full Screen"
+      >
+        <i
+          class="pi"
+          [ngClass]="
+            isFullScreen
+              ? 'pi-arrow-down-left-and-arrow-up-right-to-center'
+              : 'pi-arrow-up-right-and-arrow-down-left-from-center'
+          "
+          style="font-size: 1.2rem"
+        ></i>
+      </button>
+      <p class="mx-3 font-semibold">{{ formattedTime }} min</p>
+      @if (authService.currentUser | async; as user) {
+      <p class="capitalize">{{ user['first_name'] }} {{ user['last_name'] }}</p>
+      }
+    </div>
+  </div>
   <p-tabs [(value)]="activeTabId" (valueChange)="onTabChange($event)">
     <p-tablist>
       <span class="tablist-text">Sections</span>
@@ -145,7 +182,7 @@
       }
     </p-tabpanels>
   </p-tabs>
-  } @else {
+  } @else if (isLoading && !isLocked) {
   <p class="text-gray-400 text-center p-4">Loading test data...</p>
   }
 </div>

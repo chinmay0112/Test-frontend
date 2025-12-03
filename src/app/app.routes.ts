@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { TestInterface } from './test-interface/test-interface';
+import { TestInterface } from './app-layout-component/test-interface/test-interface';
 import { ResultComponent } from './result-component/result-component';
 import { Login } from './login/login';
 import { Registration } from './registration/registration';

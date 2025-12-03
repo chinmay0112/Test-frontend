@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { TestInterface } from './test-interface/test-interface';
+import { TestInterface } from './app-layout-component/test-interface/test-interface';
 import { ResultComponent } from './result-component/result-component';
 import { Dashboard } from './app-layout-component/dashboard/dashboard';
 import { AppLayoutComponent } from './app-layout-component/app-layout-component';
@@ -9,6 +9,7 @@ import { TestLists } from './app-layout-component/test-lists/test-lists';
 import { AccountSettingsPage } from './app-layout-component/account-settings-page/account-settings-page';
 import { CompleteProfile } from './pages/complete-profile/complete-profile';
 import { Catalog } from './app-layout-component/catalog/catalog';
+import { Instructions } from './app-layout-component/instructions/instructions';
 
 export const AUTHENTICATED_ROUTES: Routes = [
   {
@@ -21,6 +22,7 @@ export const AUTHENTICATED_ROUTES: Routes = [
       { path: 'tests', component: TestLists },
       // { path: 'prices', component: PricingPage },
       { path: 'test-series/:id', component: TestLists },
+      { path: 'instructions', component: Instructions },
       { path: 'results', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
       { path: 'catalog', component: Catalog },
