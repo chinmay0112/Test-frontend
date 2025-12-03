@@ -9,7 +9,6 @@ import { TestLists } from './app-layout-component/test-lists/test-lists';
 import { AccountSettingsPage } from './app-layout-component/account-settings-page/account-settings-page';
 import { CompleteProfile } from './pages/complete-profile/complete-profile';
 import { Catalog } from './app-layout-component/catalog/catalog';
-import { Instructions } from './app-layout-component/instructions/instructions';
 
 export const AUTHENTICATED_ROUTES: Routes = [
   {
@@ -21,8 +20,8 @@ export const AUTHENTICATED_ROUTES: Routes = [
       // { path: 'my-tests', component: MyTestSeries },
       { path: 'tests', component: TestLists },
       // { path: 'prices', component: PricingPage },
+
       { path: 'test-series/:id', component: TestLists },
-      { path: 'instructions', component: Instructions },
       { path: 'results', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
       { path: 'catalog', component: Catalog },

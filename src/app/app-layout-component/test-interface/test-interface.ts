@@ -12,11 +12,22 @@ import { TabsModule } from 'primeng/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TestResult } from '../../services/test-result';
 import { Auth } from '../../services/auth';
+import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ButtonDirective } from 'primeng/button';
 
 @Component({
   selector: 'app-test-interface',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [ReactiveFormsModule, CommonModule, TabsModule, FormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    CheckboxModule,
+    CommonModule,
+    TabsModule,
+    FormsModule,
+    RouterLink,
+    TableModule,
+  ],
   templateUrl: './test-interface.html',
   styleUrl: './test-interface.scss',
 })
@@ -40,7 +51,9 @@ export class TestInterface implements OnInit, OnDestroy {
   answers: { [key: number]: string } = {};
   visitedQuestions: { [key: number]: boolean } = {};
   remainingSeconds: any;
-  private saveProgressInterval: any; // NEW: To save every minute
+  private saveProgressInterval: any;
+  isInstructionsVisible = false;
+  checked = false;
 
   private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
@@ -54,15 +67,21 @@ export class TestInterface implements OnInit, OnDestroy {
         this.remainingSeconds = this.test.duration_minutes * 60;
 
         this.sections = res.sections || [];
-
-        if (res.saved_time_remaining && res.saved_time_remaining > 0) {
-          console.log('Resuming test with time:', res.saved_time_remaining);
+        const totalDurationSecs = this.test.duration_minutes * 60;
+        const hasSavedProgress =
+          res.saved_time_remaining && res.saved_time_remaining < totalDurationSecs - 5;
+        if (hasSavedProgress) {
+          console.log('Resuming...');
           this.remainingSeconds = res.saved_time_remaining;
+          this.isInstructionsVisible = false;
+          this.startTimer();
+          this.startAutoSave();
         } else {
-          this.remainingSeconds = this.test.duration_minutes * 60;
+          console.log('Starting new test...');
+          this.remainingSeconds = totalDurationSecs;
+          this.isInstructionsVisible = true;
         }
-        this.startTimer();
-        this.startAutoSave();
+
         this.sections.forEach((s) => (this.currentQuestionIndexes[s.id] = 0));
         this.selectedTabIndex = 0;
         //  Ensures UI updates even if async zone missed
@@ -87,6 +106,11 @@ export class TestInterface implements OnInit, OnDestroy {
         this.cd.detectChanges();
       },
     });
+  }
+  beginExam() {
+    this.isInstructionsVisible = false; // Swaps the view
+    this.startTimer();
+    this.startAutoSave();
   }
 
   ngOnInit(): void {

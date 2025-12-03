@@ -38,6 +38,77 @@
       </div>
     </div>
   </div>
+  } @else if (isInstructionsVisible) {
+  <div class="bg-[#e0e6ec]">
+    <h2 class="text-center text-2xl font-semibold p-3 bg-[#4c8ccb] text-white">
+      Exam Instructions
+    </h2>
+    <div class="p-3 flex justify-end">
+      <select class="text-sm" name="" id="">
+        <option value="">Select Language</option>
+        <option value="">English</option>
+        <!-- <option value="">Hindi</option> -->
+      </select>
+    </div>
+    <p class="my-1 px-2 text-red-500 text-xl font-semibold">
+      Please read the instructions carefully before starting the examination.
+    </p>
+    <div class="px-20 py-8">
+      <ol class="list-decimal">
+        <li class="my-3">
+          <p>
+            This test contains {{ sections.length }}
+            {{ sections.length > 1 ? 'sections' : 'section' }}
+          </p>
+          <p-table stripedRows [value]="sections">
+            <ng-template #header>
+              <tr>
+                <th>Section Name</th>
+                <th>Number of Questions</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-section>
+              <tr>
+                <td>{{ section.name }}</td>
+                <td>{{ section.number_of_questions }}</td>
+              </tr>
+            </ng-template></p-table
+          >
+        </li>
+        <li class="my-3">Click on the start button at the bottom to begin the test.</li>
+        <li class="my-3">Click on the next button to move to the next question.</li>
+        <li class="my-3">Click on the previous button to move to the previous question.</li>
+        <li class="my-3">Click on the submit button at the bottom to submit the test.</li>
+        <li class="my-3">
+          Below are the color codes for the test:
+          <div class="flex gap-3 items-center">
+            <div class="h-[30px] w-[30px] bg-red-500 my-1 rounded"></div>
+            <p>Not Attempted</p>
+          </div>
+          <div class="flex gap-3 items-center">
+            <div class="h-[30px] w-[30px] bg-purple-500 my-1 rounded"></div>
+            <p>Marked For Review</p>
+          </div>
+          <div class="flex gap-3 items-center">
+            <div class="h-[30px] w-[30px] bg-green-500 my-1 rounded"></div>
+            <p>Attempted</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="flex p-3 items-center gap-3">
+      <p-checkbox [(ngModel)]="checked" [binary]="true" />I have read and understood the
+      instructions given above
+    </div>
+    <div class="flex p-3 justify-center gap-3">
+      <button
+        (click)="beginExam()"
+        class="bg-[#4c8ccb] text-white px-4 py-2 rounded shadow-lg hover:bg-[#4c8ccb]/80 transition duration-300 ease-in-out"
+      >
+        Start Test
+      </button>
+    </div>
+  </div>
   } @else if (sections.length > 0) {
   <!-- Header -->
   <div class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white">
