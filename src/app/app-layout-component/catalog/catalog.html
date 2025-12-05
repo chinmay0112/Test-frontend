@@ -18,20 +18,29 @@
               Exam Category
             </p>
 
-            <label
-              *ngFor="let cat of categories"
-              class="flex items-center space-x-3 cursor-pointer group"
-            >
-              <input
-                type="checkbox"
-                [checked]="selectedCategories.has(cat)"
-                (change)="toggleCategory(cat)"
-                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
-                cat
-              }}</span>
-            </label>
+            <ng-container *ngIf="categoriesLoading">
+              <div *ngFor="let i of [1, 2, 3, 4]" class="flex items-center space-x-3 mb-3">
+                <p-skeleton width="1.25rem" height="1.25rem" borderRadius="4px"></p-skeleton>
+                <p-skeleton width="80%" height="1rem"></p-skeleton>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!categoriesLoading">
+              <label
+                *ngFor="let cat of categories"
+                class="flex items-center space-x-3 cursor-pointer group"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="selectedCategories.has(cat)"
+                  (change)="toggleCategory(cat)"
+                  class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
+                  cat
+                }}</span>
+              </label>
+            </ng-container>
           </div>
         </div>
       </div>

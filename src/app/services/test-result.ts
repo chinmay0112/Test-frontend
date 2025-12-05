@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +9,7 @@ export class TestResult {
   // This is a private variable to hold the results data.
   private testResults: any = null;
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   // The "Warehouse" will call this method to put the data in the truck.
   setResults(results: any): void {
@@ -20,5 +22,9 @@ export class TestResult {
     // For safety, we clear the data after it's been retrieved once.
     this.testResults = null;
     return results;
+  }
+
+  getReportCard(id: number) {
+    return this.http.get(`${environment.apiUrl}/api/results/${id}`);
   }
 }

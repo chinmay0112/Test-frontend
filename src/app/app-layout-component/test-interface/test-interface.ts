@@ -207,7 +207,7 @@ export class TestInterface implements OnInit, OnDestroy {
         console.log('✅ Test submitted successfully:', res);
         alert('Test submitted successfully!');
         this.testResultService.setResults(res);
-        this.router.navigate(['app/results']);
+        this.router.navigate([`app/results/${(res as any).id}`]);
       },
       error: (err) => {
         console.error('❌ Error submitting test:', err);

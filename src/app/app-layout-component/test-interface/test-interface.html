@@ -39,7 +39,7 @@
     </div>
   </div>
   } @else if (isInstructionsVisible) {
-  <div class="bg-[#e0e6ec]">
+  <div class="bg-[#e0e6ec] min-h-screen">
     <h2 class="text-center text-2xl font-semibold p-3 bg-[#4c8ccb] text-white">
       Exam Instructions
     </h2>
@@ -56,11 +56,11 @@
     <div class="px-20 py-8">
       <ol class="list-decimal">
         <li class="my-3">
-          <p>
-            This test contains {{ sections.length }}
+          <p class="py-2">
+            This test contains {{ sections.length <= 1 ? 'only one' : sections.length }}
             {{ sections.length > 1 ? 'sections' : 'section' }}
           </p>
-          <p-table stripedRows [value]="sections">
+          <p-table [value]="sections">
             <ng-template #header>
               <tr>
                 <th>Section Name</th>
@@ -97,13 +97,16 @@
       </ol>
     </div>
     <div class="flex p-3 items-center gap-3">
-      <p-checkbox [(ngModel)]="checked" [binary]="true" />I have read and understood the
-      instructions given above
+      <p-checkbox inputId="agreement" [(ngModel)]="checked" [binary]="true" />
+      <label class="cursor-pointer" for="agreement"
+        >I have read and understood the instructions given above</label
+      >
     </div>
     <div class="flex p-3 justify-center gap-3">
       <button
+        [disabled]="!checked"
         (click)="beginExam()"
-        class="bg-[#4c8ccb] text-white px-4 py-2 rounded shadow-lg hover:bg-[#4c8ccb]/80 transition duration-300 ease-in-out"
+        class="bg-[#4c8ccb] text-white px-4 py-2 rounded shadow-lg hover:bg-[#4c8ccb]/80 transition duration-300 ease-in-out disabled:bg-blue-400 disabled:cursor-not-allowed"
       >
         Start Test
       </button>

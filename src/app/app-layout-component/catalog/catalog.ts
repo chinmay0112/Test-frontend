@@ -16,6 +16,7 @@ export class Catalog {
   categories: string[] = [];
   selectedCategories: Set<string> = new Set();
   loading = true;
+  categoriesLoading = true;
   errorMessage: string | null = null;
 
   constructor(
@@ -36,10 +37,12 @@ export class Catalog {
         } else if (res.name) {
           this.categories = res.name;
         }
+        this.categoriesLoading = false;
         this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching exam names:', err);
+        this.categoriesLoading = false;
       },
     });
   }

@@ -22,7 +22,7 @@ export const AUTHENTICATED_ROUTES: Routes = [
       // { path: 'prices', component: PricingPage },
 
       { path: 'test-series/:id', component: TestLists },
-      { path: 'results', component: ResultComponent },
+      { path: 'results/:id', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
       { path: 'catalog', component: Catalog },
 
