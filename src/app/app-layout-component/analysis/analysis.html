@@ -1,0 +1,25 @@
+@if (!results) {
+<div class="text-center py-3">Loading...</div>
+} @else {
+<div class="text-xl font-semibold p-4 bg-[#4c8ccb] text-white">
+  {{ results?.test_title }}
+</div>
+<p-tabs [(value)]="activeTabId" (valueChange)="onTabChange($event)">
+  <p-tablist>
+    <span class="tablist-text">Sections</span>
+
+    @for (item of sectionAnalysis; track $index) {
+    <p-tab value="{{ item.id }}">{{ item.section_name }}</p-tab>
+    }
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel
+      ><div class="grid grid-cols-12 gap-2 p-4">
+        <div class="col-span-12 md:col-span-7 lg:col-span-9">
+          <h3 class="font-semibold mb-2 min-h-[60px]">Q1</h3>
+        </div>
+        <div class="col-span-12 md:col-span-5 lg:col-span-3"></div>
+      </div>
+    </p-tabpanel>
+  </p-tabpanels> </p-tabs
+>}

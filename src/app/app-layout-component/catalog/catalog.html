@@ -26,20 +26,41 @@
             </ng-container>
 
             <ng-container *ngIf="!categoriesLoading">
-              <label
-                *ngFor="let cat of categories"
-                class="flex items-center space-x-3 cursor-pointer group"
-              >
+              <!-- Search Input -->
+              <div class="mb-3 relative">
+                <i class="pi pi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
                 <input
-                  type="checkbox"
-                  [checked]="selectedCategories.has(cat)"
-                  (change)="toggleCategory(cat)"
-                  class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  type="text"
+                  [(ngModel)]="categorySearch"
+                  placeholder="Search..."
+                  class="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                 />
-                <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
-                  cat
-                }}</span>
-              </label>
+              </div>
+
+              <!-- Scrollable List -->
+              <div class="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                <label
+                  *ngFor="let cat of filteredCategories"
+                  class="flex items-center space-x-3 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="selectedCategories.has(cat)"
+                    (change)="toggleCategory(cat)"
+                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
+                    cat
+                  }}</span>
+                </label>
+
+                <div
+                  *ngIf="filteredCategories.length === 0"
+                  class="text-xs text-slate-400 text-center py-4"
+                >
+                  No categories found
+                </div>
+              </div>
             </ng-container>
           </div>
         </div>

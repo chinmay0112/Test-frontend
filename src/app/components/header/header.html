@@ -1,252 +1,286 @@
-<header class="bg-white shadow-sm sticky top-0 z-50">
-  <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-    <a href="#" class="text-2xl font-bold text-indigo-600">PrepMaster</a>
-
-    <!-- Desktop Menu Links -->
-    @if (authService.isLoggedIn$ | async) {
-    <div class="hidden lg:flex space-x-8 items-center">
-      <a
-        routerLink="/home"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="text-slate-600 hover:text-indigo-600 transition-colors"
-      >
-        Home
-      </a>
-      <a
-        routerLink="/app/dashboard"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="text-slate-600 hover:text-indigo-600 transition-colors"
-      >
-        Dashboard
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+  <nav
+    class="container relative mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center"
+  >
+    <!-- LEFT SIDE: Logo & Main Nav -->
+    <div class="flex items-center gap-8">
+      <!-- Logo -->
+      <a routerLink="/" class="text-2xl font-bold text-indigo-600 flex items-center gap-2">
+        <i class="pi pi-book text-xl"></i>
+        <span>PrepMaster</span>
       </a>
 
-      <a
-        routerLink="/app/catalog"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="text-slate-600 hover:text-indigo-600 transition-colors"
-      >
-        Explore Exams
-      </a>
+      <!-- Desktop Nav (Logged In) -->
+      @if (authService.isLoggedIn$ | async) {
+      <div class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a
+          routerLink="/app/dashboard"
+          routerLinkActive="text-indigo-600 font-semibold"
+          class="hover:text-indigo-600 transition-colors"
+        >
+          Dashboard
+        </a>
 
-      <a
-        routerLink="/app/results"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="text-slate-600 hover:text-indigo-600 transition-colors"
-      >
-        My Results
-      </a>
-    </div>
-    } @else {
-    <div class="hidden lg:flex space-x-6 items-center">
-      <a href="#features" class="text-black hover:text-indigo-600 transition-colors">Features</a>
-      <a href="#exams" class="text-black hover:text-indigo-600 transition-colors">Exams</a>
-      <a href="#how-it-works" class="text-black hover:text-indigo-600 transition-colors"
-        >How it Works</a
-      >
-      <a href="#testimonials" class="text-black hover:text-indigo-600 transition-colors"
-        >Testimonials</a
-      >
-      <a href="#pricing" class="text-black hover:text-indigo-600 transition-colors">Pricing</a>
-    </div>
-    }
+        <a
+          routerLink="/app/catalog"
+          routerLinkActive="text-indigo-600 font-semibold"
+          class="hover:text-indigo-600 transition-colors"
+        >
+          Explore Exams
+        </a>
 
-    <!-- --- THIS IS THE CORRECTED DESKTOP AUTH SECTION --- -->
+        <!-- Study Material Dropdown (Desktop Hover) -->
+        <div class="relative group cursor-pointer h-16 flex items-center">
+          <button
+            class="hover:text-indigo-600 transition-colors flex items-center gap-1 focus:outline-none"
+          >
+            Study Material <i class="pi pi-angle-down text-xs opacity-70"></i>
+          </button>
 
-    <!-- 1. Logged-Out View (Desktop) -->
-    @if (!(authService.isLoggedIn$|async)) {
-    <div class="hidden lg:flex space-x-3 items-center">
-      <button
-        class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors"
-        (click)="navigateTo('/login')"
-      >
-        Login
-      </button>
-      <button
-        class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
-        (click)="navigateTo('/register')"
-      >
-        Sign Up
-      </button>
-    </div>
-    }
-
-    <!-- 2. Logged-In View (Desktop) -->
-    @else { @if(authService.currentUser | async; as user) {
-    <div class="hidden lg:flex items-center space-x-4">
-      @if (user['is_pro_member']) {
-      <div
-        class="flex items-center space-x-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full border border-amber-200 shadow-sm"
-      >
-        <span class="text-xs font-bold">PRO</span>
+          <!-- Dropdown Body -->
+          <div
+            class="absolute top-14 left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl hidden group-hover:block animate-fade-in pt-2"
+          >
+            <div class="flex flex-col py-2">
+              <a
+                href="#"
+                class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
+              >
+                <i class="pi pi-file text-slate-400"></i> Previous Papers
+              </a>
+              <a
+                href="#"
+                class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
+              >
+                <i class="pi pi-globe text-slate-400"></i> Current Affairs
+              </a>
+              <a
+                href="#"
+                class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
+              >
+                <i class="pi pi-bolt text-slate-400"></i> Daily Quiz
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-      } @else {
+      }
+    </div>
+
+    <!-- CENTER LINKS (Logged Out Only) -->
+    @if ((authService.isLoggedIn$ | async) === false) {
+    <div
+      class="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-sm font-medium text-slate-600"
+    >
+      <a href="#features" class="hover:text-indigo-600 transition-colors">Features</a>
+      <a href="#exams" class="hover:text-indigo-600 transition-colors">Exams</a>
+      <a href="#how-it-works" class="hover:text-indigo-600 transition-colors">How It Works</a>
+      <a href="#testimonials" class="hover:text-indigo-600 transition-colors">Testimonials</a>
+      <a href="#pricing" class="hover:text-indigo-600 transition-colors">Pricing</a>
+    </div>
+    }
+
+    <!-- RIGHT SIDE: Actions & Profile -->
+    <div class="flex items-center gap-3 sm:gap-6">
+      <!-- LOGGED IN VIEW -->
+      @if (authService.isLoggedIn$ | async) { @if(authService.currentUser | async; as user){
+      @if(user.is_pro_member){
+      <div
+        class="flex items-center gap-1.5 bg-amber-100 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-200"
+      >
+        <i class="pi pi-star-fill text-[10px]"></i>
+        <span>PRO</span>
+      </div>
+      }@else {
       <button
-        class="premium-btn text-sm font-medium py-2 px-4 rounded-lg shadow-md"
-        (click)="navigateTo('/app/prices')"
+        routerLink="/app/prices"
+        class="premium-btn px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
       >
         Our Plans
       </button>
+      } } @else {
+      <p-skeleton width="5rem" height="2rem" borderRadius="0.5rem"></p-skeleton>
       }
 
-      <span class="text-sm text-slate-600 capitalize">
-        Welcome, {{ user.firstName || 'User' }}!
-      </span>
-
+      <!-- 1. Gamification (Streak) - Hidden on tiny screens -->
       <div
-        class="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center cursor-pointer"
+        class="hidden sm:flex items-center bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 cursor-help"
+        title="3 Day Study Streak"
       >
-        <span class="text-sm font-semibold text-indigo-700 uppercase">
-          {{ user.firstName ? user.firstName[0] : 'U' }}
-        </span>
+        <i class="pi pi-fire text-orange-500"></i>
+        <span>3</span>
       </div>
 
-      <button class="text-red-500 hover:text-red-700 text-sm font-medium" (click)="logout()">
-        Logout
+      <!-- 2. Notifications -->
+      <button
+        class="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors focus:outline-none"
+      >
+        <i class="pi pi-bell text-xl"></i>
+        <!-- Red Dot -->
+        <span
+          class="absolute top-1.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
+        ></span>
       </button>
-    </div>
-    } @else {
-    <div class="hidden lg:flex items-center space-x-4">
-      <p-skeleton width="6rem" height="2.5rem" borderRadius="0.5rem"></p-skeleton>
-      <p-skeleton width="8rem" height="1rem"></p-skeleton>
-      <p-skeleton shape="circle" size="2rem"></p-skeleton>
-      <p-skeleton width="4rem" height="1rem"></p-skeleton>
-    </div>
-    } }
 
-    <!-- Mobile Menu Button -->
-    <div class="lg:hidden">
+      <!-- 3. Profile Dropdown -->
+      <div class="relative">
+        @if (authService.currentUser | async; as user) {
+        <button
+          type="button"
+          (click)="userMenu.toggle($event)"
+          class="flex items-center gap-2 focus:outline-none"
+        >
+          <!-- Avatar -->
+          <div
+            class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-md ring-2 ring-white hover:ring-indigo-100 transition-all"
+          >
+            {{ user['first_name'] ? user['first_name'][0].toUpperCase() : 'U' }}
+          </div>
+          <!-- Name (Hidden on Mobile) -->
+          <div class="hidden md:block text-left">
+            <p class="text-xs font-bold text-slate-700 leading-none">{{ user['first_name'] }}</p>
+            <p class="text-[10px] text-slate-500 leading-none mt-1" *ngIf="user.is_pro_member">
+              PRO Member
+            </p>
+          </div>
+          <i class="pi pi-angle-down text-xs text-slate-400 hidden md:block"></i>
+        </button>
+        } @else {
+        <!-- Skeleton for Avatar loading -->
+        <p-skeleton shape="circle" size="2.25rem"></p-skeleton>
+        }
+
+        <!-- PrimeNG Menu -->
+        <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+      </div>
+
+      } @else {
+      <!-- LOGGED OUT VIEW -->
+
+      <div class="hidden lg:flex items-center gap-3">
+        <a
+          routerLink="/login"
+          class="text-indigo-600 font-semibold hover:text-indigo-700 text-sm px-3 py-2"
+          >Login</a
+        >
+        <a
+          routerLink="/register"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shadow-sm shadow-indigo-200"
+          >Sign Up</a
+        >
+      </div>
+      }
+
+      <!-- Mobile Hamburger (Visible on small screens) -->
       <button
         (click)="toggleMobileMenu()"
-        class="text-slate-600 hover:text-indigo-600 focus:outline-none"
+        class="lg:hidden p-2 text-slate-600 hover:text-indigo-600 focus:outline-none"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            *ngIf="!isMobileMenuOpen"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16m-7 6h7"
-          ></path>
-          <path
-            *ngIf="isMobileMenuOpen"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
+        <i
+          class="pi"
+          [ngClass]="isMobileMenuOpen ? 'pi-times' : 'pi-bars'"
+          style="font-size: 1.5rem"
+        ></i>
       </button>
     </div>
   </nav>
 
-  <!-- ---  MOBILE SIDEBAR --- -->
+  <!-- MOBILE MENU OVERLAY -->
   @if (isMobileMenuOpen) {
-  <div class="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 z-40">
-    <div class="container mx-auto px-4 sm:px-6">
+  <div
+    class="lg:hidden absolute top-16 left-0 w-full bg-white border-t border-slate-100 shadow-2xl z-40 animate-fade-in h-[calc(100vh-4rem)] overflow-y-auto"
+  >
+    <div class="flex flex-col p-4 space-y-2">
       @if (authService.isLoggedIn$ | async) {
       <a
-        routerLink="/home"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="block py-2 px-3 text-slate-600 hover:text-indigo-600"
-        (click)="closeMobileMenu()"
-      >
-        Home
-      </a>
-      <a
         routerLink="/app/dashboard"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="block py-2 px-3 text-slate-600 hover:text-indigo-600"
         (click)="closeMobileMenu()"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center"
       >
-        Dashboard
+        <i class="pi pi-home mr-3 text-lg"></i> Dashboard
       </a>
       <a
         routerLink="/app/catalog"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="block py-2 px-3 text-slate-600 hover:text-indigo-600"
         (click)="closeMobileMenu()"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center"
       >
-        Explore Exams
+        <i class="pi pi-search mr-3 text-lg"></i> Explore Exams
       </a>
-      <a
-        routerLink="/app/results"
-        routerLinkActive="text-indigo-600 font-semibold"
-        class="block py-2 px-3 text-slate-600 hover:text-indigo-600"
-        (click)="closeMobileMenu()"
-      >
-        My Results
-      </a>
+
+      <!-- Mobile Expandable Study Material -->
+      <div class="border rounded-xl overflow-hidden">
+        <button
+          (click)="isStudyMenuOpen = !isStudyMenuOpen"
+          class="w-full flex justify-between items-center px-4 py-3 bg-slate-50 font-medium text-slate-700"
+        >
+          <span class="flex items-center"
+            ><i class="pi pi-book mr-3 text-lg"></i> Study Material</span
+          >
+          <i class="pi" [ngClass]="isStudyMenuOpen ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+        </button>
+        @if (isStudyMenuOpen) {
+        <div class="bg-white px-4 py-2 space-y-1">
+          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+            >Previous Papers</a
+          >
+          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+            >Current Affairs</a
+          >
+          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+            >Daily Quiz</a
+          >
+        </div>
+        }
+      </div>
+
       } @else {
-      <a href="#features" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
+      <!-- Mobile Logged Out Links -->
+      <a
+        href="#features"
+        (click)="closeMobileMenu()"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50"
         >Features</a
       >
-      <a href="#exams" class="block py-2 px-3 text-black" (click)="closeMobileMenu()">Exams</a>
-      <a href="#how-it-works" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
-        >How it Works</a
+      <a
+        href="#exams"
+        (click)="closeMobileMenu()"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50"
+        >Exams</a
       >
-      <a href="#testimonials" class="block py-2 px-3 text-black" (click)="closeMobileMenu()"
+      <a
+        href="#how-it-works"
+        (click)="closeMobileMenu()"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50"
+        >How It Works</a
+      >
+      <a
+        href="#testimonials"
+        (click)="closeMobileMenu()"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50"
         >Testimonials</a
       >
-      <a href="#pricing" class="block py-2 px-3 text-black" (click)="closeMobileMenu()">Pricing</a>
-      }
-
-      <!-- 1. Logged-Out View (Mobile) -->
-      @if (!(authService.isLoggedIn$ | async)) {
-      <div class="border-t border-slate-200 mt-4 pt-4 flex flex-col space-y-3">
+      <a
+        href="#pricing"
+        (click)="closeMobileMenu()"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50"
+        >Pricing</a
+      >
+      <div class="border-t border-slate-100 my-2 pt-4 flex flex-col gap-3">
         <button
-          class="w-full text-center text-indigo-600 hover:text-indigo-800 text-sm font-medium transition-colors"
-          (click)="navigateTo('/login')"
+          routerLink="/login"
+          (click)="closeMobileMenu()"
+          class="w-full py-3 rounded-xl border border-slate-300 font-bold text-slate-700"
         >
           Login
         </button>
         <button
-          class="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
-          (click)="navigateTo('/register')"
+          routerLink="/register"
+          (click)="closeMobileMenu()"
+          class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-md"
         >
-          Sign Up
-        </button>
-      </div>
-      }
-
-      <!-- 2. Logged-In View (Mobile) -->
-      @else {
-      <div class="border-t border-slate-200 mt-4 pt-4 space-y-3">
-        <div class="flex items-center px-3 py-2">
-          @if (authService.currentUser |async; as user) {
-          <div
-            class="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center cursor-pointer"
-          >
-            <span class="text-sm font-semibold text-indigo-700 uppercase">
-              {{ user.firstName ? user.firstName[0] : 'U' }}
-            </span>
-          </div>
-          <span class="text-sm text-slate-600 ml-3"> Welcome, {{ user.firstName || 'User' }} </span>
-          } @else {
-          <p-skeleton shape="circle" size="2rem"></p-skeleton>
-          <p-skeleton width="8rem" height="1rem" styleClass="ml-3"></p-skeleton>
-          }
-        </div>
-        @if (authService.currentUser | async; as user) { @if (user['is_pro_member']) {
-        <div
-          class="w-full text-center bg-amber-100 text-amber-800 text-sm font-bold py-2 px-4 rounded-lg border border-amber-200"
-        >
-          <span class="text-xs font-bold">PRO</span>
-        </div>
-        } @else {
-        <button
-          class="w-full text-center premium-btn text-sm font-medium py-2 px-4 rounded-lg shadow-md"
-          (click)="navigateTo('/app/prices')"
-        >
-          Our Plans
-        </button>
-        } } @else {
-        <p-skeleton width="100%" height="2.5rem" borderRadius="0.5rem"></p-skeleton>
-        }
-        <button
-          class="w-full text-center text-red-500 hover:text-red-700 text-sm font-medium py-2 px-4 rounded-lg border border-red-500 hover:bg-red-50 transition-colors"
-          (click)="logout()"
-        >
-          Logout
+          Sign Up Free
         </button>
       </div>
       }

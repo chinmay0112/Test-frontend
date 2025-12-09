@@ -25,6 +25,10 @@ export class TestResult {
   }
 
   getReportCard(id: number) {
-    return this.http.get(`${environment.apiUrl}/api/results/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/api/results/${id}/`);
+  }
+
+  getLeaderboard(testId: any) {
+    return this.http.get<any>(`${environment.apiUrl}/api/tests/${testId}/leaderboard/`);
   }
 }

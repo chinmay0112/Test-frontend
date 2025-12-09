@@ -15,20 +15,30 @@
         <div
           class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center mb-6"
         >
+          @if (authService.currentUser | async; as user) {
           <p-avatar
-            image="https://placehold.co/64x64/E0E7FF/4338CA?text=A"
+            image="https://placehold.co/64x64/E0E7FF/4338CA?text={{ user['first_name'][0] }}"
             size="xlarge"
             shape="circle"
             styleClass="mr-4 border-2 border-white ring-2 ring-indigo-300"
           ></p-avatar>
           <div>
             <h3 class="font-bold text-lg text-slate-800">
-              {{ profileForm.value.fullName || 'Aryan Sharma' }}
+              {{ user['first_name'] }} {{ user['last_name'] }}
             </h3>
             <p class="text-sm text-slate-500">
-              {{ profileForm.value.email || 'aryan@example.com' }}
+              {{ user['email'] }}
             </p>
           </div>
+          } @else {
+          <div class="flex items-center w-full">
+            <p-skeleton shape="circle" size="4rem" styleClass="mr-4"></p-skeleton>
+            <div class="flex-1">
+              <p-skeleton width="60%" height="1.2rem" styleClass="mb-2"></p-skeleton>
+              <p-skeleton width="80%" height="0.9rem"></p-skeleton>
+            </div>
+          </div>
+          }
         </div>
 
         <!-- Navigation Links -->
@@ -56,31 +66,32 @@
             <h2 class="text-xl font-bold text-slate-800">Profile Information</h2>
             <p class="text-sm text-slate-500 mt-1">Update your personal details.</p>
           </header>
+          @if (authService.currentUser | async; as user) {
           <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Full Name -->
+              <!-- First Name -->
               <div class="mb-2">
-                <label for="fullName" class="block text-sm font-medium text-slate-600 mb-2"
-                  >Full Name</label
+                <label for="firstName" class="block text-sm font-medium text-slate-600 mb-2"
+                  >First Name</label
                 >
                 <input
-                  id="fullName"
+                  id="firstName"
                   type="text"
                   pInputText
-                  formControlName="fullName"
+                  formControlName="firstName"
                   class="w-full"
                 />
               </div>
-              <!-- Username -->
+              <!-- Last Name -->
               <div class="mb-2">
-                <label for="username" class="block text-sm font-medium text-slate-600 mb-2"
-                  >Username</label
+                <label for="lastName" class="block text-sm font-medium text-slate-600 mb-2"
+                  >Last Name</label
                 >
                 <input
-                  id="username"
+                  id="lastName"
                   type="text"
                   pInputText
-                  formControlName="username"
+                  formControlName="lastName"
                   class="w-full"
                 />
               </div>
@@ -115,6 +126,32 @@
               ></button>
             </div>
           </form>
+          } @else {
+          <div class="p-6">
+            <!-- Skeleton for Form -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="mb-2">
+                <p-skeleton width="6rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height="2.5rem"></p-skeleton>
+              </div>
+              <div class="mb-2">
+                <p-skeleton width="6rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height="2.5rem"></p-skeleton>
+              </div>
+              <div class="mb-2">
+                <p-skeleton width="6rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height="2.5rem"></p-skeleton>
+              </div>
+              <div class="mb-2">
+                <p-skeleton width="6rem" styleClass="mb-2"></p-skeleton>
+                <p-skeleton height="2.5rem"></p-skeleton>
+              </div>
+            </div>
+            <div class="mt-6 text-right">
+              <p-skeleton width="8rem" height="2.5rem" styleClass="ml-auto"></p-skeleton>
+            </div>
+          </div>
+          }
         </div>
         }
 

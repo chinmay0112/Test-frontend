@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { Subscription } from 'rxjs';
@@ -27,7 +27,12 @@ export class PricingPage implements OnInit, OnDestroy {
   readonly MONTHLY_PRICE = 249;
   readonly YEARLY_PRICE = 2399;
   userSubscription: Subscription | undefined;
-  constructor(private router: Router, public authService: Auth, private ngZone: NgZone) {}
+  constructor(
+    private router: Router,
+    public authService: Auth,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.userSubscription = this.authService.currentUser.subscribe((user) => {
@@ -97,6 +102,7 @@ export class PricingPage implements OnInit, OnDestroy {
     console.log('Verifying payment with response:', response);
     this.paymentId = response.razorpay_payment_id;
     this.loading = true; // Show skeleton while verifying
+    this.cdr.detectChanges();
     this.authService.verifyPayment(response).subscribe({
       next: (res) => {
         if (res.status === 'success') {

@@ -132,6 +132,7 @@ export class Auth {
   }
 
   fetchCurrentUser(): Observable<User> {
+    this.currentUser.next(null);
     return this.authApiService.getCurrentUser().pipe(
       tap((user) => {
         user.firstName = user['first_name'] ?? 'User';

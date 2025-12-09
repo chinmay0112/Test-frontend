@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
+import { Auth } from '../../services/auth';
 export const passwordMatchValidator: ValidatorFn = (
   control: AbstractControl
 ): ValidationErrors | null => {
@@ -22,9 +23,18 @@ export const passwordMatchValidator: ValidatorFn = (
     ? { passwordMismatch: true }
     : null;
 };
+import { SkeletonModule } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-account-settings-page',
-  imports: [CommonModule, AvatarModule, TagModule, ReactiveFormsModule, InputTextModule],
+  imports: [
+    CommonModule,
+    AvatarModule,
+    TagModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    SkeletonModule,
+  ],
   templateUrl: './account-settings-page.html',
   styleUrl: './account-settings-page.scss',
 })
@@ -33,11 +43,11 @@ export class AccountSettingsPage {
   profileForm: FormGroup;
   passwordForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, public authService: Auth) {
     // --- Profile Form ---
     this.profileForm = this.fb.group({
-      fullName: ['', Validators.required],
-      username: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: [{ value: '', disabled: true }], // Make email read-only
       phone: ['', Validators.required],
     });
@@ -54,16 +64,17 @@ export class AccountSettingsPage {
   }
 
   ngOnInit(): void {
-    // In a real app, you would fetch this user data from your AuthService or an API
-    const mockUserData = {
-      fullName: 'Aryan Sharma',
-      username: 'aryan_sharma',
-      email: 'aryan@example.com',
-      phone: '9876543210',
-    };
-
-    // Pre-fill the profile form with user data
-    this.profileForm.patchValue(mockUserData);
+    // Fetch real user data
+    this.authService.currentUser.subscribe((user) => {
+      if (user) {
+        this.profileForm.patchValue({
+          firstName: user['first_name'],
+          lastName: user['last_name'],
+          email: user.email,
+          phone: user['phone'],
+        });
+      }
+    });
   }
 
   /**

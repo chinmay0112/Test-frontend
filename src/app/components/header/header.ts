@@ -1,38 +1,81 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { MenuModule } from 'primeng/menu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterLink, SkeletonModule],
+  imports: [CommonModule, RouterLink, SkeletonModule, MenuModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header {
-  isMobileMenuOpen = false; // State for mobile menu
+export class Header implements OnInit {
+  isMobileMenuOpen = false;
+  isStudyMenuOpen = false; // For mobile toggle
+  userMenuItems: MenuItem[] | undefined;
 
-  constructor(private router: Router, public authService: Auth) {}
+  constructor(public authService: Auth, private router: Router) {}
 
-  ngOnInit(): void {}
-
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
-    this.closeMobileMenu(); // Close menu on navigation
+  ngOnInit() {
+    this.userMenuItems = [
+      {
+        label: 'My Profile',
+        icon: 'pi pi-user',
+        command: () => {
+          this.navigateTo('/app/profile');
+        },
+      },
+      {
+        label: 'My Results',
+        icon: 'pi pi-chart-bar',
+        command: () => {
+          this.navigateTo('/app/results');
+        },
+      },
+      {
+        label: 'Subscription Plans',
+        icon: 'pi pi-star',
+        command: () => {
+          this.navigateTo('/app/prices');
+        },
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Logout',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          this.logout();
+        },
+      },
+    ];
   }
 
-  // --- Mobile Menu Logic ---
-  toggleMobileMenu(): void {
+  toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    // Reset subsections when closing
+    if (!this.isMobileMenuOpen) {
+      this.isStudyMenuOpen = false;
+    }
   }
 
-  closeMobileMenu(): void {
+  closeMobileMenu() {
     this.isMobileMenuOpen = false;
+    this.isStudyMenuOpen = false;
   }
+
   logout() {
     this.authService.logout();
+    this.closeMobileMenu();
     this.router.navigate(['/login']);
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
     this.closeMobileMenu();
   }
 }

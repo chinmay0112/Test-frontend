@@ -3,10 +3,11 @@ import { TestService } from '../../services/test-service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-catalog',
-  imports: [CommonModule, SkeletonModule],
+  imports: [CommonModule, SkeletonModule, FormsModule],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
 })
@@ -14,6 +15,7 @@ export class Catalog {
   allTestSeries: any[] = [];
   filteredTestSeries: any[] = [];
   categories: string[] = [];
+  categorySearch: string = ''; // New search property
   selectedCategories: Set<string> = new Set();
   loading = true;
   categoriesLoading = true;
@@ -87,6 +89,13 @@ export class Catalog {
   clearFilters() {
     this.selectedCategories.clear();
     this.filteredTestSeries = this.allTestSeries;
+  }
+
+  get filteredCategories() {
+    if (!this.categorySearch) return this.categories;
+    return this.categories.filter((c) =>
+      c.toLowerCase().includes(this.categorySearch.toLowerCase())
+    );
   }
 
   // --- Navigation ---
