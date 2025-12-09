@@ -1,25 +1,154 @@
 @if (!results) {
-<div class="text-center py-3">Loading...</div>
-} @else {
-<div class="text-xl font-semibold p-4 bg-[#4c8ccb] text-white">
-  {{ results?.test_title }}
+<div class="flex h-screen items-center justify-center">
+  <div class="text-center">
+    <i class="pi pi-spin pi-spinner text-4xl text-indigo-600 mb-4"></i>
+    <p class="text-slate-500 font-medium">Loading analysis...</p>
+  </div>
 </div>
+} @else {
+<!-- Test title starts -->
+<div
+  class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white shadow-md z-10 sticky top-0"
+>
+  <h2 class="font-semibold text-lg truncate max-w-md">{{ results?.test_title }} - Analysis</h2>
+  <div class="flex items-center gap-4">
+    <div class="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
+      <span class="font-bold">{{ results.score }}</span>
+      <span class="text-xs opacity-80">Score</span>
+    </div>
+  </div>
+</div>
+<!-- Test title ends -->
 <p-tabs [(value)]="activeTabId" (valueChange)="onTabChange($event)">
   <p-tablist>
     <span class="tablist-text">Sections</span>
 
-    @for (item of sectionAnalysis; track $index) {
-    <p-tab value="{{ item.id }}">{{ item.section_name }}</p-tab>
+    @for (section of sectionAnalysis; track section.section_name) {
+    <p-tab [value]="section.section_name" class="px-6 py-3 font-medium whitespace-nowrap">
+      {{ section.section_name }}
+    </p-tab>
     }
   </p-tablist>
   <p-tabpanels>
-    <p-tabpanel
+    @for (section of sectionAnalysis; track section.section_name) {
+    <p-tabpanel [value]="section.section_name"
       ><div class="grid grid-cols-12 gap-2 p-4">
+        <!-- Left side -->
         <div class="col-span-12 md:col-span-7 lg:col-span-9">
-          <h3 class="font-semibold mb-2 min-h-[60px]">Q1</h3>
+          @if (getCurrentQuestion(section.section_name); as response) {
+          <h3 class="font-semibold mb-2 min-h-[60px]">
+            <span>Q{{ currentQuestionIndexes[section.section_name] + 1 }}</span>
+            {{ response.question.question_text }}
+          </h3>
+          @if (!response.selected_answer) {
+          <div
+            class="mb-3 px-3 py-2 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm font-medium flex items-center"
+          >
+            <i class="pi pi-exclamation-circle mr-2"></i> You did not attempt this question.
+          </div>
+          }
+          <!-- Options -->
+          <div class="space-y-3">
+            <div
+              *ngFor="let opt of ['A', 'B', 'C', 'D']"
+              class="p-3 border rounded-lg flex items-center"
+              [ngClass]="{
+                'bg-green-100 border-green-500':
+                  response.question.correct_option === opt.toLowerCase(),
+                'bg-red-100 border-red-500':
+                  response.selected_answer === opt.toLowerCase() && !response.is_correct,
+                'border-slate-200':
+                  response.selected_answer !== opt.toLowerCase() &&
+                  response.question.correct_option !== opt.toLowerCase()
+              }"
+            >
+              <span class="font-bold mr-2">{{ opt }}.</span>
+              {{ response.question['option_' + opt.toLowerCase()] }}
+
+              <!-- Labels -->
+              <span
+                *ngIf="response.question.correct_option === opt.toLowerCase()"
+                class="ml-auto text-green-700 text-xs font-bold uppercase"
+                ><i class="pi pi-check mr-1"></i> Correct</span
+              >
+              <span
+                *ngIf="response.selected_answer === opt.toLowerCase() && !response.is_correct"
+                class="ml-auto text-red-700 text-xs font-bold uppercase"
+                ><i class="pi pi-times mr-1"></i> Your Answer</span
+              >
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 my-2">
+            <button
+              class="px-3 py-1 bg-slate-200 hover:bg-slate-300 rounded disabled:opacity-50 w-full md:w-auto"
+              (click)="prevQuestion(section.section_name)"
+              [disabled]="currentQuestionIndexes[section.section_name] === 0"
+            >
+              Previous
+            </button>
+            <button
+              class="bg-[#c7dcef] hover:bg-[#b3d6f6] px-3 py-1 rounded w-full md:w-auto"
+              (click)="viewExplanation(section.section_name)"
+            >
+              {{ response.showExplanation ? 'Hide Explanation' : 'View Explanation' }}
+            </button>
+            <button
+              class="bg-[#c7dcef] hover:bg-[#b3d6f6] px-3 py-1 rounded w-full md:w-auto disabled:opacity-50"
+              (click)="nextQuestion(section.section_name)"
+            >
+              Next
+            </button>
+          </div>
+          @if (response.showExplanation) {
+          <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <h4 class="font-bold text-blue-800 mb-2">Explanation:</h4>
+            <p class="text-slate-700 leading-relaxed">{{ response.question.explanation }}</p>
+          </div>
+          } }
         </div>
-        <div class="col-span-12 md:col-span-5 lg:col-span-3"></div>
+        <!-- Right side -->
+        <div
+          class="hidden lg:block col-span-3 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full"
+        >
+          <div class="p-4 border-b border-slate-100 bg-slate-50">
+            <div class="grid grid-cols-2 gap-3 text-xs font-medium text-slate-600">
+              <div class="flex items-center">
+                <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span> Correct
+              </div>
+              <div class="flex items-center">
+                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Incorrect
+              </div>
+              <div class="flex items-center">
+                <span class="w-3 h-3 rounded-full bg-gray-200 border border-slate-300 mr-2"></span>
+                Unattempted
+              </div>
+            </div>
+          </div>
+          <div class="flex-grow overflow-y-auto p-4 custom-scrollbar">
+            <div class="grid grid-cols-5 gap-2">
+              <!-- Helper function needed in TS to get list for palette -->
+              @for (item of getSectionResponses(section.section_name); track $index) {
+              <button
+                class="w-10 h-10 rounded-lg text-sm font-bold transition-all focus:outline-none"
+                [ngClass]="{
+                  'bg-green-500 text-white shadow-green-200 shadow': item.is_correct,
+                  'bg-red-500 text-white shadow-red-200 shadow':
+                    item.selected_answer && !item.is_correct,
+                  'bg-gray-100 text-slate-500 border border-slate-200 hover:border-indigo-400':
+                    !item.selected_answer,
+                  'ring-2 ring-indigo-600 ring-offset-2':
+                    currentQuestionIndexes[section.section_name] === $index
+                }"
+                (click)="jumpToQuestion(section.section_name, $index)"
+              >
+                {{ $index + 1 }}
+              </button>
+              }
+            </div>
+          </div>
+        </div>
       </div>
     </p-tabpanel>
+    }
   </p-tabpanels> </p-tabs
 >}
