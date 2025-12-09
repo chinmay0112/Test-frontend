@@ -179,6 +179,7 @@ export class TestInterface implements OnInit, OnDestroy {
     clearInterval(this.timerInterval);
     clearInterval(this.saveProgressInterval);
     const payload: {
+      test_id: number;
       user_id: number;
       responses: {
         question_id: number;
@@ -186,7 +187,10 @@ export class TestInterface implements OnInit, OnDestroy {
         marked_for_review: boolean;
       }[];
     } = {
-      user_id: 1, // Replace this with your actual logged-in user id
+      test_id: this.test.id,
+      user_id: this.authService.currentUser.value?.id
+        ? Number(this.authService.currentUser.value.id)
+        : 0,
       responses: [],
     };
 
@@ -207,7 +211,7 @@ export class TestInterface implements OnInit, OnDestroy {
         console.log('✅ Test submitted successfully:', res);
         alert('Test submitted successfully!');
         this.testResultService.setResults(res);
-        this.router.navigate([`app/results/${(res as any).id}`]);
+        this.router.navigate([`app/results/${this.test.id}`]);
       },
       error: (err) => {
         console.error('❌ Error submitting test:', err);
