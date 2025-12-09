@@ -226,7 +226,7 @@
           >
             <!-- Rank Badge -->
             <div
-              class="w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm shadow-sm"
+              class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm shadow-sm"
               [ngClass]="{
                 'bg-yellow-400 text-white': user.rank === 1,
                 'bg-slate-400 text-white': user.rank === 2,
@@ -238,12 +238,14 @@
             </div>
 
             <!-- Avatar -->
-            <p-avatar
-              image="https://placehold.co/64x64/E0E7FF/4338CA?text={{ user.student_name[0] }}"
-              size="large"
-              shape="circle"
-              styleClass="mr-4 border-2 border-white ring-2 ring-indigo-300"
-            ></p-avatar>
+            <div class="flex-shrink-0">
+              <p-avatar
+                image="https://placehold.co/64x64/E0E7FF/4338CA?text={{ user.student_name[0] }}"
+                size="large"
+                shape="circle"
+                styleClass="mr-4 border-2 border-white ring-2 ring-indigo-300"
+              ></p-avatar>
+            </div>
 
             <!-- User Info -->
             <div class="flex-grow">
