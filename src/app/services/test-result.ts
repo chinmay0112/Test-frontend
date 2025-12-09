@@ -31,4 +31,8 @@ export class TestResult {
   getLeaderboard(testId: any) {
     return this.http.get<any>(`${environment.apiUrl}/api/tests/${testId}/leaderboard/`);
   }
+
+  getResultList() {
+    return this.http.get<any>(`${environment.apiUrl}/api/results/`);
+  }
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { ChartModule } from 'primeng/chart';
 import { TestResult } from '../services/test-result';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -28,30 +28,47 @@ export class ResultComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
-      const id = params['id'];
-      if (!id) return;
+    this.route.params
+      .pipe(
+        // 1. Get Result ID from URL and fetch Report Card
+        switchMap((params) => {
+          const resultId = params['id'];
+          return this.testResultService.getReportCard(resultId);
+        }),
+        // 2. Report Card Loaded -> Now fetch Leaderboard using the Test ID found inside it
+        switchMap((report: any) => {
+          console.log('✅ Report Data:', report);
+          this.results = report;
+          this.initChart();
 
-      forkJoin({
-        report: this.testResultService.getReportCard(id),
-        leaderboard: this.testResultService.getLeaderboard(id),
-      }).subscribe(({ report, leaderboard }) => {
-        // Handle Report
-        console.log('Report:', report);
-        this.results = report;
-        this.initChart();
+          // CRITICAL: Extract the Test ID from the report data
+          // Ensure your TestResultDetailSerializer in Django includes 'test' (the ID)
+          const testId = report.test;
+          console.log('Test ID:', testId);
 
-        // Handle Leaderboard
-        console.log('Leaderboard:', leaderboard);
-        this.leaderboard = leaderboard;
-
-        this.cd.detectChanges();
+          if (testId) {
+            return this.testResultService.getLeaderboard(testId);
+          } else {
+            console.warn('Test ID not found in report data. Cannot fetch leaderboard.');
+            return of([]); // Return empty array if no test ID
+          }
+        })
+      )
+      .subscribe({
+        next: (leaderboardData: any[]) => {
+          // 3. Leaderboard Loaded
+          console.log('🏆 Leaderboard Data:', leaderboardData);
+          this.leaderboard = leaderboardData;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          console.error('❌ Error loading results page:', err);
+          if (err.status === 404) {
+            alert('Result not found.');
+            this.router.navigate(['/app/dashboard']);
+          }
+        },
       });
-    });
-
-    if (this.results) {
-      this.initChart();
-    }
   }
 
   getMaxMarks() {
@@ -150,65 +167,5 @@ export class ResultComponent implements OnInit {
         },
       },
     };
-
-    // this.topUsers = [
-    //   {
-    //     rank: 1,
-    //     name: 'Kartik Saini',
-    //     score: 192,
-    //     accuracy: 96,
-    //     avatar: 'https://i.pravatar.cc/150?u=2',
-    //   },
-    //   {
-    //     rank: 2,
-    //     name: 'Chinmay Kulshreshtha',
-    //     score: 188,
-    //     accuracy: 94,
-    //     avatar: 'https://i.pravatar.cc/150?u=2',
-    //   },
-    //   {
-    //     rank: 3,
-    //     name: 'Sujata Rani',
-    //     score: 185,
-    //     accuracy: 92,
-    //     avatar: 'https://i.pravatar.cc/150?u=3',
-    //   },
-
-    //   {
-    //     rank: 5,
-    //     name: 'Emma Thompson',
-    //     score: 175,
-    //     accuracy: 88,
-    //     avatar: 'https://i.pravatar.cc/150?u=5',
-    //   },
-    //   {
-    //     rank: 5,
-    //     name: 'Priya Aggarwal',
-    //     score: 175,
-    //     accuracy: 88,
-    //     avatar: 'https://i.pravatar.cc/150?u=5',
-    //   },
-    //   {
-    //     rank: 6,
-    //     name: 'Emma Thompson',
-    //     score: 175,
-    //     accuracy: 88,
-    //     avatar: 'https://i.pravatar.cc/150?u=5',
-    //   },
-    //   {
-    //     rank: 7,
-    //     name: 'Emma Thompson',
-    //     score: 175,
-    //     accuracy: 88,
-    //     avatar: 'https://i.pravatar.cc/150?u=5',
-    //   },
-    //   {
-    //     rank: 192,
-    //     name: 'Kunal Tanwar',
-    //     score: -178,
-    //     accuracy: -89,
-    //     avatar: 'https://i.pravatar.cc/150?u=4',
-    //   },
-    // ];
   }
 }
