@@ -45,6 +45,8 @@ export class Registration {
   // UI state
   loading = signal(false);
   serverError = signal<string | null>(null);
+  verificationEmailSent = signal(false);
+  isEmailSent = signal(false);
   isRegistrationSuccessful = false;
   // Form group
   registrationForm: FormGroup = this.fb.group(
@@ -115,7 +117,8 @@ export class Registration {
             this.registrationForm.reset();
             // this.router.navigate(['/login']);
           } else {
-            this.router.navigate(['/verify-email'], { queryParams: { email: payload.email } });
+            // this.router.navigate(['/verify-email'], { queryParams: { email: payload.email } });
+            this.verificationEmailSent.set(true);
           }
         },
         // 5) err ko type do (any enough hai yahan)
@@ -138,6 +141,19 @@ export class Registration {
           }
         },
       });
+  }
+
+  sendVerificationMail(): void {
+    this.auth.verifyEmail(this.registrationForm.value.email).subscribe({
+      next: (res: any) => {
+        console.log('Email sent successfully', res);
+        this.isEmailSent.set(true);
+      },
+      error: (err: any) => {
+        console.log('Error sending email', err);
+        // Optional: Handle error UI
+      },
+    });
   }
   closeModalAndLogin(): void {
     this.isRegistrationSuccessful = false;

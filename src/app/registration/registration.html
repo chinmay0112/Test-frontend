@@ -31,6 +31,71 @@
     </button>
   </div>
 </div>
+} @if (verificationEmailSent()) {
+<!-- Verify Email Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl text-center">
+    <!-- Icon -->
+    <div
+      class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+      [class.bg-indigo-100]="!isEmailSent()"
+      [class.bg-green-100]="isEmailSent()"
+    >
+      @if (!isEmailSent()) {
+      <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        ></path>
+      </svg>
+      } @else {
+      <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+      }
+    </div>
+
+    @if (!isEmailSent()) {
+    <!-- Content -->
+    <h2 class="text-2xl font-bold text-slate-800 mb-2">Verify your Email</h2>
+    <p class="text-slate-500 mb-8">
+      We need to verify your email address. Please click the button below to send a verification
+      email.
+    </p>
+
+    <!-- Verify Button -->
+    <button
+      (click)="sendVerificationMail()"
+      class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+    >
+      Send Verification Mail
+    </button>
+    } @else {
+    <!-- Success Content -->
+    <h2 class="text-2xl font-bold text-slate-800 mb-2">Email Sent!</h2>
+    <p class="text-slate-500 mb-8">
+      We've sent a verification link to your email. Please check your inbox and click the link to
+      verify your account.
+    </p>
+
+    <!-- Go to Login Button -->
+    <button
+      (click)="closeModalAndLogin()"
+      class="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-colors duration-200"
+    >
+      Go to Login
+    </button>
+
+    }
+  </div>
+</div>
 }
 
 <!-- Modal ends -->

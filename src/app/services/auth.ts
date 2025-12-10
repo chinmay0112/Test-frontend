@@ -190,4 +190,7 @@ export class Auth {
       paymentDetails
     );
   }
+  verifyEmail(key: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/api/auth/registration/verify-email/`, { key });
+  }
 }
