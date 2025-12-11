@@ -1,20 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { InputOtpModule } from 'primeng/inputotp';
 
 /* 1) Auth service se sahi cheezein import kari hai:
    - RegisterResponse type ko bhi yahin se laye hai taaki res ka type fix ho. */
-import { Auth, RegisterResponse } from '../services/auth';
+import { Auth } from '../services/auth';
 
 // Password match validator
 export const passwordMatchValidator: ValidatorFn = (
@@ -30,7 +31,7 @@ export const passwordMatchValidator: ValidatorFn = (
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, InputOtpModule, FormsModule],
   templateUrl: './registration.html',
   styleUrls: ['./registration.scss'],
 })
@@ -45,9 +46,19 @@ export class Registration {
   // UI state
   loading = signal(false);
   serverError = signal<string | null>(null);
+
+  // Verification & OTP state
   verificationEmailSent = signal(false);
   isEmailSent = signal(false);
+  showOtpModal = signal(false);
+
+  // OTP Logic state
+  otpDigits: string[] = ['', '', '', '', '', ''];
+  timeLeft: number = 30;
+  showResend: boolean = false;
+
   isRegistrationSuccessful = false;
+
   // Form group
   registrationForm: FormGroup = this.fb.group(
     {
@@ -84,77 +95,49 @@ export class Registration {
   }
 
   onSubmit(): void {
-    this.serverError.set(null);
-
-    if (this.registrationForm.invalid) {
-      this.registrationForm.markAllAsTouched();
-      return;
-    }
-
-    // Clean payload
-    const raw = this.registrationForm.getRawValue();
-    const payload = {
-      first_name: String(raw.first_name).trim(),
-      last_name: String(raw.last_name).trim(),
-      email: String(raw.email).trim().toLowerCase(),
-      phone: String(raw.phone).trim(),
-      password1: raw.password1 as string,
-      password2: raw.password2 as string,
-    };
-
     this.loading.set(true);
-
-    this.auth
-      .register(payload)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        // 4) res ko type do -> implicit any hataya
-        next: (res: RegisterResponse) => {
-          if (res?.token || (res as any)?.access) {
-            const token = res.token ?? (res as any).access;
-            // localStorage.setItem('token', token as string);
-            this.isRegistrationSuccessful = true;
-            this.registrationForm.reset();
-            // this.router.navigate(['/login']);
-          } else {
-            // this.router.navigate(['/verify-email'], { queryParams: { email: payload.email } });
-            this.verificationEmailSent.set(true);
-          }
-        },
-        // 5) err ko type do (any enough hai yahan)
-        error: (err: any) => {
-          const msg = err?.error?.message ?? err?.message ?? err;
-          if (Array.isArray(msg)) {
-            // Field-wise validation errors
-            for (const e of msg) {
-              if (e?.field && this.registrationForm.get(e.field)) {
-                this.registrationForm.get(e.field)!.setErrors({ server: e.message });
-              }
-            }
-            const top = msg.find((e: any) => !e?.field)?.message;
-            if (top) this.serverError.set(top);
-          } else {
-            if (err?.status === 409) this.serverError.set('Account already exists.');
-            else if (err?.status === 400 || err?.status === 422)
-              this.serverError.set('Please fix the highlighted fields.');
-            else this.serverError.set('Something went wrong. Please try again.');
-          }
-        },
-      });
-  }
-
-  sendVerificationMail(): void {
-    this.auth.verifyEmail(this.registrationForm.value.email).subscribe({
-      next: (res: any) => {
-        console.log('Email sent successfully', res);
-        this.isEmailSent.set(true);
+    this.auth.register(this.registrationForm.value).subscribe({
+      next: (res) => {
+        this.isRegistrationSuccessful = true;
+        this.loading.set(false);
       },
-      error: (err: any) => {
-        console.log('Error sending email', err);
-        // Optional: Handle error UI
+      error: (err) => {
+        console.log(err);
       },
     });
   }
+
+  // Stubs for verification flow
+  sendVerificationMail(): void {
+    console.log('Sending verification mail...');
+  }
+
+  // Stubs for OTP flow
+  onOtpInput(index: number, event: any): void {
+    console.log('OTP Input', index, event);
+  }
+
+  onKeyDown(index: number, event: KeyboardEvent): void {
+    console.log('Key Down', index, event);
+  }
+
+  onPaste(event: ClipboardEvent): void {
+    console.log('Paste', event);
+  }
+
+  sendOtp(): void {
+    this.auth.sendOtp(this.registrationForm.value.phone).subscribe({
+      next: (res) => {
+        console.log('OTP Sent');
+      },
+      error: (err) => alert('Failed to send OTP'),
+    });
+  }
+
+  verifyOtp(): void {
+    console.log('Verify OTP');
+  }
+
   closeModalAndLogin(): void {
     this.isRegistrationSuccessful = false;
     this.router.navigate(['/login']);
