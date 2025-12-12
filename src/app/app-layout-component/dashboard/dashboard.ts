@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
-import { SafeHtmlPipe } from 'primeng/menu';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
-import { Header } from '../../components/header/header';
+import { ChartModule } from 'primeng/chart';
+import { DashboardService } from '../../services/dashboard';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,65 +19,169 @@ import { Header } from '../../components/header/header';
     ButtonModule,
     AvatarModule,
     TableModule,
-    SafeHtmlPipe,
+    ChartModule,
+    RouterLink,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
-  // Mock data for the dashboard
+  // Data Models
   performanceStats: any[] = [];
   myTestSeries: any[] = [];
   continueLearning: any;
   recentActivity: any[] = [];
+  isLoading: boolean = false;
+  // Chart Configurations
+  trendChartData: any;
+  trendChartOptions: any;
+  trendData: any[] = [];
+  accuracyChartData: any;
+  accuracyChartOptions: any;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private dashboardService: DashboardService,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // In a real application, this data would come from API calls to your Django backend.
-    this.performanceStats = [
-      {
-        label: 'Tests Taken',
-        value: '12',
-        icon: 'pi pi-file-edit',
-        bgColor: 'bg-blue-100',
-        iconColor: 'text-blue-600',
+    forkJoin({
+      stats: this.dashboardService.getStats(),
+      trend: this.dashboardService.getTrends(),
+      recent: this.dashboardService.getRecentActivity(),
+      resume: this.dashboardService.getResume(),
+      mySeries: this.dashboardService.getMySeries(),
+    }).subscribe({
+      next: (res) => {
+        this.isLoading = true;
+        this.trendData = res.trend;
+        this.performanceStats = [
+          {
+            label: 'Tests Taken',
+            value: res.stats.tests_taken,
+            // trend: '+2 this week',
+            trendColor: 'text-green-500',
+            icon: 'pi pi-file-edit',
+            bgColor: 'bg-blue-50',
+            iconColor: 'text-blue-600',
+          },
+          {
+            label: 'Avg. Score',
+            value: res.stats.avg_score,
+            // trend: '+1.5% increase',
+            trendColor: 'text-green-500',
+            icon: 'pi pi-chart-line',
+            bgColor: 'bg-indigo-50',
+            iconColor: 'text-indigo-600',
+          },
+          {
+            label: 'Questions',
+            value: res.stats.questions_attempted,
+            // trend: 'Total attempted',
+            trendColor: 'text-slate-400',
+            icon: 'pi pi-bolt',
+            bgColor: 'bg-amber-50',
+            iconColor: 'text-amber-600',
+          },
+          {
+            label: 'Accuracy',
+            value: res.stats.accuracy,
+            // trend: '-2% decrease',
+            trendColor: 'text-red-500',
+            icon: 'pi pi-bullseye',
+            bgColor: 'bg-teal-50',
+            iconColor: 'text-teal-600',
+          },
+        ];
+        this.continueLearning = res.resume;
+        this.myTestSeries = res.mySeries;
+        this.recentActivity = res.recent;
+        this.initCharts();
+        this.cd.detectChanges();
       },
-      {
-        label: 'Avg. Score',
-        value: '78.5%',
-        icon: 'pi pi-chart-line',
-        bgColor: 'bg-green-100',
-        iconColor: 'text-green-600',
+      error: (err) => {
+        console.log(err);
       },
-      {
-        label: 'Questions Attempted',
-        value: '1,250',
-        icon: 'pi pi-question-circle',
-        bgColor: 'bg-orange-100',
-        iconColor: 'text-orange-600',
-      },
-      {
-        label: 'Accuracy',
-        value: '88%',
-        icon: 'pi pi-check-circle',
-        bgColor: 'bg-purple-100',
-        iconColor: 'text-purple-600',
-      },
-    ];
+    });
 
+    this.initMockData();
+
+    this.isLoading = false;
+  }
+  navigateTo(id: number) {
+    this.router.navigate(['/app/test', id]);
+  }
+
+  initCharts() {
+    const labels =
+      this.trendData && this.trendData.length
+        ? this.trendData.map((item) => item.test_title || `Test ${item.id}`) // Use test name or fallback
+        : [];
+
+    const scores =
+      this.trendData && this.trendData.length
+        ? this.trendData.map((item) => Number(item.score)) // Ensure score is a number
+        : [];
+    // 1. Line Chart: Score Trends over last 5 tests
+    this.trendChartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Your Score',
+          data: scores,
+          fill: true,
+          borderColor: '#4F46E5', // Indigo-600
+          backgroundColor: 'rgba(79, 70, 229, 0.1)',
+          tension: 0.4,
+        },
+      ],
+    };
+
+    this.trendChartOptions = {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+        x: { grid: { display: false } },
+      },
+    };
+
+    const totalAttempted =
+      Number(this.performanceStats.find((stat) => stat.label === 'Questions')?.value) || 0;
+    const accuracyPercentage =
+      Number(this.performanceStats.find((stat) => stat.label === 'Accuracy')?.value) || 0;
+
+    // Calculate approx correct count based on percentage
+    const correctCount = Math.round((accuracyPercentage / 100) * totalAttempted);
+    const incorrectCount = totalAttempted - correctCount;
+    const skippedCount = 0; // 'Skipped' data is not currently available in stats
+
+    // 2. Doughnut Chart: Accuracy Breakdown
+    this.accuracyChartData = {
+      labels: ['Correct', 'Incorrect', 'Skipped'],
+      datasets: [
+        {
+          data: [correctCount, incorrectCount, skippedCount],
+          backgroundColor: ['#10B981', '#EF4444', '#94A3B8'], // Green, Red, Slate
+          hoverBackgroundColor: ['#059669', '#DC2626', '#64748B'],
+        },
+      ],
+    };
+
+    this.accuracyChartOptions = {
+      cutout: '70%',
+      plugins: {
+        legend: { position: 'bottom', labels: { usePointStyle: true } },
+      },
+    };
+  }
+
+  initMockData() {
     this.myTestSeries = [
       { id: 1, name: 'SSC CGL Tier 1 Full Mocks', category: 'SSC', icon: '🏆', progress: 75 },
       { id: 2, name: 'Bank PO Prelims Practice', category: 'Banking', icon: '🏦', progress: 40 },
       { id: 3, name: 'UPSC GS Paper 1 Series', category: 'UPSC', icon: '🏛️', progress: 10 },
     ];
-
-    this.continueLearning = {
-      id: 2,
-      name: 'Bank PO Prelims Mock 3',
-      category: 'Banking',
-      description: 'You left off on question 15 in the Reasoning section.',
-    };
 
     this.recentActivity = [
       {
@@ -85,7 +190,7 @@ export class Dashboard {
         category: 'SSC',
         score: '115.5',
         accuracy: 82,
-        date: 'Oct 18, 2025',
+        date: 'Oct 18',
       },
       {
         id: 11,
@@ -93,7 +198,7 @@ export class Dashboard {
         category: 'Banking',
         score: '72.0',
         accuracy: 75,
-        date: 'Oct 17, 2025',
+        date: 'Oct 17',
       },
       {
         id: 10,
@@ -101,35 +206,8 @@ export class Dashboard {
         category: 'SSC',
         score: '101.0',
         accuracy: 71,
-        date: 'Oct 15, 2025',
+        date: 'Oct 15',
       },
     ];
-  }
-
-  // --- NAVIGATION METHODS ---
-
-  navigate(path: string): void {
-    this.router.navigate([path]);
-  }
-
-  navigateToTestSeries(seriesId: number): void {
-    console.log('Navigating to test series with ID:', seriesId);
-    this.router.navigate(['/test-series', seriesId]);
-  }
-
-  resumeTest(testId: number): void {
-    console.log('Resuming test with ID:', testId);
-    this.router.navigate(['/test', testId]);
-  }
-
-  navigateToAnalysis(activityId: number): void {
-    console.log('Navigating to analysis for activity ID:', activityId);
-    this.router.navigate(['/analysis', activityId]);
-  }
-
-  logout(): void {
-    console.log('Logging out...');
-    // Here you would call your AuthService to clear tokens
-    this.router.navigate(['/login']);
   }
 }

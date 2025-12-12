@@ -1,8 +1,18 @@
 :host ::ng-deep .p-progressbar .p-progressbar-value {
   background: #4f46e5;
 }
+
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   background: #f8fafc;
   font-weight: 600;
   color: #475569;
+}
+
+/* Status-based Progress Bar Colors */
+:host ::ng-deep .p-progressbar.good-score .p-progressbar-value {
+  background: #10b981; /* Emerald-500 */
+}
+
+:host ::ng-deep .p-progressbar.avg-score .p-progressbar-value {
+  background: #f59e0b; /* Amber-500 */
 }

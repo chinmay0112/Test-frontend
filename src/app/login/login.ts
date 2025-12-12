@@ -13,35 +13,17 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 })
 export class Login {
   loginFormUsingEmail: FormGroup;
-  loginFormUsingPhone: FormGroup;
-  loginMode: 'email' | 'phone' = 'email'; // Track current mode
-  otpSent = false; // Track if OTP has been sent
   isLoading: boolean = false;
   loginError: any = null;
+
   constructor(private fb: FormBuilder, private router: Router, private auth: Auth) {
-    // Initialize form with all possible controls
     this.loginFormUsingEmail = this.fb.group({
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.required]],
     });
-    this.loginFormUsingPhone = this.fb.group({
-      phone: ['', [Validators.pattern('^[6-9]\\d{9}$')]], // Basic Indian mobile pattern
-      otp: ['', [Validators.minLength(6), Validators.maxLength(6)]],
-    });
-    // Initial validation setup for email mode
   }
 
   ngOnInit(): void {}
-
-  setLoginMode(mode: 'email' | 'phone'): void {
-    if (this.loginMode === mode) return; // Do nothing if mode hasn't changed
-
-    this.loginMode = mode;
-    this.otpSent = false; // Reset OTP status when switching modes
-    this.loginFormUsingEmail.reset(); // Clear form values when switching
-  }
-
-  sendOtp(): void {}
 
   onSubmitusingEmail(): void {
     this.isLoading = true;
@@ -67,6 +49,7 @@ export class Login {
       },
     });
   }
+
   loginWithGoogle(): void {
     console.log('Google clicked');
     this.isLoading = true; // Show spinner

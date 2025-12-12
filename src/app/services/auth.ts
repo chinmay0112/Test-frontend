@@ -190,8 +190,8 @@ export class Auth {
       paymentDetails
     );
   }
-  sendOtp(phone: string) {
-    return this.http.post(`${environment.apiUrl}/api/auth/send-otp/`, { phone });
+  sendOtp(phone: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/api/auth/send-otp/`, { phone });
   }
 
   verifyOtp(phone: string, otp: string) {
