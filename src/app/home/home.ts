@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { Header } from '../components/header/header';
 import { Footer } from '../components/footer/footer';
 import { ButtonModule } from 'primeng/button';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Header, Footer, ButtonModule],
+  imports: [CommonModule, Header, Footer, ButtonModule, ReactiveFormsModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -18,8 +19,17 @@ export class Home implements OnInit {
   howItWorksSteps: any[] = [];
   currentYear = new Date().getFullYear();
   isMobileMenuOpen = false; // State for mobile menu
+  contactForm: FormGroup;
+  isSubmitting = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private fb: FormBuilder) {
+    this.contactForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      subject: ['', Validators.required],
+      message: ['', [Validators.required, Validators.minLength(10)]],
+    });
+  }
 
   ngOnInit(): void {
     this.features = [
@@ -109,5 +119,26 @@ export class Home implements OnInit {
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
+  }
+
+  onSubmitContact(): void {
+    if (this.contactForm.valid) {
+      this.isSubmitting = true;
+      console.log('Contact Form Submitted:', this.contactForm.value);
+
+      // Simulate API call
+      setTimeout(() => {
+        this.isSubmitting = false;
+        alert('Thank you for contacting us! We will get back to you shortly.');
+        this.contactForm.reset();
+      }, 1500);
+    } else {
+      Object.keys(this.contactForm.controls).forEach((key) => {
+        const control = this.contactForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+    }
   }
 }

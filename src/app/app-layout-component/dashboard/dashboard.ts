@@ -38,6 +38,7 @@ export class Dashboard {
   trendData: any[] = [];
   accuracyChartData: any;
   accuracyChartOptions: any;
+  doughnutChartData: any;
 
   constructor(
     private router: Router,
@@ -76,7 +77,7 @@ export class Dashboard {
             iconColor: 'text-indigo-600',
           },
           {
-            label: 'Questions',
+            label: 'Questions Attempted',
             value: res.stats.questions_attempted,
             // trend: 'Total attempted',
             trendColor: 'text-slate-400',
@@ -98,14 +99,36 @@ export class Dashboard {
         this.myTestSeries = res.mySeries;
         this.recentActivity = res.recent;
         this.initCharts();
+        this.doughnutChartData = res.stats.chart_data || { correct: 0, incorrect: 0, skipped: 0 };
+
+        // 2. Doughnut Chart: Accuracy Breakdown
+        this.accuracyChartData = {
+          labels: ['Correct', 'Incorrect', 'Skipped'],
+          datasets: [
+            {
+              data: [
+                this.doughnutChartData.correct,
+                this.doughnutChartData.incorrect,
+                this.doughnutChartData.skipped,
+              ],
+              backgroundColor: ['#10B981', '#EF4444', '#94A3B8'], // Green, Red, Slate
+              hoverBackgroundColor: ['#059669', '#DC2626', '#64748B'],
+            },
+          ],
+        };
+
+        this.accuracyChartOptions = {
+          cutout: '70%',
+          plugins: {
+            legend: { position: 'bottom', labels: { usePointStyle: true } },
+          },
+        };
         this.cd.detectChanges();
       },
       error: (err) => {
         console.log(err);
       },
     });
-
-    this.initMockData();
 
     this.isLoading = false;
   }
@@ -145,69 +168,5 @@ export class Dashboard {
         x: { grid: { display: false } },
       },
     };
-
-    const totalAttempted =
-      Number(this.performanceStats.find((stat) => stat.label === 'Questions')?.value) || 0;
-    const accuracyPercentage =
-      Number(this.performanceStats.find((stat) => stat.label === 'Accuracy')?.value) || 0;
-
-    // Calculate approx correct count based on percentage
-    const correctCount = Math.round((accuracyPercentage / 100) * totalAttempted);
-    const incorrectCount = totalAttempted - correctCount;
-    const skippedCount = 0; // 'Skipped' data is not currently available in stats
-
-    // 2. Doughnut Chart: Accuracy Breakdown
-    this.accuracyChartData = {
-      labels: ['Correct', 'Incorrect', 'Skipped'],
-      datasets: [
-        {
-          data: [correctCount, incorrectCount, skippedCount],
-          backgroundColor: ['#10B981', '#EF4444', '#94A3B8'], // Green, Red, Slate
-          hoverBackgroundColor: ['#059669', '#DC2626', '#64748B'],
-        },
-      ],
-    };
-
-    this.accuracyChartOptions = {
-      cutout: '70%',
-      plugins: {
-        legend: { position: 'bottom', labels: { usePointStyle: true } },
-      },
-    };
-  }
-
-  initMockData() {
-    this.myTestSeries = [
-      { id: 1, name: 'SSC CGL Tier 1 Full Mocks', category: 'SSC', icon: '🏆', progress: 75 },
-      { id: 2, name: 'Bank PO Prelims Practice', category: 'Banking', icon: '🏦', progress: 40 },
-      { id: 3, name: 'UPSC GS Paper 1 Series', category: 'UPSC', icon: '🏛️', progress: 10 },
-    ];
-
-    this.recentActivity = [
-      {
-        id: 12,
-        name: 'SSC CGL Mock 2',
-        category: 'SSC',
-        score: '115.5',
-        accuracy: 82,
-        date: 'Oct 18',
-      },
-      {
-        id: 11,
-        name: 'Bank PO Mock 2',
-        category: 'Banking',
-        score: '72.0',
-        accuracy: 75,
-        date: 'Oct 17',
-      },
-      {
-        id: 10,
-        name: 'SSC CGL Mock 1',
-        category: 'SSC',
-        score: '101.0',
-        accuracy: 71,
-        date: 'Oct 15',
-      },
-    ];
   }
 }
