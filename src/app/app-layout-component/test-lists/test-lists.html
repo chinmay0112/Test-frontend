@@ -61,8 +61,8 @@
     </h2>
     <div class="space-y-4">
       <!-- Test Item Card - REDESIGNED -->
+      @for (test of testSeries.tests; track test.id; let i = $index) {
       <div
-        *ngFor="let test of testSeries.tests; let i = index"
         class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center hover:shadow-md hover:border-indigo-300 transition-all duration-300"
       >
         <!-- New Icon Column -->
@@ -151,6 +151,7 @@
           }
         </div>
       </div>
+      }
     </div>
   </div>
   } @else {
@@ -158,8 +159,8 @@
     <p-skeleton width="12rem" height="2rem" class="mb-6"></p-skeleton>
 
     <div class="space-y-4">
+      @for (i of [1, 2, 3]; track i) {
       <div
-        *ngFor="let i of [1, 2, 3]"
         class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center"
       >
         <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
@@ -175,6 +176,7 @@
           <p-skeleton width="120px" height="2.5rem" borderRadius="8px"></p-skeleton>
         </div>
       </div>
+      }
     </div>
   </div>
   }

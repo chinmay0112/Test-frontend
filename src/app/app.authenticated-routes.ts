@@ -10,6 +10,7 @@ import { AccountSettingsPage } from './app-layout-component/account-settings-pag
 import { CompleteProfile } from './pages/complete-profile/complete-profile';
 import { Catalog } from './app-layout-component/catalog/catalog';
 import { Analysis } from './app-layout-component/analysis/analysis';
+import { ComingSoon } from './app-layout-component/coming-soon/coming-soon';
 
 export const AUTHENTICATED_ROUTES: Routes = [
   {
@@ -34,6 +35,7 @@ export const AUTHENTICATED_ROUTES: Routes = [
     ],
   },
   { path: 'analysis/:id', component: Analysis },
+  { path: 'coming-soon', component: ComingSoon },
   { path: 'test/:id', component: TestInterface },
   { path: 'complete-profile', component: CompleteProfile },
 ];

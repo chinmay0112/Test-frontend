@@ -1,0 +1,320 @@
+<div class="bg-slate-50 min-h-screen flex flex-col font-sans text-slate-700">
+  <app-header></app-header>
+
+  <!-- Hero Section (Consistent Style with Privacy Policy) -->
+  <div
+    class="relative bg-gradient-to-br from-slate-900 to-indigo-950 py-16 lg:py-24 text-white overflow-hidden"
+  >
+    <!-- Abstract Background Shapes -->
+    <div
+      class="absolute top-10 left-10 w-64 h-64 bg-indigo-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"
+    ></div>
+    <div
+      class="absolute bottom-10 right-10 w-80 h-80 bg-purple-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob animation-delay-2000"
+    ></div>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">Terms of Service</h1>
+      <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+        Please read these terms carefully before using our platform. They govern your use of
+        PrepMaster.
+      </p>
+      <div
+        class="mt-8 inline-flex items-center bg-white/5 backdrop-blur-md px-5 py-2 rounded-full border border-white/10 text-sm font-medium text-slate-200"
+      >
+        <i class="pi pi-clock mr-2 text-indigo-300"></i>
+        <span>Effective Date: <strong>December 13, 2025</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <main class="flex-grow py-12 lg:py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div class="flex flex-col lg:flex-row gap-12">
+        <!-- Sticky Sidebar Navigation -->
+        <aside class="lg:w-1/4 hidden lg:block">
+          <div class="sticky top-24 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3
+              class="font-bold text-slate-900 mb-4 text-xs uppercase tracking-widest border-b border-slate-100 pb-2"
+            >
+              Contents
+            </h3>
+            <nav class="space-y-1">
+              <button
+                (click)="scrollTo('acceptance')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                1. Acceptance of Terms
+              </button>
+              <button
+                (click)="scrollTo('account')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                2. User Accounts
+              </button>
+              <button
+                (click)="scrollTo('intellectual-property')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                3. Intellectual Property
+              </button>
+              <button
+                (click)="scrollTo('prohibited')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                4. Prohibited Conduct
+              </button>
+              <button
+                (click)="scrollTo('termination')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                5. Termination
+              </button>
+              <button
+                (click)="scrollTo('disclaimer')"
+                class="w-full text-left block px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center group"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-indigo-500 mr-3 transition-colors"
+                ></span>
+                6. Disclaimer & Liability
+              </button>
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="lg:w-3/4 space-y-12">
+          <!-- 1. Acceptance -->
+          <section id="acceptance" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shadow-sm border border-slate-200"
+              >
+                <span class="font-bold text-lg">01</span>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">Acceptance of Terms</h2>
+            </div>
+            <div
+              class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 prose prose-slate max-w-none"
+            >
+              <p>
+                By creating an account, accessing, or using <strong>PrepMaster</strong> (the
+                "Service"), you acknowledge that you have read, understood, and agree to be bound by
+                these Terms of Service.
+              </p>
+              <p>
+                If you do not agree to these terms, you may not access or use the Service. We
+                reserve the right to modify these terms at any time, and such modifications will be
+                effective immediately upon posting.
+              </p>
+            </div>
+          </section>
+
+          <!-- 2. User Accounts -->
+          <section id="account" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100"
+              >
+                <i class="pi pi-user text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">User Accounts</h2>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+              <div class="flex gap-4 items-start">
+                <i class="pi pi-check-circle text-blue-500 mt-1"></i>
+                <div>
+                  <h4 class="font-bold text-slate-800 mb-1">Registration</h4>
+                  <p class="text-sm text-slate-600">
+                    You agree to provide accurate, current, and complete information during the
+                    registration process and to update such information to keep it accurate.
+                  </p>
+                </div>
+              </div>
+              <div class="w-full h-px bg-slate-100"></div>
+              <div class="flex gap-4 items-start">
+                <i class="pi pi-lock text-blue-500 mt-1"></i>
+                <div>
+                  <h4 class="font-bold text-slate-800 mb-1">Security</h4>
+                  <p class="text-sm text-slate-600">
+                    You are responsible for safeguarding your password. You agree not to disclose
+                    your password to any third party and to take sole responsibility for any
+                    activities or actions under your account.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. Intellectual Property -->
+          <section id="intellectual-property" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100"
+              >
+                <i class="pi pi-briefcase text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">Intellectual Property</h2>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <p class="text-slate-600 mb-4">
+                The Service and its original content, features, and functionality are and will
+                remain the exclusive property of PrepMaster and its licensors.
+              </p>
+              <div
+                class="bg-purple-50 border border-purple-100 rounded-xl p-4 text-sm text-purple-900"
+              >
+                <strong>Note:</strong> All study materials, mock tests, and question banks are
+                protected by copyright. You may not reproduce, distribute, or create derivative
+                works without explicit permission.
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Prohibited Conduct -->
+          <section id="prohibited" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 shadow-sm border border-red-100"
+              >
+                <i class="pi pi-ban text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">Prohibited Conduct</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div
+                class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center">
+                  <i class="pi pi-times-circle text-red-500 mr-2"></i> Account Sharing
+                </h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Sharing your account credentials with others to access premium content is strictly
+                  prohibited and will result in a ban.
+                </p>
+              </div>
+              <div
+                class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center">
+                  <i class="pi pi-times-circle text-red-500 mr-2"></i> Scraping
+                </h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Using automated systems (bots, spiders, scrapers) to access the Service or extract
+                  data is forbidden.
+                </p>
+              </div>
+              <div
+                class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center">
+                  <i class="pi pi-times-circle text-red-500 mr-2"></i> Harmful Content
+                </h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Posting malware, viruses, or any content that disrupts the service or harms other
+                  users.
+                </p>
+              </div>
+              <div
+                class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center">
+                  <i class="pi pi-times-circle text-red-500 mr-2"></i> Reverse Engineering
+                </h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Attempting to decipher, decompile, disassemble, or reverse engineer any of the
+                  software used to provide the Service.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. Termination -->
+          <section id="termination" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shadow-sm border border-orange-100"
+              >
+                <i class="pi pi-power-off text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">Termination</h2>
+            </div>
+            <div
+              class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-orange-400"
+            >
+              <p class="text-slate-600">
+                We may terminate or suspend your account immediately, without prior notice or
+                liability, for any reason whatsoever, including without limitation if you breach the
+                Terms. Upon termination, your right to use the Service will immediately cease.
+              </p>
+            </div>
+          </section>
+
+          <!-- 6. Disclaimer -->
+          <section id="disclaimer" class="scroll-mt-28">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-sm border border-slate-200"
+              >
+                <i class="pi pi-info text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">Disclaimer & Liability</h2>
+            </div>
+            <div
+              class="prose prose-slate max-w-none text-slate-600 bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
+            >
+              <p>
+                The Service is provided on an "AS IS" and "AS AVAILABLE" basis. PrepMaster makes no
+                representations or warranties of any kind, express or implied, as to the operation
+                of their services, or the information, content, or materials included therein.
+              </p>
+              <p class="font-medium mt-4">
+                In no event shall PrepMaster, nor its directors, employees, partners, agents,
+                suppliers, or affiliates, be liable for any indirect, incidental, special,
+                consequential or punitive damages.
+              </p>
+            </div>
+          </section>
+
+          <!-- Contact Footer -->
+          <div
+            class="bg-slate-900 rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden"
+          >
+            <div class="absolute inset-0 bg-indigo-600/20 pattern-dots"></div>
+            <div class="relative z-10">
+              <h3 class="text-2xl font-bold mb-3">Questions about our Terms?</h3>
+              <p class="text-slate-300 mb-8 max-w-lg mx-auto">
+                If you need clarification on any point mentioned above, our legal team is here to
+                help.
+              </p>
+              <a
+                href="mailto:legal@prepmaster.com"
+                class="inline-flex items-center justify-center px-8 py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                Contact Legal Team
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

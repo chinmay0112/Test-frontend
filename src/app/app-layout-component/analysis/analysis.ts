@@ -5,10 +5,11 @@ import { TabsModule } from 'primeng/tabs';
 import { TestResult } from '../../services/test-result';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-analysis',
-  imports: [CommonModule, TabsModule, FormsModule, TableModule],
+  imports: [CommonModule, TabsModule, FormsModule, TableModule, DialogModule],
   templateUrl: './analysis.html',
   styleUrl: './analysis.scss',
 })
@@ -18,6 +19,14 @@ export class Analysis implements OnInit {
   activeTabId: any = null; // current active tab value (section id)
   currentQuestionIndexes: { [key: string]: number } = {};
   responses: any[] = [];
+
+  // AI Doubt Solver Properties
+  showAiModal = false;
+  currentAiQuestion: any = null;
+  aiChatHistory: { sender: 'user' | 'bot'; text: string }[] = [];
+  isAiTyping = false;
+  aiInputText = '';
+
   constructor(
     private testResultService: TestResult,
     private cdr: ChangeDetectorRef,
@@ -97,5 +106,31 @@ export class Analysis implements OnInit {
   // NEW: Jump to specific question from palette
   jumpToQuestion(sectionName: string, index: number) {
     this.currentQuestionIndexes[sectionName] = index;
+  }
+
+  // AI Mock Functionality
+  openAiDoubtSolver(question: any) {
+    this.currentAiQuestion = question;
+    this.showAiModal = true;
+    this.aiChatHistory = []; // Reset chat
+    this.aiInputText = '';
+  }
+
+  sendAiMessage() {
+    if (!this.aiInputText.trim()) return;
+
+    // Add user message
+    this.aiChatHistory.push({ sender: 'user', text: this.aiInputText });
+    this.aiInputText = '';
+    this.isAiTyping = true;
+
+    // Simulate bot response
+    setTimeout(() => {
+      this.isAiTyping = false;
+      this.aiChatHistory.push({
+        sender: 'bot',
+        text: "That's a great question! Based on your answer history, I recommend reviewing the core concept of this topic. Would you like a brief summary?",
+      });
+    }, 1500);
   }
 }

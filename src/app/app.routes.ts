@@ -9,7 +9,9 @@ import { ForgotPassword } from './forgot-password/forgot-password';
 import { authGuard } from './services/auth-guard';
 import { publicGuard } from './services/public-guard';
 import { GoogleCallback } from './pages/google-callback/google-callback';
+import { PrivacyPolicy } from './privacy-policy/privacy-policy';
 import { PricingPage } from './app-layout-component/pricing-page/pricing-page';
+import { TermsOfService } from './terms-of-service/terms-of-service';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
@@ -19,6 +21,8 @@ export const routes: Routes = [
   { path: 'register', component: Registration, canActivate: [publicGuard] },
   { path: 'google-callback', component: GoogleCallback },
   { path: 'app/prices', component: PricingPage },
+  { path: 'privacy-policy', component: PrivacyPolicy },
+  { path: 'terms-of-service', component: TermsOfService },
   {
     path: 'app',
 
