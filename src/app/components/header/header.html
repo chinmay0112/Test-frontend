@@ -83,23 +83,30 @@
     <!-- RIGHT SIDE: Actions & Profile -->
     <div class="flex items-center gap-3 sm:gap-6">
       <!-- LOGGED IN VIEW -->
+      <!-- Subscription Status (Desktop) -->
       @if (authService.isLoggedIn$ | async) { @if(authService.currentUser | async; as user){
-      @if(user.is_pro_member){
-      <div
-        class="flex items-center gap-1.5 bg-amber-100 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-200"
-      >
-        <i class="pi pi-star-fill text-[10px]"></i>
-        <span>PRO</span>
+      <!-- Subscription Status (Desktop) -->
+      <div class="hidden md:flex items-center">
+        @if(user.is_pro_member){
+        <div
+          class="flex items-center gap-1.5 bg-amber-100 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-200"
+        >
+          <i class="pi pi-star-fill text-[10px]"></i>
+          <span>PRO</span>
+        </div>
+        }@else {
+        <button
+          routerLink="/app/prices"
+          class="premium-btn px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
+        >
+          Our Plans
+        </button>
+        }
       </div>
-      }@else {
-      <button
-        routerLink="/app/prices"
-        class="premium-btn px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
-      >
-        Our Plans
-      </button>
-      } } @else {
-      <p-skeleton width="5rem" height="2rem" borderRadius="0.5rem"></p-skeleton>
+      } @else {
+      <div class="hidden md:flex">
+        <p-skeleton width="5rem" height="2rem" borderRadius="0.5rem"></p-skeleton>
+      </div>
       }
 
       <!-- 1. Gamification (Streak) - Hidden on tiny screens -->
@@ -192,6 +199,28 @@
   >
     <div class="flex flex-col p-4 space-y-2">
       @if (authService.isLoggedIn$ | async) {
+
+      <!-- Mobile Subscription Status -->
+      @if(authService.currentUser | async; as user){
+      <div class="px-4 py-2">
+        @if(user.is_pro_member){
+        <div
+          class="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 px-4 py-3 rounded-xl border border-amber-200 font-bold"
+        >
+          <i class="pi pi-star-fill text-sm"></i>
+          <span>PRO Member</span>
+        </div>
+        } @else {
+        <button
+          routerLink="/app/prices"
+          (click)="closeMobileMenu()"
+          class="w-full premium-btn px-4 py-3 rounded-xl font-bold shadow-sm flex items-center justify-center gap-2"
+        >
+          <i class="pi pi-sparkles"></i> Upgrade to Pro
+        </button>
+        }
+      </div>
+      }
       <a
         routerLink="/app/dashboard"
         (click)="closeMobileMenu()"
