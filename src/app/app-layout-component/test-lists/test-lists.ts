@@ -4,10 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TestService } from '../../services/test-service';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Auth } from '../../services/auth';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-test-lists',
-  imports: [CommonModule, SkeletonModule],
+  imports: [CommonModule, SkeletonModule, TabsModule],
   templateUrl: './test-lists.html',
   styleUrl: './test-lists.scss',
 })
@@ -74,7 +75,7 @@ export class TestLists {
    * Navigates back to the "My Test Series" library page.
    */
   goBack(): void {
-    this.router.navigate(['/app/my-tests']);
+    this.router.navigate(['/app/catalog']);
   }
 
   isTestLocked(index: number): boolean {
