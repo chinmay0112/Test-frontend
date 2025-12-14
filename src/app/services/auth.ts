@@ -35,7 +35,7 @@ export interface User {
   email: string;
   full_name?: string;
   firstName?: string; // we set this client-side
-  is_pro_member?: boolean;
+  is_pro_active?: boolean;
   [k: string]: any;
 }
 
@@ -166,7 +166,7 @@ export class Auth {
           first_name: data.first_name,
           last_name: data.last_name,
           phone: data.phone,
-          is_pro_member: oldUser.is_pro_member,
+          is_pro_active: oldUser.is_pro_active,
           // UI convenience fields
           firstName: data.first_name,
           full_name: `${data.first_name} ${data.last_name}`,

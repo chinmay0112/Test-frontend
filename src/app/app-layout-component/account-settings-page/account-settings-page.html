@@ -248,26 +248,26 @@
                   <div class="flex items-center gap-2">
                     <span
                       class="text-xl font-bold"
-                      [ngClass]="user.is_pro_member ? 'text-indigo-600' : 'text-slate-700'"
+                      [ngClass]="user.is_pro_active ? 'text-indigo-600' : 'text-slate-700'"
                     >
-                      {{ user.is_pro_member ? 'Pro Access' : 'Free Starter' }}
+                      {{ user.is_pro_active ? 'Pro Access' : 'Free Starter' }}
                     </span>
 
                     <!-- Status Tag -->
                     <span
                       class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border"
                       [ngClass]="
-                        user.is_pro_member
+                        user.is_pro_active
                           ? 'bg-green-50 text-green-700 border-green-200'
                           : 'bg-slate-100 text-slate-500 border-slate-200'
                       "
                     >
-                      {{ user.is_pro_member ? 'Active' : 'Basic' }}
+                      {{ user.is_pro_active ? 'Active' : 'Basic' }}
                     </span>
                   </div>
 
                   <!-- Right: Action (Upgrade Button for Free users) -->
-                  @if (!user.is_pro_member) {
+                  @if (!user.is_pro_active) {
                   <button
                     class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
                   >
@@ -277,11 +277,14 @@
                 </div>
 
                 <!-- Renewal Info (Mock Data for now) -->
-                @if (user.is_pro_member) {
+                @if (user.is_pro_active) {
                 <div class="mt-2 flex items-center text-xs text-slate-500">
                   <i class="pi pi-calendar mr-1.5"></i>
                   <span
-                    >Renews on: <span class="font-medium text-slate-700">Oct 28, 2026</span></span
+                    >Renews on:
+                    <span class="font-medium text-slate-700">{{
+                      user['pro_expiry_date'] | date : 'dd MMM yyyy'
+                    }}</span></span
                   >
                 </div>
                 } @else {

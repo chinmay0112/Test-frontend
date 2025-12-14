@@ -39,7 +39,7 @@ export class PricingPage implements OnInit, OnDestroy {
       const isLoggedIn = this.authService.isUserLoggedIn();
       if (user) {
         this.loading = false;
-        this.isProMember = !!user.is_pro_member;
+        this.isProMember = !!user.is_pro_active;
       } else {
         // If logged in but user is null, we are still fetching.
         // If not logged in, we are done (guest).

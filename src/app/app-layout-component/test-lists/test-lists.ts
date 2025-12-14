@@ -28,7 +28,7 @@ export class TestLists {
   ngOnInit(): void {
     this.userSubscription = this.authService.currentUser.subscribe((user) => {
       if (user) {
-        this.isProMember = !!user.is_pro_member;
+        this.isProMember = !!user.is_pro_active;
       }
     });
 

@@ -87,7 +87,7 @@
       @if (authService.isLoggedIn$ | async) { @if(authService.currentUser | async; as user){
       <!-- Subscription Status (Desktop) -->
       <div class="hidden md:flex items-center">
-        @if(user.is_pro_member){
+        @if(user.is_pro_active){
         <div
           class="flex items-center gap-1.5 bg-amber-100 text-amber-700 px-3 py-1.5 rounded-full text-xs font-bold border border-amber-200"
         >
@@ -110,13 +110,15 @@
       }
 
       <!-- 1. Gamification (Streak) - Hidden on tiny screens -->
+      @if (authService.currentUser | async; as user) {
       <div
-        class="hidden sm:flex items-center bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 cursor-help"
-        title="3 Day Study Streak"
+        class="flex items-center bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 cursor-help"
+        title="{{ user['streak'] }} Day Study Streak"
       >
-        <i class="pi pi-fire text-orange-500"></i>
-        <span>3</span>
+        <img class="h-[20px] object-cover" src="assets/images/streak-img.png" alt="" />
+        <span>{{ user['streak'] }}</span>
       </div>
+      }
 
       <!-- 2. Notifications -->
       <button
@@ -146,7 +148,7 @@
           <!-- Name (Hidden on Mobile) -->
           <div class="hidden md:block text-left">
             <p class="text-xs font-bold text-slate-700 leading-none">{{ user['first_name'] }}</p>
-            <p class="text-[10px] text-slate-500 leading-none mt-1" *ngIf="user.is_pro_member">
+            <p class="text-[10px] text-slate-500 leading-none mt-1" *ngIf="user.is_pro_active">
               PRO Member
             </p>
           </div>
@@ -203,7 +205,7 @@
       <!-- Mobile Subscription Status -->
       @if(authService.currentUser | async; as user){
       <div class="px-4 py-2">
-        @if(user.is_pro_member){
+        @if(user.is_pro_active){
         <div
           class="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 px-4 py-3 rounded-xl border border-amber-200 font-bold"
         >
@@ -251,13 +253,22 @@
         </button>
         @if (isStudyMenuOpen) {
         <div class="bg-white px-4 py-2 space-y-1">
-          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+          <a
+            routerLink="/app/coming-soon"
+            (click)="closeMobileMenu()"
+            class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
             >Previous Papers</a
           >
-          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+          <a
+            routerLink="/app/coming-soon"
+            (click)="closeMobileMenu()"
+            class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
             >Current Affairs</a
           >
-          <a href="#" class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
+          <a
+            routerLink="/app/coming-soon"
+            (click)="closeMobileMenu()"
+            class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
             >Daily Quiz</a
           >
         </div>
