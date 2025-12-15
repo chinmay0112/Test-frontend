@@ -54,22 +54,40 @@
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-bold text-slate-800">Performance Trend</h3>
         <select
+          [(ngModel)]="selectedTrendRange"
+          (ngModelChange)="onTrendRangeChange()"
           class="text-sm border-none bg-slate-50 text-slate-600 rounded-md focus:ring-0 cursor-pointer"
         >
-          <option>Last 5 Tests</option>
-          <option>Last 10 Tests</option>
+          <option [ngValue]="5">Last 5 Tests</option>
+          <option [ngValue]="10">Last 10 Tests</option>
         </select>
       </div>
+      @if (trendData && trendData.length > 0) {
       <p-chart
         type="line"
         [data]="trendChartData"
         [options]="trendChartOptions"
         height="250px"
       ></p-chart>
+      } @else {
+      <div
+        class="h-[250px] flex flex-col items-center justify-center text-center bg-slate-50 rounded-lg border border-dashed border-slate-200"
+      >
+        <div
+          class="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm"
+        >
+          <i class="pi pi-chart-line text-slate-400"></i>
+        </div>
+        <p class="text-sm font-semibold text-slate-600">No trend data yet</p>
+        <p class="text-xs text-slate-400">Take more tests to see your progress</p>
+      </div>
+      }
     </div>
 
     <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col">
       <h3 class="text-lg font-bold text-slate-800 mb-2">Overall Accuracy</h3>
+      @if ((doughnutChartData?.correct || 0) + (doughnutChartData?.incorrect || 0) +
+      (doughnutChartData?.skipped || 0) > 0) {
       <div class="flex-1 flex items-center justify-center relative">
         <p-chart
           type="doughnut"
@@ -87,6 +105,19 @@
           </div>
         </div>
       </div>
+      } @else {
+      <div
+        class="h-[220px] flex-1 flex flex-col items-center justify-center text-center bg-slate-50 rounded-lg border border-dashed border-slate-200"
+      >
+        <div
+          class="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2 shadow-sm"
+        >
+          <i class="pi pi-chart-pie text-slate-400"></i>
+        </div>
+        <p class="text-sm font-semibold text-slate-600">No accuracy data</p>
+        <p class="text-xs text-slate-400">Complete a test to view analysis</p>
+      </div>
+      }
     </div>
   </div>
 
@@ -197,6 +228,23 @@
                     icon="pi pi-angle-right"
                     class="p-button-text p-button-rounded p-button-secondary p-button-sm"
                   ></button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center p-8">
+                  <div class="flex flex-col items-center justify-center">
+                    <div
+                      class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3"
+                    >
+                      <i class="pi pi-calendar-times text-xl text-slate-400"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-600">No recent activity</p>
+                    <p class="text-xs text-slate-400 mt-1">
+                      Complete a test to see your performance history here.
+                    </p>
+                  </div>
                 </td>
               </tr>
             </ng-template>

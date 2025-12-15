@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
@@ -14,6 +15,7 @@ import { forkJoin } from 'rxjs';
   selector: 'app-dashboard',
   imports: [
     CommonModule,
+    FormsModule,
     CarouselModule,
     ProgressBarModule,
     ButtonModule,
@@ -136,16 +138,22 @@ export class Dashboard {
     this.router.navigate(['/app/test', id]);
   }
 
-  initCharts() {
-    const labels =
-      this.trendData && this.trendData.length
-        ? this.trendData.map((item) => item.test_title || `Test ${item.id}`) // Use test name or fallback
-        : [];
+  // Trend Filter
+  selectedTrendRange: number = 5;
 
-    const scores =
-      this.trendData && this.trendData.length
-        ? this.trendData.map((item) => Number(item.score)) // Ensure score is a number
-        : [];
+  onTrendRangeChange() {
+    this.initCharts();
+  }
+
+  initCharts() {
+    // Slice data based on selection. Assuming data is in order, we take the last N items.
+    // If API returns undefined order, user might need to sort. Assuming insertion order for now.
+    const filteredTrend =
+      this.trendData && this.trendData.length ? this.trendData.slice(-this.selectedTrendRange) : [];
+
+    const labels = filteredTrend.map((item) => item.test_title || `Test ${item.id}`);
+
+    const scores = filteredTrend.map((item) => Number(item.score));
     // 1. Line Chart: Score Trends over last 5 tests
     this.trendChartData = {
       labels: labels,

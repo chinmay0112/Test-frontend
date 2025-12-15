@@ -122,14 +122,60 @@
 
       <!-- 2. Notifications -->
       <button
+        (click)="op.toggle($event)"
         class="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors focus:outline-none"
       >
         <i class="pi pi-bell text-xl"></i>
         <!-- Red Dot -->
+        @if(unreadCount > 0){
         <span
           class="absolute top-1.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
         ></span>
+        }
       </button>
+
+      <p-popover #op [style]="{ width: '350px' }">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+          <h3 class="font-bold text-slate-800">Notifications</h3>
+          <button
+            (click)="markAsRead()"
+            class="text-xs text-indigo-600 hover:underline font-medium"
+          >
+            Mark all read
+          </button>
+        </div>
+        <div class="max-h-[300px] overflow-y-auto space-y-2">
+          @for (notif of notifications; track notif.id) {
+          <div
+            class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+            [ngClass]="{ 'opacity-70': notif.read }"
+          >
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+              [ngClass]="notif.color"
+            >
+              <i [class]="notif.icon + ' text-sm'"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-800 leading-tight mb-0.5">
+                {{ notif.title }}
+                @if(!notif.read) {<span
+                  class="inline-block w-1.5 h-1.5 bg-red-500 rounded-full ml-1 align-middle"
+                ></span
+                >}
+              </p>
+              <p class="text-xs text-slate-500 line-clamp-2 leading-snug">{{ notif.message }}</p>
+              <p class="text-[10px] text-slate-400 mt-1">{{ notif.time }}</p>
+            </div>
+          </div>
+          } @empty {
+          <div class="text-center py-6">
+            <i class="pi pi-bell-slash text-2xl text-slate-300 mb-2"></i>
+            <p class="text-sm text-slate-500">No new notifications</p>
+          </div>
+          }
+        </div>
+      </p-popover>
 
       <!-- 3. Profile Dropdown -->
       <div class="relative">
