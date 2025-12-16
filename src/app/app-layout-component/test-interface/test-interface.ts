@@ -68,12 +68,43 @@ export class TestInterface implements OnInit, OnDestroy {
 
         this.sections = res.sections || [];
         const totalDurationSecs = this.test.duration_minutes * 60;
-        const hasSavedProgress =
-          res.saved_time_remaining && res.saved_time_remaining < totalDurationSecs - 5;
-        if (hasSavedProgress) {
-          console.log('Resuming...');
-          this.remainingSeconds = res.saved_time_remaining;
-          this.isInstructionsVisible = false;
+        const hasSavedTime =
+          res.saved_time_remaining !== undefined && res.saved_time_remaining !== null;
+        const hasSavedResponses = res.saved_responses && res.saved_responses.length > 0;
+        if (hasSavedTime || hasSavedResponses) {
+          console.log('Resuming Test...');
+
+          // A. Restore Time
+          if (hasSavedTime && res.saved_time_remaining < totalDurationSecs - 5) {
+            this.remainingSeconds = res.saved_time_remaining;
+          } else {
+            this.remainingSeconds = totalDurationSecs;
+          }
+
+          // B. Restore Answers (THIS WAS MISSING)
+          if (hasSavedResponses) {
+            res.saved_responses.forEach((savedItem: any) => {
+              // Restore Answer
+              if (savedItem.selected_answer) {
+                this.answers[savedItem.question_id] = savedItem.selected_answer;
+                this.visitedQuestions[savedItem.question_id] = true;
+              }
+              // Restore Review Status
+              if (savedItem.marked_for_review) {
+                this.markedForReview[savedItem.question_id] = true;
+                this.visitedQuestions[savedItem.question_id] = true;
+              }
+            });
+          }
+          this.selectedTabIndex = 0;
+          if (this.sections.length > 0) {
+            this.activeTabId = this.sections[0].id;
+            // Mark first question as visited
+            if (this.sections[0].questions?.[0]) {
+              this.visitedQuestions[this.sections[0].questions[0].id] = true;
+            }
+          }
+          this.isInstructionsVisible = false; // Skip instructions
           this.startTimer();
           this.startAutoSave();
         } else {
@@ -136,9 +167,10 @@ export class TestInterface implements OnInit, OnDestroy {
   startAutoSave() {
     // Save progress every 30 seconds
     this.saveProgressInterval = setInterval(() => {
+      const payload = this.generatePayload();
       if (this.test && this.remainingSeconds > 0) {
-        this.testService.getProgress(this.test.id, this.remainingSeconds).subscribe({
-          next: () => console.log('Auto-saved progress'),
+        this.testService.getProgress(this.test.id, payload).subscribe({
+          next: () => console.log('Auto-saved progress', payload),
           error: (err) => console.error('Auto-save failed', err),
         });
       }
@@ -162,7 +194,40 @@ export class TestInterface implements OnInit, OnDestroy {
       }
     }
   }
+  private generatePayload() {
+    const payload: {
+      test_id: number;
+      user_id: number;
+      remaining_time?: number; // Add this field
+      responses: {
+        question_id: number;
+        selected_answer: string | null;
+        marked_for_review: boolean;
+      }[];
+    } = {
+      test_id: this.test.id,
+      user_id: this.authService.currentUser.value?.id
+        ? Number(this.authService.currentUser.value.id)
+        : 0,
+      remaining_time: this.remainingSeconds, // Include time in payload
+      responses: [],
+    };
 
+    this.sections.forEach((section) => {
+      section.questions.forEach((q: any) => {
+        // Only send questions that have been interacted with to save bandwidth
+        if (this.answers[q.id] || this.markedForReview[q.id]) {
+          payload.responses.push({
+            question_id: q.id,
+            selected_answer: this.answers[q.id] || null,
+            marked_for_review: !!this.markedForReview[q.id],
+          });
+        }
+      });
+    });
+
+    return payload;
+  }
   prevQuestion(section: any) {
     const index = this.currentQuestionIndexes[section.id];
     if (index > 0) {
