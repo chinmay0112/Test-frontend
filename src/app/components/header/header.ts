@@ -1,11 +1,12 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Component, inject, HostListener, OnInit } from '@angular/core';
+import { Component, inject, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { PopoverModule } from 'primeng/popover';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -13,41 +14,13 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header implements OnInit {
+export class Header implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
   isStudyMenuOpen = false; // For mobile toggle
   userMenuItems: MenuItem[] | undefined;
-
+  private notifSub: Subscription | undefined;
   // Mock Notifications
-  notifications = [
-    {
-      id: 1,
-      title: 'New Test Series Added',
-      message: 'UPSC Prelims 2025 Booster Pack is now available.',
-      time: '2 hours ago',
-      icon: 'pi pi-book',
-      color: 'bg-indigo-100 text-indigo-600',
-      read: false,
-    },
-    {
-      id: 2,
-      title: 'Result Announced',
-      message: 'Your result for "History Mock Test 5" has been published.',
-      time: '5 hours ago',
-      icon: 'pi pi-chart-bar',
-      color: 'bg-green-100 text-green-600',
-      read: false,
-    },
-    {
-      id: 3,
-      title: 'System Update',
-      message: 'Platform maintenance scheduled for tonight at 2 AM.',
-      time: '1 day ago',
-      icon: 'pi pi-cog',
-      color: 'bg-orange-100 text-orange-600',
-      read: true,
-    },
-  ];
+  notifications: any[] = [];
 
   get unreadCount() {
     return this.notifications.filter((n) => !n.read).length;
@@ -56,39 +29,21 @@ export class Header implements OnInit {
   constructor(public authService: Auth, private router: Router) {}
 
   ngOnInit() {
-    this.userMenuItems = [
-      {
-        label: 'My Profile',
-        icon: 'pi pi-user',
-        command: () => {
-          this.navigateTo('/app/profile');
-        },
-      },
-      {
-        label: 'My Results',
-        icon: 'pi pi-chart-bar',
-        command: () => {
-          this.navigateTo('/app/results');
-        },
-      },
-      {
-        label: 'Subscription Plans',
-        icon: 'pi pi-star',
-        command: () => {
-          this.navigateTo('/app/prices');
-        },
-      },
-      {
-        separator: true,
-      },
-      {
-        label: 'Logout',
-        icon: 'pi pi-sign-out',
-        command: () => {
-          this.logout();
-        },
-      },
-    ];
+    // 1. Initial Fetch
+    this.fetchNotifications();
+
+    // 2. Optional: Poll every 60 seconds for new notifications
+    // Only if user is logged in
+    this.notifSub = interval(60000).subscribe(() => {
+      if (this.authService.currentUser.value) {
+        // Assuming you have a signal for user
+        this.fetchNotifications();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.notifSub) this.notifSub.unsubscribe();
   }
 
   toggleMobileMenu() {
@@ -115,11 +70,25 @@ export class Header implements OnInit {
     this.closeMobileMenu();
   }
 
+  fetchNotifications() {
+    this.authService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+      },
+      error: (err) => console.error('Failed to load notifications', err),
+    });
+  }
+
   markAsRead() {
-    this.notifications.forEach((n) => (n.read = true));
+    // Optimistic Update: Update UI immediately
+    this.notifications.forEach((n) => (n.is_read = true));
+
+    // Send request to backend
+    this.authService.markNotificationsAsRead().subscribe();
   }
 
   clearNotifications() {
     this.notifications = [];
+    this.authService.clearNotifications().subscribe();
   }
 }

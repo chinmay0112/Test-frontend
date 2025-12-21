@@ -16,6 +16,8 @@ import { finalize, tap } from 'rxjs';
 /* 1) Auth service se sahi cheezein import kari hai:
    - RegisterResponse type ko bhi yahin se laye hai taaki res ka type fix ho. */
 import { Auth, RegisterResponse } from '../services/auth';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 // Password match validator
 export const passwordMatchValidator: ValidatorFn = (
@@ -31,11 +33,21 @@ export const passwordMatchValidator: ValidatorFn = (
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CommonModule, InputOtpModule, FormsModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ToastModule,
+    CommonModule,
+    InputOtpModule,
+    FormsModule,
+  ],
   templateUrl: './registration.html',
   styleUrls: ['./registration.scss'],
+  providers: [MessageService],
 })
 export class Registration {
+  constructor(private messageService: MessageService) {}
+
   // 2) NonNullableFormBuilder -> safer controls (no null)
   private fb = inject(FormBuilder).nonNullable;
   private router = inject(Router);
@@ -57,8 +69,9 @@ export class Registration {
   otpDigits: string = '';
   timeLeft: number = 30;
   showResend: boolean = false;
+  interval: any;
 
-  isRegistrationSuccessful = false;
+  isRegistrationSuccessful = signal(false);
 
   // Form group
   registrationForm: FormGroup = this.fb.group(
@@ -97,16 +110,7 @@ export class Registration {
 
   onSubmit(): void {
     this.loading.set(true);
-    // this.auth.register(this.registrationForm.value).subscribe({
-    //   next: (res) => {
-    //     this.sendOtp();
 
-    //     this.loading.set(false);
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   },
-    // });
     this.sendOtp();
   }
 
@@ -120,15 +124,44 @@ export class Registration {
       .sendOtp(this.registrationForm.value.phone)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((next) => {
-        console.log('OTP sent successfully');
+        console.log('OTP sent successfully', next);
         this.showOtpModal.set(true);
+        this.startTimer();
       });
+  }
+
+  startTimer() {
+    this.timeLeft = 30;
+    this.showResend = false;
+    this.stopTimer();
+    this.interval = setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        this.stopTimer();
+        this.showResend = true;
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
   }
 
   verifyAndCreateAccount(): void {
     const enteredOtp = this.otpDigits;
-    if (enteredOtp.length < 6) return;
+
+    // 1. Basic Validation: Don't send if empty or too short
+    if (!enteredOtp || enteredOtp.length < 6) {
+      return;
+    }
+
     this.loading.set(true);
+    this.serverError.set(null); // Clear previous error messages
+
     const raw = this.registrationForm.getRawValue();
     const payload = {
       first_name: String(raw.first_name).trim(),
@@ -145,32 +178,80 @@ export class Registration {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res: RegisterResponse) => {
-          this.showOtpModal.set(false); // Close OTP Modal
-          this.isRegistrationSuccessful = true;
+          // --- SUCCESS FLOW ---
+          console.log('Registration Successful', res);
+
+          // 1. Close Modal
+          this.showOtpModal.set(false);
+          this.stopTimer();
+
+          // 2. Handle Auto-Login vs Email Verification
           if (res?.token || (res as any)?.access) {
-            // Auto Login
-            this.isRegistrationSuccessful = true;
+            this.isRegistrationSuccessful.set(true);
             this.registrationForm.reset();
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Welcome!',
+              detail: 'Registration successful. Redirecting...',
+              life: 2000,
+            });
+
+            // Redirect after 1.5 seconds so they see the success message
+            setTimeout(() => {
+              this.closeModalAndLogin();
+            }, 1500);
           } else {
-            // Email Verification Required
+            // If backend requires email verification instead of auto-login
             this.verificationEmailSent.set(true);
             this.isEmailSent.set(true);
+            // Also show the success modal so user knows what happened
+            this.isRegistrationSuccessful.set(true);
           }
         },
         error: (err) => {
-          console.error(err);
-          // Handle specific OTP error
-          if (err.error?.otp) {
-            alert('Invalid OTP');
-          } else {
-            this.serverError.set(err.error?.detail || 'Registration failed.');
+          // --- UNSUCCESSFUL FLOW ---
+          console.error('Registration error:', err);
+
+          // 1. Parse the error message
+          let errorMessage = 'Registration failed. Please try again.';
+
+          // Check for specific backend error structures
+          if (err.error) {
+            if (typeof err.error === 'string') errorMessage = err.error;
+            else if (err.error.detail) errorMessage = err.error.detail;
+            else if (err.error.message) errorMessage = err.error.message;
+            // If it's a field specific error array (e.g. Django/DRF)
+            else if (err.error.email) errorMessage = err.error.email[0];
+            else if (err.error.phone) errorMessage = err.error.phone[0];
           }
+
+          // Check specifically for OTP mismatch
+          if (err.error?.otp || errorMessage.toLowerCase().includes('otp')) {
+            errorMessage = 'Incorrect OTP. Please check and try again.';
+          }
+
+          // 2. UX: Clear the OTP input so they can type again immediately
+          this.otpDigits = '';
+
+          // 3. Set the error signal (to show inline in HTML if needed)
+          this.serverError.set(errorMessage);
+
+          // 4. Show a Toast Notification
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Failed',
+            detail: errorMessage,
+            life: 3000,
+          });
+
+          // CRITICAL: We do NOT call this.showOtpModal.set(false).
+          // The modal stays open, allowing the user to click "Resend" or try typing again.
         },
       });
   }
-
   closeModalAndLogin(): void {
-    this.isRegistrationSuccessful = false;
+    this.isRegistrationSuccessful.set(false);
     this.router.navigate(['/login']);
   }
   onGoogleSignUp(): void {

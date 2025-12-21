@@ -197,4 +197,15 @@ export class Auth {
   verifyOtp(phone: string, otp: string) {
     return this.http.post(`${environment.apiUrl}/api/auth/verify-otp/`, { phone, otp });
   }
+  getNotifications() {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/notifications/`);
+  }
+
+  markNotificationsAsRead() {
+    return this.http.post(`${environment.apiUrl}/api/notifications/mark-read/`, {});
+  }
+
+  clearNotifications() {
+    return this.http.delete(`${environment.apiUrl}/api/notifications/clear/`);
+  }
 }

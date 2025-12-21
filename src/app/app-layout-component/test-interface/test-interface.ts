@@ -15,6 +15,7 @@ import { Auth } from '../../services/auth';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonDirective } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-test-interface',
@@ -26,7 +27,9 @@ import { ButtonDirective } from 'primeng/button';
     TabsModule,
     FormsModule,
     RouterLink,
+    RouterLink,
     TableModule,
+    DialogModule,
   ],
   templateUrl: './test-interface.html',
   styleUrl: './test-interface.scss',
@@ -57,6 +60,12 @@ export class TestInterface implements OnInit, OnDestroy {
 
   private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
+
+  // Submit Modal State
+  showSubmitModal = false;
+  isSubmitting = false;
+  testSummary: any[] = [];
+
   getTestbyId(id: number): void {
     this.isLocked = false;
     this.isLoading = true; // Start loading
@@ -240,7 +249,40 @@ export class TestInterface implements OnInit, OnDestroy {
     const firstQ = section?.questions?.[this.currentQuestionIndexes[section.id]];
     if (firstQ) this.visitedQuestions[firstQ.id] = true;
   }
+
+  openSubmitModal() {
+    this.calculateSummary();
+    this.showSubmitModal = true;
+  }
+
+  calculateSummary() {
+    this.testSummary = this.sections.map((section) => {
+      let attempted = 0;
+      let unattempted = 0;
+      let marked = 0;
+
+      section.questions.forEach((q: any) => {
+        const isAnswered = !!this.answers[q.id];
+        const isMarked = !!this.markedForReview[q.id];
+
+        if (isAnswered) attempted++;
+        else unattempted++;
+
+        if (isMarked) marked++;
+      });
+
+      return {
+        name: section.name,
+        total: section.questions.length,
+        attempted,
+        unattempted,
+        marked,
+      };
+    });
+  }
+
   submitTest() {
+    this.isSubmitting = true;
     clearInterval(this.timerInterval);
     clearInterval(this.saveProgressInterval);
     const payload: {
@@ -272,13 +314,17 @@ export class TestInterface implements OnInit, OnDestroy {
     console.log('📦 Sending Payload:', payload);
 
     this.testService.submitTest(this.test.id, payload).subscribe({
-      next: (res) => {
+      next: (res: any) => {
+        this.isSubmitting = false;
+        this.showSubmitModal = false;
         console.log('✅ Test submitted successfully:', res);
         alert('Test submitted successfully!');
         this.testResultService.setResults(res);
-        this.router.navigate([`app/results/${this.test.id}`]);
+        this.router.navigate([`app/results/${res.id}`]);
       },
       error: (err) => {
+        this.isSubmitting = false;
+        this.showSubmitModal = false;
         console.error('❌ Error submitting test:', err);
         alert('Failed to submit test. Please try again.');
       },

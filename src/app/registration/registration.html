@@ -1,7 +1,8 @@
+<p-toast />
 <!-- ========================================== -->
 <!-- 1. MODAL: ACCOUNT CREATED (SUCCESS)        -->
 <!-- ========================================== -->
-@if (isRegistrationSuccessful) {
+@if (isRegistrationSuccessful()) {
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in"
 >
@@ -194,7 +195,7 @@
                   id="firstName"
                   formControlName="first_name"
                   class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-sm font-medium"
-                  placeholder="John"
+                  placeholder="Golu"
                   [class.border-red-300]="f.first_name.touched && f.first_name.invalid"
                 />
               </div>
@@ -213,7 +214,7 @@
                   id="lastName"
                   formControlName="last_name"
                   class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-sm font-medium"
-                  placeholder="Doe"
+                  placeholder="Kumar"
                 />
               </div>
             </div>
@@ -305,12 +306,6 @@
           <p class="text-red-500 text-xs flex items-center mt-1">
             <i class="pi pi-exclamation-circle mr-1"></i> Passwords do not match
           </p>
-          } @if (serverError()) {
-          <div
-            class="bg-red-50 border border-red-100 text-red-600 p-2 rounded-lg text-xs flex items-center"
-          >
-            <i class="pi pi-info-circle mr-2 text-sm"></i> {{ serverError() }}
-          </div>
           }
 
           <!-- Submit Button -->
