@@ -17,6 +17,7 @@ import { interval, Subscription } from 'rxjs';
 export class Header implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
   isStudyMenuOpen = false; // For mobile toggle
+  isDesktopStudyMenuOpen = false; // For desktop hover/click
   userMenuItems: MenuItem[] | undefined;
   private notifSub: Subscription | undefined;
   // Mock Notifications
@@ -29,8 +30,44 @@ export class Header implements OnInit, OnDestroy {
   constructor(public authService: Auth, private router: Router) {}
 
   ngOnInit() {
+    this.userMenuItems = [
+      {
+        label: 'My Profile',
+        icon: 'pi pi-user',
+        command: () => {
+          this.navigateTo('/app/profile');
+        },
+      },
+      {
+        label: 'My Results',
+        icon: 'pi pi-chart-bar',
+        command: () => {
+          this.navigateTo('/app/results');
+        },
+      },
+      {
+        label: 'Subscription Plans',
+        icon: 'pi pi-star',
+        command: () => {
+          this.navigateTo('/app/prices');
+        },
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Logout',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          this.logout();
+        },
+      },
+    ];
+
     // 1. Initial Fetch
-    this.fetchNotifications();
+    if (this.authService.isUserLoggedIn()) {
+      this.fetchNotifications();
+    }
 
     // 2. Optional: Poll every 60 seconds for new notifications
     // Only if user is logged in
@@ -81,7 +118,7 @@ export class Header implements OnInit, OnDestroy {
 
   markAsRead() {
     // Optimistic Update: Update UI immediately
-    this.notifications.forEach((n) => (n.is_read = true));
+    this.notifications.forEach((n) => (n.read = true));
 
     // Send request to backend
     this.authService.markNotificationsAsRead().subscribe();

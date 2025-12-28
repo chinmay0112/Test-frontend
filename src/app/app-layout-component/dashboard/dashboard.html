@@ -13,6 +13,7 @@
       <p class="text-slate-500 text-sm">Welcome back! Here is your latest performance report.</p>
     </div>
     <p-button
+      routerLink="/app/catalog"
       label="Explore Tests"
       icon="pi pi-compass"
       styleClass="p-button-outlined p-button-sm"
@@ -98,10 +99,10 @@
         ></p-chart>
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none pb-8">
           <div class="text-center">
-            <span class="block text-2xl font-bold text-slate-800">{{
-              performanceStats[3]?.value || '0%'
-            }}</span>
-            <span class="text-xs text-slate-400">Correct</span>
+            <span class="block text-2xl font-bold text-slate-800"
+              >{{ performanceStats[3]?.value || '0%' }}%</span
+            >
+            <span class="text-xs text-slate-400">Accuracy</span>
           </div>
         </div>
       </div>

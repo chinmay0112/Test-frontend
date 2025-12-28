@@ -32,3 +32,24 @@
     background: #4f46e5;
   }
 }
+/* Override PrimeNG Tab Styling for a "Pill" Look */
+:host ::ng-deep .transparent-tabs .p-tablist-tab-list {
+  background: transparent !important;
+  border: none !important;
+}
+
+:host ::ng-deep .transparent-tabs .p-tab {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Hide the default ink bar (underline) */
+:host ::ng-deep .transparent-tabs .p-tablist-active-bar {
+  display: none !important;
+}
+
+.bg-pattern {
+  background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+}

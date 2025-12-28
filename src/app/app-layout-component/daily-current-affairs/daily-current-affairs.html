@@ -1,0 +1,263 @@
+<div class="min-h-screen bg-slate-50 font-sans">
+  <div class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between py-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-2 h-8 bg-indigo-600 rounded-full inline-block"></span>
+            Daily Current Affairs
+          </h1>
+          <p class="text-slate-500 text-sm ml-4 mt-1">
+            Stay updated with the latest exam-relevant news.
+          </p>
+        </div>
+
+        <div class="mt-4 md:mt-0 flex gap-3">
+          <button
+            class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center"
+          >
+            <i class="pi pi-filter mr-2"></i> Filter
+          </button>
+          <button
+            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md shadow-indigo-200 transition-all flex items-center"
+          >
+            <i class="pi pi-download mr-2"></i> Download PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="flex overflow-x-auto pb-0 gap-6 no-scrollbar mt-2 border-b border-transparent">
+        <div
+          class="flex flex-col items-center cursor-pointer group pb-3 border-b-2 border-indigo-600 min-w-[4rem]"
+        >
+          <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Today</span>
+          <div
+            class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-700 font-bold text-lg group-hover:bg-indigo-100 transition-colors"
+          >
+            23
+          </div>
+        </div>
+
+        <div
+          *ngFor="let date of [22, 21, 20, 19, 18]"
+          class="flex flex-col items-center cursor-pointer group pb-3 border-b-2 border-transparent hover:border-slate-300 min-w-[4rem]"
+        >
+          <span
+            class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1 group-hover:text-slate-600"
+            >Dec</span
+          >
+          <div
+            class="w-10 h-10 rounded-full bg-transparent flex items-center justify-center text-slate-600 font-medium text-lg group-hover:bg-slate-100 transition-colors"
+          >
+            {{ date }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="lg:col-span-8 space-y-8">
+        <div class="relative group rounded-3xl overflow-hidden shadow-xl cursor-pointer h-[400px]">
+          <img
+            src="https://images.unsplash.com/photo-1526304640151-b5710763d301?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            alt="News"
+          />
+
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent opacity-90"
+          ></div>
+
+          <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+            <span
+              class="inline-block px-3 py-1 bg-rose-500 text-white text-xs font-bold uppercase tracking-wider rounded-full mb-3 shadow-lg"
+            >
+              International
+            </span>
+            <h2
+              class="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight group-hover:text-indigo-200 transition-colors"
+            >
+              India assumes G20 Presidency: What does this mean for the global economy?
+            </h2>
+            <p class="text-slate-300 text-sm md:text-base line-clamp-2 mb-4 max-w-2xl">
+              As India takes over the G20 presidency, the focus shifts to inclusive growth, digital
+              infrastructure, and climate financing for developing nations.
+            </p>
+            <div class="flex items-center gap-4 text-xs text-slate-400 font-medium">
+              <span class="flex items-center"><i class="pi pi-clock mr-1"></i> 2 Hours ago</span>
+              <span class="flex items-center"><i class="pi pi-eye mr-1"></i> 5.2k Reads</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <h3 class="text-lg font-bold text-slate-800">Latest Updates</h3>
+          <div class="h-px bg-slate-200 flex-grow"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group"
+          >
+            <div class="h-48 overflow-hidden relative">
+              <img
+                src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                alt="News"
+              />
+              <div
+                class="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-lg px-2 py-1 text-xs font-bold text-slate-700 shadow-sm"
+              >
+                <i class="pi pi-bookmark text-slate-400 hover:text-indigo-600 cursor-pointer"></i>
+              </div>
+            </div>
+            <div class="p-5 flex-grow flex flex-col">
+              <div class="mb-3">
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md"
+                  >Economy</span
+                >
+              </div>
+              <h4
+                class="text-lg font-bold text-slate-800 mb-2 leading-snug group-hover:text-indigo-600 transition-colors"
+              >
+                RBI announces new repo rate hike by 25 basis points
+              </h4>
+              <p class="text-sm text-slate-500 line-clamp-3 mb-4 flex-grow">
+                The Reserve Bank of India has increased the repo rate to tackle inflation, impacting
+                home loan EMIs and deposit rates across banks.
+              </p>
+              <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center">
+                <span class="text-xs text-slate-400">By Editorial Team</span>
+                <button
+                  class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center"
+                >
+                  Read Full Story <i class="pi pi-arrow-right ml-1 text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group"
+          >
+            <div class="h-48 overflow-hidden relative">
+              <img
+                src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                alt="News"
+              />
+              <div
+                class="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-lg px-2 py-1 text-xs font-bold text-slate-700 shadow-sm"
+              >
+                <i class="pi pi-bookmark text-slate-400 hover:text-indigo-600 cursor-pointer"></i>
+              </div>
+            </div>
+            <div class="p-5 flex-grow flex flex-col">
+              <div class="mb-3">
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md"
+                  >Sports</span
+                >
+              </div>
+              <h4
+                class="text-lg font-bold text-slate-800 mb-2 leading-snug group-hover:text-indigo-600 transition-colors"
+              >
+                National Games 2025: Medal Tally Update
+              </h4>
+              <p class="text-sm text-slate-500 line-clamp-3 mb-4 flex-grow">
+                Services continues to dominate the medal tally with 45 Gold medals, followed closely
+                by Maharashtra in the 37th National Games.
+              </p>
+              <div class="mt-auto pt-4 border-t border-slate-50 flex justify-between items-center">
+                <span class="text-xs text-slate-400">By Sports Desk</span>
+                <button
+                  class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center"
+                >
+                  Read Full Story <i class="pi pi-arrow-right ml-1 text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center pt-4">
+          <button
+            class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-medium rounded-full shadow-sm hover:shadow-md hover:text-indigo-600 transition-all"
+          >
+            Load Previous News
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 space-y-6">
+        <div
+          class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden"
+        >
+          <div
+            class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-xl"
+          ></div>
+
+          <h3 class="text-lg font-bold mb-2 relative z-10">Monthly Capsule</h3>
+          <p class="text-indigo-100 text-sm mb-6 relative z-10">
+            Download the consolidated current affairs PDF for November 2025.
+          </p>
+
+          <button
+            class="w-full py-3 bg-white text-indigo-700 font-bold rounded-xl shadow-md hover:bg-indigo-50 transition-colors flex items-center justify-center relative z-10"
+          >
+            <i class="pi pi-file-pdf mr-2"></i> Download PDF
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+            <i class="pi pi-hashtag text-indigo-600 mr-2"></i> Trending Topics
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span
+              class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs rounded-full cursor-pointer transition-colors"
+              >#G20Summit</span
+            >
+            <span
+              class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs rounded-full cursor-pointer transition-colors"
+              >#Budget2025</span
+            >
+            <span
+              class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs rounded-full cursor-pointer transition-colors"
+              >#CryptoBill</span
+            >
+            <span
+              class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs rounded-full cursor-pointer transition-colors"
+              >#ISRO</span
+            >
+            <span
+              class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs rounded-full cursor-pointer transition-colors"
+              >#ElectionResults</span
+            >
+          </div>
+        </div>
+
+        <div class="bg-indigo-50 rounded-2xl border border-indigo-100 p-5">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-indigo-900">Today's Quick Quiz</h3>
+            <span
+              class="bg-white text-indigo-600 text-[10px] font-bold px-2 py-1 rounded border border-indigo-200"
+              >5 Qs</span
+            >
+          </div>
+          <p class="text-xs text-indigo-700 mb-4">
+            Test your knowledge on today's current affairs.
+          </p>
+          <button
+            class="w-full py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Start Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

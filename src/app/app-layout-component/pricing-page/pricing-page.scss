@@ -15,3 +15,28 @@
     animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
+@keyframes pop-in-elastic {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px); // Start smaller and slightly down
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0); // Overshoot slightly past normal size
+  }
+  80% {
+    transform: scale(0.98); // Bounce back slightly smaller
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1); // Settle at normal size
+  }
+}
+
+// Create the class to apply the animation
+.animate-pop-in {
+  // 0.5s duration, using a springy bezier curve for the elastic feel
+  animation: pop-in-elastic 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  // Ensure it starts invisible before the animation kicks in
+  opacity: 0;
+}

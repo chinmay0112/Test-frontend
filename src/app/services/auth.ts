@@ -184,11 +184,19 @@ export class Auth {
       coupon_code: couponCode,
     });
   }
-  verifyPayment(paymentDetails: any): Observable<{ status: string; message: string }> {
-    return this.http.post<{ status: string; message: string }>(
-      `${environment.apiUrl}/api/payments/verify/`,
-      paymentDetails
-    );
+  verifyCoupon(code: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/api/verify-coupon/`, {
+      code: code,
+      amount: 299, // Send original price context if needed
+    });
+  }
+  // Add couponCode as an optional parameter
+  verifyPayment(paymentData: any, couponCode?: string): Observable<any> {
+    const payload = {
+      ...paymentData,
+      coupon_code: couponCode, // <--- Add this
+    };
+    return this.http.post(`${environment.apiUrl}/api/verify-payment/`, payload);
   }
   sendOtp(phone: string): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/api/auth/send-otp/`, { phone });

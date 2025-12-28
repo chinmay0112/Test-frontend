@@ -1,62 +1,66 @@
 <div class="bg-slate-50 min-h-screen">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col lg:flex-row gap-8">
-      <div class="w-full lg:w-64 flex-shrink-0">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-24">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-slate-800">Filters</h3>
+      <!-- SIDEBAR FILTERS -->
+      <div class="w-full lg:w-72 flex-shrink-0">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-bold text-slate-800 text-lg">Filters</h3>
             <button
               (click)="clearFilters()"
-              class="text-xs text-indigo-600 font-medium hover:underline"
+              class="text-xs text-indigo-600 font-semibold hover:text-indigo-800 transition-colors"
             >
-              Clear
+              Clear All
             </button>
           </div>
 
-          <div class="space-y-3">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-              Exam Category
-            </p>
+          <div class="space-y-4">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Exam Category</p>
 
             <ng-container *ngIf="categoriesLoading">
               <div *ngFor="let i of [1, 2, 3, 4]" class="flex items-center space-x-3 mb-3">
-                <p-skeleton width="1.25rem" height="1.25rem" borderRadius="4px"></p-skeleton>
+                <p-skeleton width="1.25rem" height="1.25rem" borderRadius="6px"></p-skeleton>
                 <p-skeleton width="80%" height="1rem"></p-skeleton>
               </div>
             </ng-container>
 
             <ng-container *ngIf="!categoriesLoading">
               <!-- Search Input -->
-              <div class="mb-3 relative">
-                <i class="pi pi-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+              <div class="relative group">
+                <i
+                  class="pi pi-search absolute left-3 top-3 text-slate-400 text-sm group-focus-within:text-indigo-500 transition-colors"
+                ></i>
                 <input
                   type="text"
                   [(ngModel)]="categorySearch"
-                  placeholder="Search..."
-                  class="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                  placeholder="Search categories..."
+                  class="w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
               </div>
 
               <!-- Scrollable List -->
-              <div class="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+              <div class="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar pt-2">
                 <label
                   *ngFor="let cat of filteredCategories"
-                  class="flex items-center space-x-3 cursor-pointer group"
+                  class="flex items-center space-x-3 cursor-pointer group p-2 rounded-lg hover:bg-slate-50 transition-colors"
                 >
-                  <input
-                    type="checkbox"
-                    [checked]="selectedCategories.has(cat)"
-                    (change)="toggleCategory(cat)"
-                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <span class="text-slate-600 group-hover:text-indigo-600 transition-colors">{{
-                    cat
-                  }}</span>
+                  <div class="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      [checked]="selectedCategories.has(cat)"
+                      (change)="toggleCategory(cat)"
+                      class="peer h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer transition-all"
+                    />
+                  </div>
+                  <span
+                    class="text-sm text-slate-600 font-medium group-hover:text-indigo-700 transition-colors"
+                    >{{ cat }}</span
+                  >
                 </label>
 
                 <div
                   *ngIf="filteredCategories.length === 0"
-                  class="text-xs text-slate-400 text-center py-4"
+                  class="text-sm text-slate-400 text-center py-6"
                 >
                   No categories found
                 </div>
@@ -66,144 +70,160 @@
         </div>
       </div>
 
+      <!-- MAIN CONTENT -->
       <div class="flex-1">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-800">
-            All Test Series
-            <span class="text-slate-400 font-normal text-base ml-2"
-              >({{ filteredTestSeries.length }} Found)</span
-            >
-          </h2>
+        <div class="flex flex-col sm:flex-row justify-between items-baseline mb-8">
+          <h2 class="text-2xl font-bold text-slate-800">Explore Test Series</h2>
+          <span class="text-slate-500 font-medium text-sm mt-2 sm:mt-0"
+            >Showing {{ filteredTestSeries.length }} results</span
+          >
         </div>
 
+        <!-- Error State -->
         <div
           *ngIf="errorMessage"
-          class="flex flex-col items-center justify-center py-20 text-center"
+          class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-red-100 shadow-sm"
         >
-          <i class="pi pi-exclamation-circle text-4xl text-red-500 mb-4"></i>
-          <p class="text-slate-600 mb-4">{{ errorMessage }}</p>
+          <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
+            <i class="pi pi-exclamation-circle text-3xl text-red-500"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 mb-2">Oops! Something went wrong</h3>
+          <p class="text-slate-500 mb-6 max-w-md">{{ errorMessage }}</p>
           <button
             (click)="loadTestSeries()"
-            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
           >
-            Retry
+            Retry Loading
           </button>
         </div>
 
+        <!-- Loading Skeletons -->
         <div
           *ngIf="loading && !errorMessage"
-          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
         >
           <div
             *ngFor="let i of [1, 2, 3, 4, 5, 6]"
-            class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col h-full"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col h-full"
           >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center">
+            <div class="flex items-start justify-between mb-6">
+              <div class="flex items-center w-full">
                 <p-skeleton
-                  width="2.5rem"
-                  height="2.5rem"
-                  borderRadius="0.5rem"
-                  styleClass="mr-3"
+                  width="3rem"
+                  height="3rem"
+                  borderRadius="0.75rem"
+                  styleClass="mr-4"
                 ></p-skeleton>
-                <div>
-                  <p-skeleton width="8rem" height="1.25rem" styleClass="mb-2"></p-skeleton>
-                  <p-skeleton width="4rem" height="0.75rem" borderRadius="1rem"></p-skeleton>
+                <div class="flex-1">
+                  <p-skeleton width="60%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+                  <p-skeleton width="30%" height="1rem" borderRadius="1rem"></p-skeleton>
                 </div>
               </div>
             </div>
-
-            <div class="flex-grow mb-4">
-              <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
-              <p-skeleton width="80%" height="1rem" styleClass="mb-4"></p-skeleton>
-
-              <div class="grid grid-cols-2 gap-2 mt-4">
-                <p-skeleton width="5rem" height="0.75rem"></p-skeleton>
-                <p-skeleton width="6rem" height="0.75rem"></p-skeleton>
-                <p-skeleton width="4rem" height="0.75rem"></p-skeleton>
-              </div>
+            <div class="flex-grow space-y-3 mb-6">
+              <p-skeleton width="100%" height="0.8rem"></p-skeleton>
+              <p-skeleton width="90%" height="0.8rem"></p-skeleton>
+              <p-skeleton width="40%" height="0.8rem"></p-skeleton>
             </div>
-
-            <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-              <p-skeleton width="4rem" height="1rem"></p-skeleton>
-              <p-skeleton width="6rem" height="2rem" borderRadius="0.5rem"></p-skeleton>
+            <div
+              class="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between gap-4"
+            >
+              <p-skeleton width="100%" height="2.5rem" borderRadius="0.5rem"></p-skeleton>
+              <!-- <p-skeleton width="100%" height="2.5rem" borderRadius="0.5rem"></p-skeleton> -->
             </div>
           </div>
         </div>
 
+        <!-- Results Grid -->
         <div
           *ngIf="!loading && !errorMessage"
-          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
         >
           <div
             *ngFor="let series of filteredTestSeries"
-            class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow flex flex-col h-full group overflow-hidden"
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group overflow-hidden relative"
           >
+            <!-- Decorative Top Gradient Line -->
             <div
-              class="p-5 border-b border-slate-50 bg-gradient-to-r from-slate-50 to-white flex items-start justify-between"
-            >
-              <div class="flex items-center">
+              class="h-1.5 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+            ></div>
+
+            <div class="p-6 flex flex-col h-full">
+              <!-- Header -->
+              <div class="flex items-start gap-4 mb-4">
                 <div
-                  class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg mr-3"
+                  class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xl shadow-inner flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
                 >
                   {{ series.name.charAt(0) }}
                 </div>
                 <div>
                   <h3
-                    class="uppercase font-bold text-slate-800 group-hover:text-indigo-600 transition-colors"
+                    class="font-bold text-slate-800 text-lg leading-tight group-hover:text-indigo-600 transition-colors mb-2"
                   >
                     {{ series.name }}
                   </h3>
-                  <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">{{
-                    series.category
-                  }}</span>
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200"
+                  >
+                    {{ series.category }}
+                  </span>
                 </div>
               </div>
-            </div>
 
-            <div class="p-5 flex-grow">
-              <p class="text-sm text-slate-600 mb-4 line-clamp-2">{{ series.description }}</p>
+              <!-- Description -->
+              <p class="text-sm text-slate-600 leading-relaxed mb-6 line-clamp-3 flex-grow">
+                {{ series.description }}
+              </p>
 
-              <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-4">
-                <div class="flex items-center">
-                  <i class="pi pi-file text-slate-400 mr-2"></i> {{ series.total_tests || 20 }} Full
-                  Tests
+              <!-- Stats Grid -->
+              <div class="grid grid-cols-2 gap-3 mb-6">
+                <div
+                  class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3 py-2 rounded-lg"
+                >
+                  <i class="pi pi-file text-indigo-400"></i>
+                  <span>{{ series.total_tests || 20 }} Tests</span>
                 </div>
-                <div class="flex items-center">
-                  <i class="pi pi-clock text-slate-400 mr-2"></i>
-                  {{ series.pattern_type || 'Latest Pattern' }}
+                <div
+                  class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3 py-2 rounded-lg"
+                >
+                  <i class="pi pi-clock text-indigo-400"></i>
+                  <span>{{ series.pattern_type || 'Latest' }}</span>
                 </div>
-                <div class="flex items-center">
-                  <i class="pi pi-language text-slate-400 mr-2"></i>
-                  {{ series.language || 'Eng & Hindi' }}
+                <div
+                  class="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50 px-3 py-2 rounded-lg col-span-2"
+                >
+                  <i class="pi pi-globe text-indigo-400"></i>
+                  <span>{{ series.language || 'English & Hindi' }}</span>
                 </div>
               </div>
-            </div>
 
-            <div class="p-4 bg-slate-50 border-t border-slate-100 grid grid-cols-2 gap-3">
-              <button
-                class="w-full py-2 px-3 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 hover:text-indigo-600 transition-colors"
-              >
-                Free Demo
-              </button>
-
-              <button
-                (click)="viewSeries(series.id)"
-                class="w-full py-2 px-3 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
-              >
-                View Test
-              </button>
+              <!-- Actions -->
+              <div class="mt-auto">
+                <button
+                  (click)="viewSeries(series.id)"
+                  class="w-full py-2.5 px-4 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  View Series
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Empty State -->
         <div
           *ngIf="!loading && !errorMessage && filteredTestSeries.length === 0"
-          class="text-center py-20"
+          class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-dashed border-slate-300"
         >
-          <i class="pi pi-search text-4xl text-slate-300 mb-4"></i>
-          <p class="text-slate-500">No test series found matching your criteria.</p>
-          <button (click)="clearFilters()" class="text-indigo-600 font-medium hover:underline mt-2">
+          <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+            <i class="pi pi-search text-3xl text-slate-400"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-700 mb-2">No Results Found</h3>
+          <p class="text-slate-500 mb-6">We couldn't find any test series matching your filters.</p>
+          <button
+            (click)="clearFilters()"
+            class="text-indigo-600 font-bold hover:text-indigo-800 hover:underline transition-colors"
+          >
             Clear all filters
           </button>
         </div>

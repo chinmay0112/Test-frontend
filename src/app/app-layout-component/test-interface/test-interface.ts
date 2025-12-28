@@ -57,6 +57,9 @@ export class TestInterface implements OnInit, OnDestroy {
   private saveProgressInterval: any;
   isInstructionsVisible = false;
   checked = false;
+  selectedLanguage: string = 'en'; // Default language
+  showMobilePalette = false;
+  showPauseModal = false;
 
   private timerInterval: any;
   currentQuestionIndexes: { [key: number]: number } = {};
@@ -327,6 +330,27 @@ export class TestInterface implements OnInit, OnDestroy {
         this.showSubmitModal = false;
         console.error('❌ Error submitting test:', err);
         alert('Failed to submit test. Please try again.');
+      },
+    });
+  }
+
+  pauseTest() {
+    this.isLoading = true;
+    const payload = this.generatePayload();
+
+    // Using getProgress (or equivalent save endpoint) to save state
+    this.testService.getProgress(this.test.id, payload).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.showPauseModal = false;
+        // Navigate back to dashboard or test list
+        this.router.navigate(['/app/dashboard']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to save progress:', err);
+        alert('Failed to save progress. Please try again.');
+        this.showPauseModal = false;
       },
     });
   }

@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
 import { TestResult } from '../../services/test-result';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-analysis',
-  imports: [CommonModule, TabsModule, FormsModule, TableModule, DialogModule],
+  imports: [CommonModule, TabsModule, FormsModule, TableModule, DialogModule, RouterLink],
   templateUrl: './analysis.html',
   styleUrl: './analysis.scss',
 })
@@ -27,6 +27,8 @@ export class Analysis implements OnInit {
   isAiTyping = false;
   aiInputText = '';
 
+  resultId: string | null = null;
+
   constructor(
     private testResultService: TestResult,
     private cdr: ChangeDetectorRef,
@@ -34,6 +36,7 @@ export class Analysis implements OnInit {
   ) {}
   ngOnInit(): void {
     this.router.params.subscribe((params) => {
+      this.resultId = params['id'];
       this.testResultService.getReportCard(params['id']).subscribe((res) => {
         this.results = res;
         this.responses = res.responses;

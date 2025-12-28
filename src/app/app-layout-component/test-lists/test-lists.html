@@ -1,216 +1,249 @@
-<div class="bg-slate-50 min-h-screen p-4 sm:p-6 md:p-8">
-  <!-- Page Header Card -->
-  <header class="mb-8 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-    <!-- Back Button -->
-    <button
-      (click)="goBack()"
-      class="flex items-center text-sm text-indigo-600 font-semibold hover:text-indigo-800 transition-colors mb-4"
-    >
-      <i class="pi pi-arrow-left mr-2 text-xs"></i>
-      Back to all series
-    </button>
+<div class="bg-slate-50 min-h-screen pb-12">
+  <div
+    class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 pt-8 pb-20 px-4 sm:px-6 lg:px-8 shadow-lg relative overflow-hidden"
+  >
+    <div class="absolute inset-0 opacity-10 bg-pattern"></div>
 
-    @if (testSeries) {
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wider text-indigo-500 mb-1">
-        {{ testSeries.category }}
-      </p>
-      <h1 class="text-4xl font-bold text-slate-800">{{ testSeries.name }}</h1>
-      <p class="text-slate-500 mt-2 max-w-2xl">{{ testSeries.description }}</p>
+    <div class="relative z-10 max-w-5xl mx-auto">
+      <button
+        (click)="goBack()"
+        class="group flex items-center text-sm text-indigo-200 hover:text-white font-medium transition-colors mb-6"
+      >
+        <div
+          class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3 group-hover:bg-white/20 transition-all"
+        >
+          <i class="pi pi-arrow-left text-xs"></i>
+        </div>
+        Back to Series List
+      </button>
 
-      <!-- Overall Progress -->
-      <div class="mt-4 max-w-sm">
-        <div class="flex justify-between text-sm text-slate-500 mb-2">
-          <span>Overall Progress</span>
-          <span class="font-medium">
-            {{ testSeries.testsCompleted }} / {{ testSeries.testsTotal }} Tests
+      @if (testSeries) {
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="flex-1">
+          <span
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 mb-4"
+          >
+            {{ testSeries.category }}
           </span>
+          <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 leading-tight">
+            {{ testSeries.name }}
+          </h1>
+          <p class="text-indigo-200 text-lg max-w-2xl leading-relaxed">
+            {{ testSeries.description }}
+          </p>
         </div>
-        <div class="w-full bg-slate-200 rounded-full h-2">
-          <div
-            class="bg-indigo-600 h-2 rounded-full"
-            [style.width.%]="(testSeries.testsCompleted / (testSeries.testsTotal || 1)) * 100"
-          ></div>
+
+        <div
+          class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center gap-4 min-w-[200px]"
+        >
+          <div class="relative w-16 h-16 flex-shrink-0">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <path
+                class="text-indigo-900"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+              <path
+                class="text-green-400 drop-shadow-md transition-all duration-1000 ease-out"
+                [attr.stroke-dasharray]="
+                  (testSeries.testsCompleted / (testSeries.testsTotal || 1)) * 100 + ', 100'
+                "
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+              />
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center flex-col">
+              <span class="text-sm font-bold text-white"
+                >{{
+                  (testSeries.testsCompleted / (testSeries.testsTotal || 1)) * 100
+                    | number : '1.0-0'
+                }}%</span
+              >
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-indigo-300 uppercase font-bold tracking-wider">Progress</div>
+            <div class="text-white font-medium">
+              {{ testSeries.testsCompleted }} / {{ testSeries.testsTotal }} Tests
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    } @else {
-    <!-- Skeleton Loading for Header -->
-    <div>
-      <p-skeleton width="8rem" height="1rem" class="mb-2"></p-skeleton>
-      <p-skeleton width="60%" height="2.5rem" class="mb-3"></p-skeleton>
-      <p-skeleton width="90%" height="1rem" class="mb-2"></p-skeleton>
-      <p-skeleton width="75%" height="1rem" class="mb-4"></p-skeleton>
-      <div class="mt-4 max-w-sm">
-        <p-skeleton width="100%" height="0.5rem" borderRadius="16px"></p-skeleton>
+      } @else {
+      <div class="animate-pulse space-y-4">
+        <div class="h-4 bg-white/10 rounded w-24"></div>
+        <div class="h-10 bg-white/10 rounded w-1/2"></div>
+        <div class="h-4 bg-white/10 rounded w-3/4"></div>
       </div>
+      }
     </div>
-    }
-  </header>
+  </div>
 
-  <!-- Stage Tabs & Test List -->
-  @if (testSeries) {
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
+    @if (testSeries) { @if (testSeries.stages && testSeries.stages.length > 0) {
 
-  <!-- Check if stages exist -->
-  @if (testSeries.stages && testSeries.stages.length > 0) {
-
-  <div class="mt-6">
-    <p-tabs [value]="testSeries.stages[0].id" class="custom-tabs">
-      <!-- Default to first stage ID -->
-
-      <!-- Tab Headers -->
+    <p-tabs [value]="testSeries.stages[0].id" styleClass="transparent-tabs">
       <p-tablist>
-        @for (stage of testSeries.stages; track stage.id) {
-        <p-tab [value]="stage.id" class="font-medium px-6">
-          {{ stage.name }}
-        </p-tab>
-        }
+        <div class="bg-white p-1.5 inline-flex gap-1 overflow-x-auto max-w-full">
+          @for (stage of testSeries.stages; track stage.id) {
+          <p-tab [value]="stage.id" class="!border-none !bg-transparent">
+            <div
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
+            >
+              {{ stage.name }}
+            </div>
+          </p-tab>
+          }
+        </div>
       </p-tablist>
 
-      <!-- Tab Content -->
-      <p-tabpanels class="bg-transparent p-0 mt-6">
-        @for (stage of testSeries.stages; track stage.id) {
-        <p-tabpanel [value]="stage.id">
-          <div class="space-y-4">
-            <!-- Loop through tests inside THIS stage -->
-            @for (test of stage.tests; track test.id; let i = $index) {
-            <div
-              class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center hover:shadow-md hover:border-indigo-300 transition-all duration-300"
-            >
-              <!-- Icon Column -->
-              <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-                @if (isTestLocked(i)) {
-                <i class="pi pi-lock text-4xl text-slate-400"></i>
-                } @else {
-                <i
-                  class="pi text-4xl"
+      <div class="mt-6">
+        <p-tabpanels class="!p-0 !bg-transparent">
+          @for (stage of testSeries.stages; track stage.id) {
+          <p-tabpanel [value]="stage.id">
+            <div class="grid grid-cols-1 gap-4">
+              @for (test of stage.tests; track test.id; let i = $index) {
+
+              <div
+                class="group relative bg-white rounded-2xl p-5 border transition-all duration-300 flex flex-col sm:flex-row items-center gap-5"
+                [ngClass]="{
+                  'border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-indigo-300':
+                    !isTestLocked(i),
+                  'border-slate-100 bg-slate-50 opacity-80 cursor-not-allowed': isTestLocked(i),
+                  'border-green-200 bg-green-50/30': test.status === 'Completed'
+                }"
+              >
+                <div
+                  class="absolute left-0 top-6 bottom-6 w-1 rounded-r-lg"
                   [ngClass]="{
-                    'text-green-500 pi-check-circle': test.status === 'Completed',
-                    'text-yellow-500 pi-arrow-circle-right': test.status === 'Continue',
-                    'text-indigo-500 pi-play-circle': test.status === 'Not Started'
+                    'bg-slate-300': isTestLocked(i),
+                    'bg-indigo-500': test.status === 'Not Started',
+                    'bg-yellow-500': test.status === 'Continue',
+                    'bg-green-500': test.status === 'Completed'
                   }"
-                ></i>
-                }
-              </div>
+                ></div>
 
-              <!-- Test Details -->
-              <div class="flex-grow text-center md:text-left mb-4 md:mb-0">
-                <div class="flex items-center justify-center md:justify-start space-x-3 mb-1">
-                  <h3 class="text-xl font-bold text-slate-800">{{ test.title }}</h3>
-
-                  <!-- Status Tags -->
+                <div
+                  class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner"
+                  [ngClass]="{
+                    'bg-slate-100 text-slate-400': isTestLocked(i),
+                    'bg-indigo-50 text-indigo-600': test.status === 'Not Started',
+                    'bg-yellow-50 text-yellow-600': test.status === 'Continue',
+                    'bg-green-100 text-green-600': test.status === 'Completed'
+                  }"
+                >
                   @if (isTestLocked(i)) {
-                  <span
-                    class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600"
-                    >Locked</span
-                  >
+                  <i class="pi pi-lock text-xl"></i>
                   } @else if (test.status === 'Completed') {
-                  <span
-                    class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-green-100 text-green-800"
-                    >Completed</span
-                  >
-                  } @else if (test.status === 'Continue') {
-                  <span
-                    class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800"
-                    >In Progress</span
-                  >
+                  <i class="pi pi-check text-2xl font-bold"></i>
                   } @else {
-                  <span
-                    class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800"
-                    >New</span
-                  >
+                  <span class="text-xl font-bold">{{ i + 1 }}</span>
                   }
                 </div>
-                <p class="text-sm text-slate-500">
-                  {{ test.duration_minutes }} Mins | {{ test.number_of_questions }} Questions | Max
-                  Marks: {{ test.marks_correct * test.number_of_questions }}
-                </p>
-              </div>
 
-              <!-- Action Buttons -->
+                <div class="flex-grow text-center sm:text-left">
+                  <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                    <h3
+                      class="text-lg font-bold text-slate-800"
+                      [ngClass]="{ 'text-slate-500': isTestLocked(i) }"
+                    >
+                      {{ test.title }}
+                    </h3>
+                    @if (test.status === 'Continue') {
+                    <span
+                      class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide"
+                      >Resume</span
+                    >
+                    }
+                  </div>
+
+                  <div
+                    class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-4 text-xs font-medium text-slate-500 mt-2"
+                  >
+                    <div class="flex items-center bg-slate-100 px-2 py-1 rounded">
+                      <i class="pi pi-clock mr-1.5 text-slate-400"></i>
+                      {{ test.duration_minutes }} Mins
+                    </div>
+                    <div class="flex items-center bg-slate-100 px-2 py-1 rounded">
+                      <i class="pi pi-list mr-1.5 text-slate-400"></i>
+                      {{ test.number_of_questions }} Qs
+                    </div>
+                    <div class="flex items-center bg-slate-100 px-2 py-1 rounded">
+                      <i class="pi pi-star mr-1.5 text-slate-400"></i>
+                      {{ test.marks_correct * test.number_of_questions }} Marks
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
+                  @if (isTestLocked(i)) {
+                  <button
+                    class="w-full sm:w-auto py-2.5 px-6 bg-white border border-slate-200 text-slate-400 font-medium rounded-xl text-sm flex items-center justify-center cursor-not-allowed"
+                  >
+                    <i class="pi pi-lock mr-2 text-xs"></i> Locked
+                  </button>
+                  } @else if (test.status === 'Completed') {
+                  <button
+                    (click)="navigateToResults(test.resultId)"
+                    class="w-full sm:w-auto py-2.5 px-6 bg-white border border-green-200 text-green-700 font-bold rounded-xl text-sm shadow-sm hover:bg-green-50 hover:border-green-300 transition-all flex items-center justify-center"
+                  >
+                    Analysis <i class="pi pi-arrow-right ml-2 text-xs"></i>
+                  </button>
+                  } @else {
+                  <button
+                    (click)="navigateToTest(test.id)"
+                    class="w-full sm:w-auto py-2.5 px-6 font-bold rounded-xl text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center text-white"
+                    [ngClass]="
+                      test.status === 'Continue'
+                        ? 'bg-yellow-500 hover:bg-yellow-600'
+                        : 'bg-indigo-600 hover:bg-indigo-700'
+                    "
+                  >
+                    {{ test.status === 'Continue' ? 'Resume Test' : 'Start Now' }}
+                  </button>
+                  }
+                </div>
+              </div>
+              } @if (stage.tests?.length === 0) {
               <div
-                class="flex-shrink-0 flex items-center space-x-3 w-full md:w-auto justify-center md:justify-end"
+                class="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-200"
               >
-                @if (isTestLocked(i)) {
-                <button
-                  class="py-2 px-4 text-white font-semibold rounded-lg flex items-center text-sm bg-slate-500 hover:bg-slate-600 transition-colors"
-                  (click)="handleLockClick(test.id)"
+                <div
+                  class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3"
                 >
-                  <i class="pi pi-lock mr-2 text-xs"></i> Unlock
-                </button>
-                } @else if (test.status === 'Completed') {
-                <button
-                  class="py-2 px-4 border border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition-colors text-sm flex items-center"
-                  (click)="navigateToResults(test.resultId)"
-                >
-                  <i class="pi pi-chart-bar mr-2 text-xs"></i> View Results
-                </button>
-                <!-- <button
-                  class="py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors text-sm flex items-center"
-                  (click)="navigateToTest(test.id)"
-                >
-                  <i class="pi pi-refresh mr-2 text-xs"></i> Retake
-                </button> -->
-                } @else {
-                <button
-                  class="py-2 px-4 text-white font-semibold rounded-lg transition-colors flex items-center text-sm"
-                  [ngClass]="
-                    test.status === 'Continue'
-                      ? 'bg-yellow-500 hover:bg-yellow-600'
-                      : 'bg-indigo-600 hover:bg-indigo-700'
-                  "
-                  (click)="navigateToTest(test.id)"
-                >
-                  <i
-                    class="pi mr-2 text-xs"
-                    [ngClass]="test.status === 'Continue' ? 'pi-arrow-right' : 'pi-play'"
-                  ></i>
-                  {{ test.status === 'Continue' ? 'Continue' : 'Start Test' }}
-                </button>
-                }
+                  <i class="pi pi-folder-open text-slate-300 text-2xl"></i>
+                </div>
+                <p class="text-slate-500 font-medium">No tests available in this section yet.</p>
               </div>
+              }
             </div>
-            }
-
-            <!-- Empty State for Stage -->
-            <!-- FIX: Added safe navigation operator ?.length -->
-            @if (stage.tests?.length === 0) {
-            <div
-              class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed"
-            >
-              <p class="text-slate-400">No tests available in {{ stage.name }} yet.</p>
-            </div>
-            }
-          </div>
-        </p-tabpanel>
-        }
-      </p-tabpanels>
+          </p-tabpanel>
+          }
+        </p-tabpanels>
+      </div>
     </p-tabs>
-  </div>
 
-  } @else {
-  <!-- Fallback if no stages (or flat structure) -->
-  <div class="text-center py-10">
-    <p class="text-slate-500">No test stages found for this series.</p>
-  </div>
-  } } @else {
-  <!-- Skeleton List Loading -->
-  <div class="mt-10 space-y-4">
-    <p-skeleton width="12rem" height="2rem" class="mb-6"></p-skeleton>
-    @for (i of [1, 2, 3]; track i) {
-    <div
-      class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row items-center"
-    >
-      <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-        <p-skeleton shape="circle" size="3rem"></p-skeleton>
+    } @else {
+    <div class="bg-white rounded-xl p-8 text-center shadow-sm">
+      <p class="text-slate-500">No content available.</p>
+    </div>
+    } } @else {
+    <div class="space-y-4">
+      @for (i of [1,2,3]; track i) {
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 flex items-center gap-4">
+        <p-skeleton width="4rem" height="4rem" borderRadius="12px"></p-skeleton>
+        <div class="flex-1">
+          <p-skeleton width="40%" height="1.5rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="20%" height="1rem"></p-skeleton>
+        </div>
+        <p-skeleton width="8rem" height="2.5rem" borderRadius="8px"></p-skeleton>
       </div>
-      <div class="flex-grow w-full mb-4 md:mb-0">
-        <p-skeleton width="60%" height="1.5rem" class="mb-2"></p-skeleton
-        ><p-skeleton width="40%" height="1rem"></p-skeleton>
-      </div>
-      <div class="flex-shrink-0"><p-skeleton width="120px" height="2.5rem"></p-skeleton></div>
+      }
     </div>
     }
   </div>
-  }
 </div>

@@ -11,6 +11,7 @@ import { CompleteProfile } from './pages/complete-profile/complete-profile';
 import { Catalog } from './app-layout-component/catalog/catalog';
 import { Analysis } from './app-layout-component/analysis/analysis';
 import { ComingSoon } from './app-layout-component/coming-soon/coming-soon';
+import { DailyCurrentAffairs } from './app-layout-component/daily-current-affairs/daily-current-affairs';
 
 export const AUTHENTICATED_ROUTES: Routes = [
   {
@@ -27,7 +28,7 @@ export const AUTHENTICATED_ROUTES: Routes = [
       { path: 'results/:id', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
       { path: 'catalog', component: Catalog },
-
+      { path: 'daily-current-affairs', component: DailyCurrentAffairs },
       // { path: 'analysis', component: AnalysisComponent },
 
       // Default route for '/app' is to redirect to the dashboard

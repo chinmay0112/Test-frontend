@@ -30,7 +30,11 @@
         </a>
 
         <!-- Study Material Dropdown (Desktop Hover) -->
-        <div class="relative group cursor-pointer h-16 flex items-center">
+        <div
+          class="relative group cursor-pointer h-16 flex items-center"
+          (mouseenter)="isDesktopStudyMenuOpen = true"
+          (mouseleave)="isDesktopStudyMenuOpen = false"
+        >
           <button
             class="hover:text-indigo-600 transition-colors flex items-center gap-1 focus:outline-none"
           >
@@ -39,23 +43,27 @@
 
           <!-- Dropdown Body -->
           <div
-            class="absolute top-14 left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl hidden group-hover:block animate-fade-in pt-2"
+            class="absolute top-14 left-0 w-56 bg-white border border-slate-100 shadow-xl rounded-xl animate-fade-in pt-2"
+            [class.hidden]="!isDesktopStudyMenuOpen"
           >
             <div class="flex flex-col py-2">
               <a
                 routerLink="/app/coming-soon"
+                (click)="isDesktopStudyMenuOpen = false"
                 class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
               >
                 <i class="pi pi-file text-slate-400"></i> Previous Papers
               </a>
               <a
-                routerLink="/app/coming-soon"
+                routerLink="/app/daily-current-affairs"
+                (click)="isDesktopStudyMenuOpen = false"
                 class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
               >
                 <i class="pi pi-globe text-slate-400"></i> Current Affairs
               </a>
               <a
                 routerLink="/app/coming-soon"
+                (click)="isDesktopStudyMenuOpen = false"
                 class="px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2"
               >
                 <i class="pi pi-bolt text-slate-400"></i> Daily Quiz
@@ -112,7 +120,7 @@
       <!-- 1. Gamification (Streak) - Hidden on tiny screens -->
       @if (authService.currentUser | async; as user) {
       <div
-        class="flex items-center bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 cursor-help"
+        class="hidden md:flex items-center bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-100 cursor-help"
         title="{{ user['streak'] }} Day Study Streak"
       >
         <img class="h-[20px] object-cover" src="assets/images/streak-img.png" alt="" />
@@ -177,8 +185,8 @@
         </div>
       </p-popover>
 
-      <!-- 3. Profile Dropdown -->
-      <div class="relative">
+      <!-- 3. Profile Dropdown (Hidden on Mobile) -->
+      <div class="hidden md:block relative">
         @if (authService.currentUser | async; as user) {
         <button
           type="button"
@@ -191,14 +199,14 @@
           >
             {{ user['first_name'] ? user['first_name'][0].toUpperCase() : 'U' }}
           </div>
-          <!-- Name (Hidden on Mobile) -->
-          <div class="hidden md:block text-left">
+          <!-- Name -->
+          <div class="text-left">
             <p class="text-xs font-bold text-slate-700 leading-none">{{ user['first_name'] }}</p>
             <p class="text-[10px] text-slate-500 leading-none mt-1" *ngIf="user.is_pro_active">
               PRO Member
             </p>
           </div>
-          <i class="pi pi-angle-down text-xs text-slate-400 hidden md:block"></i>
+          <i class="pi pi-angle-down text-xs text-slate-400"></i>
         </button>
         } @else {
         <!-- Skeleton for Avatar loading -->
@@ -248,6 +256,30 @@
     <div class="flex flex-col p-4 space-y-2">
       @if (authService.isLoggedIn$ | async) {
 
+      <!-- User Profile Header (Mobile) -->
+      @if(authService.currentUser | async; as user){
+      <div class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl mb-2">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold"
+          >
+            {{ user['first_name'] ? user['first_name'][0].toUpperCase() : 'U' }}
+          </div>
+          <div>
+            <p class="font-bold text-slate-800">{{ user['first_name'] }}</p>
+            <p class="text-xs text-slate-500">{{ user['email'] }}</p>
+          </div>
+        </div>
+        <!-- Mobile Streak -->
+        <div
+          class="flex items-center gap-1 bg-white px-2 py-1 rounded-lg border border-orange-100 shadow-sm"
+        >
+          <img class="h-[16px] object-cover" src="assets/images/streak-img.png" alt="" />
+          <span class="text-xs font-bold text-orange-600">{{ user['streak'] }}</span>
+        </div>
+      </div>
+      }
+
       <!-- Mobile Subscription Status -->
       @if(authService.currentUser | async; as user){
       <div class="px-4 py-2">
@@ -269,6 +301,7 @@
         }
       </div>
       }
+
       <a
         routerLink="/app/dashboard"
         (click)="closeMobileMenu()"
@@ -277,6 +310,25 @@
       >
         <i class="pi pi-home mr-3 text-lg"></i> Dashboard
       </a>
+
+      <!-- New Profile Links -->
+      <a
+        routerLink="/app/profile"
+        (click)="closeMobileMenu()"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center"
+      >
+        <i class="pi pi-user mr-3 text-lg"></i> My Profile
+      </a>
+      <a
+        routerLink="/app/results"
+        (click)="closeMobileMenu()"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center"
+      >
+        <i class="pi pi-chart-bar mr-3 text-lg"></i> My Results
+      </a>
+
       <a
         routerLink="/app/catalog"
         (click)="closeMobileMenu()"
@@ -306,7 +358,7 @@
             >Previous Papers</a
           >
           <a
-            routerLink="/app/coming-soon"
+            routerLink="/app/daily-current-affairs"
             (click)="closeMobileMenu()"
             class="block px-4 py-2 text-sm text-slate-500 hover:text-indigo-600"
             >Current Affairs</a
@@ -320,6 +372,14 @@
         </div>
         }
       </div>
+
+      <!-- Logout Button -->
+      <button
+        (click)="logout()"
+        class="px-4 py-3 rounded-xl font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center w-full text-left"
+      >
+        <i class="pi pi-sign-out mr-3 text-lg"></i> Logout
+      </button>
 
       } @else {
       <!-- Mobile Logged Out Links -->

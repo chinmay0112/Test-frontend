@@ -44,10 +44,9 @@
       Exam Instructions
     </h2>
     <div class="p-3 flex justify-end">
-      <select class="text-sm" name="" id="">
-        <option value="">Select Language</option>
-        <option value="">English</option>
-        <!-- <option value="">Hindi</option> -->
+      <select class="text-sm" [(ngModel)]="selectedLanguage" name="language">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
       </select>
     </div>
     <p class="my-1 px-2 text-red-500 text-xl font-semibold">
@@ -114,12 +113,30 @@
   </div>
   } @else if (sections.length > 0) {
   <!-- Header -->
-  <div class="p-4 flex justify-between items-center bg-[#4c8ccb] text-white">
-    <h2 class="font-semibold">{{ test?.title }}</h2>
-    <div class="flex items-center">
+  <div
+    class="p-3 sm:p-4 flex flex-wrap justify-between items-center gap-y-2 bg-[#4c8ccb] text-white"
+  >
+    <h2 class="font-semibold text-sm sm:text-base md:text-lg truncate max-w-[200px] sm:max-w-md">
+      {{ test?.title }}
+    </h2>
+    <div class="flex items-center ml-auto">
+      <button
+        (click)="showPauseModal = true"
+        class="flex justify-center items-center mr-2 focus:outline-none border p-1.5 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out rounded-lg"
+        title="Pause Test"
+      >
+        <i class="pi pi-pause" style="font-size: 1rem"></i>
+      </button>
+      <button
+        (click)="showMobilePalette = !showMobilePalette"
+        class="md:hidden flex justify-center items-center mr-2 focus:outline-none border p-1.5 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out rounded-lg"
+        title="Toggle Question Palette"
+      >
+        <i class="pi pi-th-large" style="font-size: 1rem"></i>
+      </button>
       <button
         (click)="toggleFullScreen()"
-        class="flex justify-center items-center mr-3 focus:outline-none border p-2 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out"
+        class="flex justify-center items-center mr-2 sm:mr-3 focus:outline-none border p-1.5 sm:p-2 hover:bg-white hover:text-[#4c8ccb] transition duration-300 ease-in-out rounded-lg"
         title="Toggle Full Screen"
       >
         <i
@@ -132,9 +149,24 @@
           style="font-size: 1.2rem"
         ></i>
       </button>
-      <p class="mx-3 font-semibold">{{ formattedTime }} min</p>
+      <select
+        [(ngModel)]="selectedLanguage"
+        class="mr-2 sm:mr-3 bg-white/20 text-white border-none rounded px-2 py-1 text-xs sm:text-sm focus:ring-2 focus:ring-white/50 cursor-pointer w-20 sm:w-24"
+      >
+        <option value="en" class="text-slate-800">English</option>
+        <option value="hi" class="text-slate-800">Hindi</option>
+      </select>
+      <div class="flex items-center bg-white/10 rounded px-2 py-1">
+        <i class="pi pi-clock mr-1.5 text-xs sm:text-sm"></i>
+        <p class="font-mono font-bold text-sm sm:text-base">{{ formattedTime }}</p>
+      </div>
+
       @if (authService.currentUser | async; as user) {
-      <p class="capitalize">{{ user['first_name'] }} {{ user['last_name'] }}</p>
+      <div class="hidden md:block border-l border-white/20 ml-3 pl-3">
+        <p class="capitalize text-sm font-medium">
+          {{ user['first_name'] }} {{ user['last_name'] }}
+        </p>
+      </div>
       }
     </div>
   </div>
@@ -151,11 +183,14 @@
       <p-tabpanel [value]="section.id">
         <div class="grid grid-cols-12 gap-2 p-4">
           <!-- Left: Question Display -->
-          <div class="col-span-12 md:col-span-7 lg:col-span-9">
+          <div class="col-span-12 md:col-span-7 xl:col-span-9">
             @if (getCurrentQuestion(section); as q) {
 
             <h3 class="font-semibold mb-2 min-h-[60px]">
-              Q{{ currentQuestionIndexes[section.id] + 1 }}. {{ q.question_text }}
+              Q{{ currentQuestionIndexes[section.id] + 1 }}.
+              {{
+                selectedLanguage === 'hi' ? q.question_text_hi || q.question_text : q.question_text
+              }}
             </h3>
             <div class="space-y-2 mt-2 h-[50vh]">
               <label class="block" *ngFor="let opt of ['A', 'B', 'C', 'D']">
@@ -165,7 +200,12 @@
                   [(ngModel)]="answers[q.id]"
                   [value]="opt"
                 />
-                {{ opt }}. {{ q['option_' + opt.toLowerCase()] }}
+                {{ opt }}.
+                {{
+                  selectedLanguage === 'hi'
+                    ? q['option_' + opt.toLowerCase() + '_hi'] || q['option_' + opt.toLowerCase()]
+                    : q['option_' + opt.toLowerCase()]
+                }}
               </label>
             </div>
 
@@ -197,9 +237,23 @@
           </div>
 
           <!-- Right: Palette for this section -->
-          <div class="col-span-12 md:col-span-5 lg:col-span-3">
+          <div
+            class="md:col-span-5 xl:col-span-3 transition-transform duration-300 ease-in-out fixed inset-0 z-50 bg-white md:static md:bg-transparent md:z-auto"
+            [ngClass]="showMobilePalette ? 'translate-x-0' : 'translate-x-full md:translate-x-0'"
+          >
             <div class="bg-[#fafafb] p-4 h-full flex flex-col">
-              <h4 class="font-semibold mb-2">Question Palette</h4>
+              <!-- Mobile Header with Close Button -->
+              <div class="md:hidden flex justify-between items-center mb-4 pb-2 border-b">
+                <h4 class="font-bold text-lg">Question Palette</h4>
+                <button
+                  (click)="showMobilePalette = false"
+                  class="p-2 bg-slate-100 rounded-full hover:bg-slate-200"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+
+              <h4 class="font-semibold mb-2 hidden md:block">Question Palette</h4>
               <div class="flex-grow overflow-y-auto mb-4">
                 <div class="grid grid-cols-5 gap-2">
                   @for (q of section.questions; track $index) {
@@ -218,7 +272,7 @@
                       'bg-[#d5d2d2]':
                         !markedForReview[q.id] && !answers[q.id] && !visitedQuestions[q.id]
                     }"
-                    (click)="jumpToQuestion(section, $index)"
+                    (click)="jumpToQuestion(section, $index); showMobilePalette = false"
                   >
                     {{ $index + 1 }}
                   </button>
@@ -315,5 +369,34 @@
       @if (isSubmitting) {
       <i class="pi pi-spin pi-spinner"></i> Submitting... } @else { Submit Test }
     </button>
+  </div>
+</p-dialog>
+
+<!-- Pause Confirmation Modal -->
+<p-dialog
+  [(visible)]="showPauseModal"
+  [modal]="true"
+  header="Pause Test"
+  [style]="{ width: '400px' }"
+>
+  <div class="p-4">
+    <p class="text-slate-600 mb-6">
+      Are you sure you want to pause? Your progress will be saved, and you can resume this test
+      later from your dashboard.
+    </p>
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="showPauseModal = false"
+        class="px-4 py-2 text-slate-500 hover:text-slate-700 font-medium transition-colors"
+      >
+        Resume Test
+      </button>
+      <button
+        (click)="pauseTest()"
+        class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-colors"
+      >
+        Pause & Exit
+      </button>
+    </div>
   </div>
 </p-dialog>
