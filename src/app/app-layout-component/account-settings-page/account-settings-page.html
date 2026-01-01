@@ -1,4 +1,5 @@
 <!-- This component assumes it's rendered inside your main app layout -->
+<p-toast></p-toast>
 <div class="bg-slate-50 min-h-screen p-4 sm:p-6 md:p-8">
   <div class="max-w-6xl mx-auto">
     <!-- Page Header -->
@@ -97,17 +98,68 @@
               </div>
               <!-- Email (Read-only) -->
               <div class="mb-2">
-                <label for="email" class="block text-sm font-medium text-slate-600 mb-2"
-                  >Email Address</label
-                >
-                <input
-                  id="email"
-                  type="email"
-                  pInputText
-                  formControlName="email"
-                  class="w-full"
-                  [readOnly]="true"
-                />
+                <div class="flex justify-between items-center mb-2">
+                  <label for="email" class="block text-sm font-medium text-slate-600">
+                    Email Address
+                  </label>
+
+                  @if (user['is_email_verified']) {
+                  <span
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm"
+                  >
+                    <i class="pi pi-verified text-emerald-600"></i>
+                    Verified
+                  </span>
+                  } @else {
+                  <button
+                    type="button"
+                    (click)="requestVerification()"
+                    [disabled]="verificationSent || verificationLoading"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:bg-amber-100 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group"
+                  >
+                    @if (verificationLoading) {
+                    <i class="pi pi-spin pi-spinner"></i>
+                    } @else if (verificationSent) {
+                    <i class="pi pi-check"></i>
+                    } @else {
+                    <i
+                      class="pi pi-exclamation-circle text-amber-600 group-hover:text-amber-800"
+                    ></i>
+                    }
+
+                    {{ verificationSent ? 'Link Sent' : 'Verify Now' }}
+                  </button>
+                  }
+                </div>
+
+                <div class="relative">
+                  <input
+                    id="email"
+                    type="email"
+                    pInputText
+                    formControlName="email"
+                    class="w-full !bg-slate-50 text-slate-500"
+                    [ngClass]="{
+                      'border-amber-300 ring-1 ring-amber-100':
+                        !user['is_email_verified'] && !verificationSent
+                    }"
+                    [readOnly]="true"
+                  />
+                  <i
+                    class="pi pi-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
+                  ></i>
+                </div>
+
+                @if (!user['is_email_verified']) { @if (verificationSent) {
+                <p class="text-xs text-emerald-600 mt-1.5 flex items-center gap-1 animate-fade-in">
+                  <i class="pi pi-send text-[10px]"></i>
+                  Link sent! Please check your inbox (and spam folder).
+                </p>
+                } @else {
+                <p class="text-xs text-amber-600 mt-1.5">
+                  Your email is unverified. Secure your account to prevent lockout.
+                </p>
+                } }
               </div>
               <!-- Phone -->
               <div class="mb-2">

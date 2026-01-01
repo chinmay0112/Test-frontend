@@ -24,6 +24,10 @@ export const passwordMatchValidator: ValidatorFn = (
     : null;
 };
 import { SkeletonModule } from 'primeng/skeleton';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-account-settings-page',
@@ -34,7 +38,9 @@ import { SkeletonModule } from 'primeng/skeleton';
     ReactiveFormsModule,
     InputTextModule,
     SkeletonModule,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './account-settings-page.html',
   styleUrl: './account-settings-page.scss',
 })
@@ -42,8 +48,15 @@ export class AccountSettingsPage {
   activeTab = 'profile'; // Default tab
   profileForm: FormGroup;
   passwordForm: FormGroup;
-
-  constructor(private fb: FormBuilder, private router: Router, public authService: Auth) {
+  verificationLoading = false;
+  verificationSent = false;
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    public authService: Auth,
+    private messageService: MessageService,
+    private http: HttpClient
+  ) {
     // --- Profile Form ---
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -124,5 +137,33 @@ export class AccountSettingsPage {
     } else {
       this.passwordForm.markAllAsTouched();
     }
+  }
+  requestVerification() {
+    this.verificationLoading = true;
+
+    this.http.post(`${environment.apiUrl}/api/auth/request-verification/`, {}).subscribe({
+      next: (res: any) => {
+        this.verificationLoading = false;
+        this.verificationSent = true;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Verification Sent',
+          detail: 'Check your email inbox for the verification link.',
+        });
+
+        // Optional: Reset button after 30 seconds to allow retry
+        setTimeout(() => (this.verificationSent = false), 30000);
+      },
+      error: (err) => {
+        this.verificationLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Could not send verification email. Try again later.',
+        });
+        console.error(err);
+      },
+    });
   }
 }

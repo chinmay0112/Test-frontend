@@ -23,6 +23,7 @@ export const routes: Routes = [
   { path: 'app/prices', component: PricingPage },
   { path: 'privacy-policy', component: PrivacyPolicy },
   { path: 'terms-of-service', component: TermsOfService },
+
   {
     path: 'app',
 

@@ -1,0 +1,21 @@
+.floating-table {
+  border-collapse: separate;
+  border-spacing: 0 1rem;
+
+  ::ng-deep .p-datatable-wrapper {
+    background: transparent;
+  }
+
+  ::ng-deep .p-datatable-header,
+  ::ng-deep .p-datatable-thead > tr > th,
+  ::ng-deep .p-datatable-footer {
+    background: transparent;
+    border: none;
+  }
+
+  ::ng-deep .p-datatable-tbody > tr {
+    // background: transparent !important; // Removed to allow skeleton bg
+    border: none;
+    transition: all 0.3s ease;
+  }
+}

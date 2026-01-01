@@ -105,7 +105,7 @@
         }@else {
         <button
           routerLink="/app/prices"
-          class="premium-btn px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"
+          class="premium-btn px-3 py-2 rounded-lg text-xs font-bold shadow-sm"
         >
           Our Plans
         </button>
@@ -129,12 +129,11 @@
       }
 
       <!-- 2. Notifications -->
-      <button
+      <!-- <button
         (click)="op.toggle($event)"
         class="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors focus:outline-none"
       >
         <i class="pi pi-bell text-xl"></i>
-        <!-- Red Dot -->
         @if(unreadCount > 0){
         <span
           class="absolute top-1.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
@@ -172,7 +171,7 @@
                 ></span
                 >}
               </p>
-              <p class="text-xs text-slate-500 line-clamp-2 leading-snug">{{ notif.message }}</p>
+              <p class="text-xs text-slate-500 leading-snug">{{ notif.message }}</p>
               <p class="text-[10px] text-slate-400 mt-1">{{ notif.time }}</p>
             </div>
           </div>
@@ -183,7 +182,7 @@
           </div>
           }
         </div>
-      </p-popover>
+      </p-popover> -->
 
       <!-- 3. Profile Dropdown (Hidden on Mobile) -->
       <div class="hidden md:block relative">
@@ -321,7 +320,7 @@
         <i class="pi pi-user mr-3 text-lg"></i> My Profile
       </a>
       <a
-        routerLink="/app/results"
+        routerLink="/app/all-results"
         (click)="closeMobileMenu()"
         routerLinkActive="bg-indigo-50 text-indigo-700"
         class="px-4 py-3 rounded-xl font-medium text-slate-600 hover:bg-slate-50 transition-colors flex items-center"

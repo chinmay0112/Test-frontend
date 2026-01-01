@@ -187,7 +187,12 @@
         </div>
 
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-          <p-table [value]="recentActivity" styleClass="p-datatable-sm custom-table">
+          <p-table
+            [scrollable]="true"
+            scrollHeight="250px"
+            [value]="recentActivity"
+            styleClass="p-datatable-sm custom-table"
+          >
             <ng-template pTemplate="header">
               <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
                 <th class="p-4 font-semibold">Test Name</th>
@@ -260,6 +265,7 @@
         <button
           pButton
           icon="pi pi-plus"
+          routerLink="/app/catalog"
           class="p-button-rounded p-button-text p-button-sm"
         ></button>
       </div>

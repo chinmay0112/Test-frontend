@@ -42,7 +42,7 @@ export class Header implements OnInit, OnDestroy {
         label: 'My Results',
         icon: 'pi pi-chart-bar',
         command: () => {
-          this.navigateTo('/app/results');
+          this.navigateTo('/app/all-results');
         },
       },
       {
@@ -65,16 +65,16 @@ export class Header implements OnInit, OnDestroy {
     ];
 
     // 1. Initial Fetch
-    if (this.authService.isUserLoggedIn()) {
-      this.fetchNotifications();
-    }
+    // if (this.authService.isUserLoggedIn()) {
+    //   this.fetchNotifications();
+    // }
 
     // 2. Optional: Poll every 60 seconds for new notifications
     // Only if user is logged in
     this.notifSub = interval(60000).subscribe(() => {
       if (this.authService.currentUser.value) {
         // Assuming you have a signal for user
-        this.fetchNotifications();
+        // this.fetchNotifications();
       }
     });
   }
@@ -110,7 +110,12 @@ export class Header implements OnInit, OnDestroy {
   fetchNotifications() {
     this.authService.getNotifications().subscribe({
       next: (data) => {
-        this.notifications = data;
+        // FIX: Wrap in setTimeout to push update to the next tick
+        setTimeout(() => {
+          this.notifications = data;
+          // Optional: If you still have issues, you can trigger detection here specifically
+          // this.cdRef.markForCheck();
+        }, 0);
       },
       error: (err) => console.error('Failed to load notifications', err),
     });

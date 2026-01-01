@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -26,5 +26,19 @@ export class TestService {
   }
   getExamNames() {
     return this.http.get(`${environment.apiUrl}/api/exam-names/`);
+  }
+  getTestHistory(params: any = {}) {
+    let httpParams = new HttpParams();
+
+    if (params.search) httpParams = httpParams.set('search', params.search);
+    if (params.category)
+      httpParams = httpParams.set('test__test_series__category__name', params.category);
+
+    return this.http.get(`${environment.apiUrl}/api/history/`, { params: httpParams });
+  }
+
+  // 2. Fetch the Top Cards Data
+  getHistoryStats() {
+    return this.http.get(`${environment.apiUrl}/api/history/stats/`);
   }
 }

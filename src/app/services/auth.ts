@@ -196,7 +196,7 @@ export class Auth {
       ...paymentData,
       coupon_code: couponCode, // <--- Add this
     };
-    return this.http.post(`${environment.apiUrl}/api/verify-payment/`, payload);
+    return this.http.post(`${environment.apiUrl}/api/payments/verify/`, payload);
   }
   sendOtp(phone: string): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/api/auth/send-otp/`, { phone });
