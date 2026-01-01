@@ -12,6 +12,7 @@ import { GoogleCallback } from './pages/google-callback/google-callback';
 import { PrivacyPolicy } from './privacy-policy/privacy-policy';
 import { PricingPage } from './app-layout-component/pricing-page/pricing-page';
 import { TermsOfService } from './terms-of-service/terms-of-service';
+import { VerifyEmail } from './pages/verify-email/verify-email';
 
 export const routes: Routes = [
   { path: 'home', component: Home },
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'app/prices', component: PricingPage },
   { path: 'privacy-policy', component: PrivacyPolicy },
   { path: 'terms-of-service', component: TermsOfService },
+  { path: 'app/verify-email', component: VerifyEmail },
 
   {
     path: 'app',
