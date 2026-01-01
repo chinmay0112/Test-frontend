@@ -24,7 +24,6 @@ export const AUTHENTICATED_ROUTES: Routes = [
       // { path: 'my-tests', component: MyTestSeries },
       { path: 'profile', component: AccountSettingsPage },
       { path: 'tests', component: TestLists },
-      { path: 'verify-email', component: VerifyEmail },
       { path: 'test-series/:id', component: TestLists },
       { path: 'results/:id', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
