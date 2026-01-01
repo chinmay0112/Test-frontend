@@ -23,11 +23,14 @@
             shape="circle"
             styleClass="mr-4 border-2 border-white ring-2 ring-indigo-300"
           ></p-avatar>
-          <div>
-            <h3 class="font-bold text-lg text-slate-800">
+          <div class="min-w-0 flex-1">
+            <h3
+              class="font-bold text-lg text-slate-800 truncate"
+              title="{{ user['first_name'] }} {{ user['last_name'] }}"
+            >
               {{ user['first_name'] }} {{ user['last_name'] }}
             </h3>
-            <p class="text-sm text-slate-500">
+            <p class="text-sm text-slate-500 truncate" title="{{ user['email'] }}">
               {{ user['email'] }}
             </p>
           </div>

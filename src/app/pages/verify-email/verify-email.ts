@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -10,9 +10,13 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './verify-email.scss',
 })
 export class VerifyEmail {
-  status = 'Verifying...';
-
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  status: 'loading' | 'success' | 'error' = 'loading';
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     // 1. Get the token from the URL (?token=xyz)
@@ -24,15 +28,16 @@ export class VerifyEmail {
         .post('https://test-backend-qb46.onrender.com/api/auth/verify-email/', { token })
         .subscribe({
           next: () => {
-            this.status = 'Success! Email verified.';
-            setTimeout(() => this.router.navigate(['/app/dashboard']), 3000);
+            this.status = 'success';
+            this.cd.detectChanges();
+            // setTimeout(() => this.router.navigate(['/app/dashboard']), 3000);
           },
           error: () => {
-            this.status = 'Verification failed or link expired.';
+            this.status = 'error';
           },
         });
     } else {
-      this.status = 'Invalid link.';
+      this.status = 'error';
     }
   }
 }
