@@ -13,7 +13,7 @@ import { Analysis } from './app-layout-component/analysis/analysis';
 import { ComingSoon } from './app-layout-component/coming-soon/coming-soon';
 import { DailyCurrentAffairs } from './app-layout-component/daily-current-affairs/daily-current-affairs';
 import { AllResults } from './app-layout-component/all-results/all-results';
-
+import { VerifyEmail } from './pages/verify-email/verify-email';
 export const AUTHENTICATED_ROUTES: Routes = [
   {
     path: '',
@@ -24,7 +24,7 @@ export const AUTHENTICATED_ROUTES: Routes = [
       // { path: 'my-tests', component: MyTestSeries },
       { path: 'profile', component: AccountSettingsPage },
       { path: 'tests', component: TestLists },
-
+      { path: 'verify-email', component: VerifyEmail },
       { path: 'test-series/:id', component: TestLists },
       { path: 'results/:id', component: ResultComponent },
       { path: 'settings', component: AccountSettingsPage },
