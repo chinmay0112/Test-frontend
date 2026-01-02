@@ -26,6 +26,8 @@ export const passwordMatchValidator: ValidatorFn = (
 import { SkeletonModule } from 'primeng/skeleton';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
@@ -39,6 +41,8 @@ import { HttpClient } from '@angular/common/http';
     InputTextModule,
     SkeletonModule,
     ToastModule,
+    ButtonModule,
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './account-settings-page.html',
@@ -50,6 +54,8 @@ export class AccountSettingsPage {
   passwordForm: FormGroup;
   verificationLoading = false;
   verificationSent = false;
+  isEmailEditing = false;
+  saveLoading = false;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -62,7 +68,7 @@ export class AccountSettingsPage {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: [{ value: '', disabled: true }], // Make email read-only
-      phone: ['', Validators.required],
+      phone: [{ value: '', disabled: true }, Validators.required],
     });
 
     // --- Password Form ---
@@ -80,6 +86,10 @@ export class AccountSettingsPage {
     // Fetch real user data
     this.authService.currentUser.subscribe((user) => {
       if (user) {
+        // Only patch if we are not currently saving to avoid overwriting optimistic updates or causing race conditions
+        // Actually, if the save is successful, we WANT to patch with the new data.
+        // The issue 'UI doesn't update' suggests the subscription might not be triggering or the object reference isn't changing enough for Angular CD.
+        // But let's first ensure we don't fight with the form.
         this.profileForm.patchValue({
           firstName: user['first_name'],
           lastName: user['last_name'],
@@ -114,11 +124,36 @@ export class AccountSettingsPage {
    */
   onProfileSubmit(): void {
     if (this.profileForm.valid) {
-      console.log('Profile update submitted:', this.profileForm.getRawValue());
-      // In a real app:
-      // this.authService.updateProfile(this.profileForm.value).subscribe(...)
-      alert('Profile updated successfully! (Mock)');
-      this.profileForm.markAsPristine(); // Mark as 'not dirty'
+      this.saveLoading = true;
+      const payload = {
+        first_name: this.profileForm.value.firstName, // Send as first_name
+        last_name: this.profileForm.value.lastName, // Send as last_name
+        phone: this.profileForm.value.phone,
+        email: this.profileForm.value.email,
+      };
+      this.authService.updateProfile(payload).subscribe({
+        next: () => {
+          this.saveLoading = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Profile Updated',
+            detail: 'Your profile details have been saved successfully.',
+          });
+          this.profileForm.markAsPristine();
+
+          if (this.isEmailEditing) {
+            this.toggleEmailEdit(); // Disable editing mode if active
+          }
+        },
+        error: (err) => {
+          this.saveLoading = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Update Failed',
+            detail: err?.error.error || 'Something went wrong. Please try again.',
+          });
+        },
+      });
     } else {
       this.profileForm.markAllAsTouched();
     }
@@ -127,17 +162,7 @@ export class AccountSettingsPage {
   /**
    * Handles password change form submission
    */
-  onPasswordSubmit(): void {
-    if (this.passwordForm.valid) {
-      console.log('Password change submitted:', this.passwordForm.value);
-      // In a real app:
-      // this.authService.changePassword(this.passwordForm.value).subscribe(...)
-      alert('Password changed successfully! (Mock)');
-      this.passwordForm.reset();
-    } else {
-      this.passwordForm.markAllAsTouched();
-    }
-  }
+
   requestVerification() {
     this.verificationLoading = true;
 
@@ -165,5 +190,60 @@ export class AccountSettingsPage {
         console.error(err);
       },
     });
+  }
+
+  toggleEmailEdit() {
+    this.isEmailEditing = !this.isEmailEditing;
+    const emailControl = this.profileForm.get('email');
+    if (this.isEmailEditing) {
+      emailControl?.enable();
+    } else {
+      emailControl?.disable();
+    }
+  }
+  // account-settings-page.ts
+
+  onPasswordSubmit(): void {
+    if (this.passwordForm.valid) {
+      if (this.passwordForm.value.currentPassword === this.passwordForm.value.newPassword) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Invalid Password',
+          detail: 'New password cannot be the same as the current password.',
+        });
+        return;
+      }
+
+      this.saveLoading = true; // Re-use the loading spinner
+
+      const payload = {
+        currentPassword: this.passwordForm.value.currentPassword,
+        newPassword: this.passwordForm.value.newPassword,
+      };
+
+      this.authService.changePassword(payload).subscribe({
+        next: () => {
+          this.saveLoading = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Your password has been changed successfully.',
+          });
+
+          // Clear the form for security
+          this.passwordForm.reset();
+        },
+        error: (err) => {
+          this.saveLoading = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: err?.error?.error || 'Failed to change password.',
+          });
+        },
+      });
+    } else {
+      this.passwordForm.markAllAsTouched();
+    }
   }
 }

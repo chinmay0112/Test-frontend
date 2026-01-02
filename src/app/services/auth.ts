@@ -216,4 +216,28 @@ export class Auth {
   clearNotifications() {
     return this.http.delete(`${environment.apiUrl}/api/notifications/clear/`);
   }
+
+  updateProfile(data: any): Observable<any> {
+    // 1. Note: We expect 'any' or a specific interface { message: string, user: User }
+    return this.http.patch<any>(`${environment.apiUrl}/api/users/update-profile/`, data).pipe(
+      tap((response) => {
+        const currentUser = this.currentUser.value;
+
+        if (currentUser && response.user) {
+          // 2. CRITICAL FIX: Extract the inner 'user' object from the response
+          const updatedServerData = response.user;
+
+          // 3. Merge current state with the FRESH data from server
+          // This automatically handles first_name, last_name, phone, etc.
+          const newState = { ...currentUser, ...updatedServerData };
+
+          // 4. Update the BehaviorSubject
+          this.currentUser.next(newState);
+        }
+      })
+    );
+  }
+  changePassword(data: { currentPassword: string; newPassword: string }) {
+    return this.http.post(`${environment.apiUrl}/api/auth/change-password/`, data);
+  }
 }

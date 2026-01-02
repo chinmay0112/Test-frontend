@@ -9,7 +9,11 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
 import { DashboardService } from '../../services/dashboard';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
+import { Auth } from '../../services/auth';
+import { MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +30,7 @@ import { forkJoin } from 'rxjs';
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  providers: [MessageService],
 })
 export class Dashboard {
   // Data Models
@@ -34,7 +39,8 @@ export class Dashboard {
   continueLearning: any;
   recentActivity: any[] = [];
   isLoading: boolean = false;
-  // Chart Configurations
+  verificationLoading = false;
+  verificationSent = false;
   trendChartData: any;
   trendChartOptions: any;
   trendData: any[] = [];
@@ -45,7 +51,10 @@ export class Dashboard {
   constructor(
     private router: Router,
     private dashboardService: DashboardService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    public authService: Auth,
+    private messageService: MessageService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -176,5 +185,8 @@ export class Dashboard {
         x: { grid: { display: false } },
       },
     };
+  }
+  requestVerification() {
+    this.router.navigate(['/app/profile']);
   }
 }

@@ -102,9 +102,24 @@
               <!-- Email (Read-only) -->
               <div class="mb-2">
                 <div class="flex justify-between items-center mb-2">
-                  <label for="email" class="block text-sm font-medium text-slate-600">
-                    Email Address
-                  </label>
+                  <div class="flex items-center gap-2">
+                    <label for="email" class="block text-sm font-medium text-slate-600">
+                      Email Address
+                    </label>
+                    <button
+                      type="button"
+                      (click)="toggleEmailEdit()"
+                      class="text-slate-400 hover:text-indigo-600 focus:outline-none transition-colors"
+                      pTooltip="Edit Email"
+                      tooltipPosition="top"
+                    >
+                      <i
+                        class="pi"
+                        [class.pi-pencil]="!isEmailEditing"
+                        [class.pi-times]="isEmailEditing"
+                      ></i>
+                    </button>
+                  </div>
 
                   @if (user['is_email_verified']) {
                   <span
@@ -141,23 +156,46 @@
                     type="email"
                     pInputText
                     formControlName="email"
-                    class="w-full !bg-slate-50 text-slate-500"
+                    class="w-full text-slate-700 transition-colors"
                     [ngClass]="{
+                      '!bg-slate-50 text-slate-500': !isEmailEditing,
+                      'bg-white border-indigo-500 ring-2 ring-indigo-200': isEmailEditing,
                       'border-amber-300 ring-1 ring-amber-100':
-                        !user['is_email_verified'] && !verificationSent
+                        !user['is_email_verified'] && !verificationSent && !isEmailEditing
                     }"
-                    [readOnly]="true"
+                    [readOnly]="!isEmailEditing"
                   />
+                  @if (!isEmailEditing) {
                   <i
                     class="pi pi-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
                   ></i>
+                  }
                 </div>
-
-                @if (!user['is_email_verified']) { @if (verificationSent) {
-                <p class="text-xs text-emerald-600 mt-1.5 flex items-center gap-1 animate-fade-in">
-                  <i class="pi pi-send text-[10px]"></i>
-                  Link sent! Please check your inbox (and spam folder).
-                </p>
+                @if (isEmailEditing) {
+                <div
+                  class="flex items-start gap-2 mt-2 px-3 py-2 bg-amber-50 text-amber-700 rounded-lg text-xs border border-amber-200 animate-fade-in"
+                >
+                  <i class="pi pi-exclamation-triangle mt-0.5"></i>
+                  <p>
+                    <span class="font-bold">Warning:</span> Changing your email will require you to
+                    verify the new address again. Your current verified status will be lost.
+                  </p>
+                </div>
+                } @if (!user['is_email_verified']) { @if (verificationSent) {
+                <div class="mt-1.5 flex flex-wrap items-center gap-3 animate-fade-in">
+                  <p class="text-xs text-emerald-600 flex items-center gap-1">
+                    <i class="pi pi-send text-[10px]"></i>
+                    Link sent! Check inbox.
+                  </p>
+                  <button
+                    type="button"
+                    (click)="requestVerification()"
+                    [disabled]="verificationLoading"
+                    class="text-xs text-indigo-600 font-bold hover:text-indigo-800 underline focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {{ verificationLoading ? 'Sending...' : 'Resend Link' }}
+                  </button>
+                </div>
                 } @else {
                 <p class="text-xs text-amber-600 mt-1.5">
                   Your email is unverified. Secure your account to prevent lockout.
@@ -169,15 +207,28 @@
                 <label for="phone" class="block text-sm font-medium text-slate-600 mb-2"
                   >Phone</label
                 >
-                <input id="phone" type="tel" pInputText formControlName="phone" class="w-full" />
+                <div class="relative">
+                  <input
+                    id="phone"
+                    type="tel"
+                    pInputText
+                    formControlName="phone"
+                    class="w-full !bg-slate-50 text-slate-500"
+                    [readOnly]="true"
+                  />
+                  <i
+                    class="pi pi-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
+                  ></i>
+                </div>
               </div>
             </div>
             <div class="mt-6 text-right">
               <button
                 pButton
-                label="Save Changes"
+                [label]="saveLoading ? 'Saving...' : 'Save Changes'"
                 type="submit"
-                [disabled]="!profileForm.dirty || !profileForm.valid"
+                [loading]="saveLoading"
+                [disabled]="!profileForm.dirty || !profileForm.valid || saveLoading"
               ></button>
             </div>
           </form>
@@ -356,7 +407,7 @@
                 routerLink="/pricing"
               ></button>
             </div>
-            <div class="mt-6">
+            <!-- <div class="mt-6">
               <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600"
                 >View billing history</a
               >
@@ -364,7 +415,7 @@
               <a href="#" class="text-sm font-medium text-red-600 hover:text-red-800"
                 >Cancel subscription</a
               >
-            </div>
+            </div> -->
           </div>
         </div>
         }
