@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-verify-email',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './verify-email.html',
   styleUrl: './verify-email.scss',
 })
