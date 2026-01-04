@@ -254,7 +254,7 @@
               <button
                 class="w-10 h-10 rounded-lg text-sm font-bold transition-all focus:outline-none"
                 [ngClass]="{
-                  'bg-green-500  shadow-green-200 shadow': item.is_correct,
+                  'bg-green-500 !text-white  shadow-green-200 shadow': item.is_correct,
                   'bg-red-500 text-white shadow-red-200 shadow':
                     item.selected_answer && !item.is_correct,
                   'bg-gray-100 text-slate-500 border border-slate-200 hover:border-indigo-400':

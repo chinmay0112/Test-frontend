@@ -34,7 +34,51 @@
       </div>
     </div>
   </section>
+  <!-- Stats Floating Section -->
+  <div class="relative z-20 -mt-16 pb-12">
+    <div class="container mx-auto px-4">
+      <div
+        class="bg-white rounded-2xl shadow-xl grid grid-cols-1 md:grid-cols-3 gap-8 p-8 border border-slate-100 max-w-5xl mx-auto transform transition-transform duration-300"
+      >
+        <!-- Stat 1 -->
+        <div
+          class="flex items-center justify-center gap-4 border-b md:border-b-0 md:border-r border-slate-100 pb-6 md:pb-0"
+        >
+          <div class="p-4 bg-indigo-50 rounded-full text-indigo-600">
+            <i class="pi pi-file-edit text-2xl"></i>
+          </div>
+          <div class="text-left">
+            <div class="text-3xl font-bold text-slate-800">10k+</div>
+            <div class="text-slate-500 text-sm font-medium tracking-wide">Practice Questions</div>
+          </div>
+        </div>
 
+        <!-- Stat 2 -->
+        <div
+          class="flex items-center justify-center gap-4 border-b md:border-b-0 md:border-r border-slate-100 pb-6 md:pb-0"
+        >
+          <div class="p-4 bg-purple-50 rounded-full text-purple-600">
+            <i class="pi pi-desktop text-2xl"></i>
+          </div>
+          <div class="text-left">
+            <div class="text-3xl font-bold text-slate-800">500+</div>
+            <div class="text-slate-500 text-sm font-medium tracking-wide">Mock Tests</div>
+          </div>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="flex items-center justify-center gap-4">
+          <div class="p-4 bg-amber-50 rounded-full text-amber-600">
+            <i class="pi pi-bolt text-2xl"></i>
+          </div>
+          <div class="text-left">
+            <div class="text-3xl font-bold text-slate-800">24/7</div>
+            <div class="text-slate-500 text-sm font-medium tracking-wide">AI Analysis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Features Section -->
   <section id="features" class="py-16 lg:py-24 bg-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,22 +108,41 @@
   </section>
 
   <!-- Exams Covered -->
-  <section id="exams" class="py-16 lg:py-24 bg-slate-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl lg:text-4xl font-bold text-slate-800 text-center mb-12">
-        Exams We Cover
-      </h2>
-      <div
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-4xl mx-auto"
+  <section
+    id="exams"
+    class="py-16 lg:py-24 bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4c1d95] relative overflow-hidden"
+  >
+    <!-- Decorative background elements -->
+    <div
+      class="absolute top-0 left-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"
+    ></div>
+    <div
+      class="absolute bottom-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-x-1/2 translate-y-1/2"
+    ></div>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <h2 class="text-3xl lg:text-4xl font-bold text-white text-center mb-12">Exams We Cover</h2>
+      <p-carousel
+        [value]="examsCovered"
+        [numVisible]="4"
+        [numScroll]="1"
+        [circular]="true"
+        [responsiveOptions]="responsiveOptions"
+        [autoplayInterval]="3000"
       >
-        <div
-          *ngFor="let exam of examsCovered"
-          class="flex flex-col items-center text-center p-4 bg-white rounded-lg shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
-        >
-          <div class="text-4xl mb-3 text-indigo-500">{{ exam.icon }}</div>
-          <p class="font-medium text-slate-700">{{ exam.name }}</p>
-        </div>
-      </div>
+        <ng-template let-exam pTemplate="item">
+          <div
+            class="m-3 flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 min-h-[180px] justify-center group"
+          >
+            <img
+              [src]="exam.icon"
+              [alt]="exam.name"
+              class="h-24 w-auto object-contain mb-5 transform group-hover:scale-110 transition-transform duration-300"
+            />
+            <p class="font-bold text-xl text-slate-800 tracking-wide">{{ exam.name }}</p>
+          </div>
+        </ng-template>
+      </p-carousel>
     </div>
   </section>
 
@@ -358,3 +421,30 @@
   <!-- Footer -->
   <app-footer></app-footer>
 </div>
+
+<p-toast></p-toast>
+
+<p-dialog
+  [(visible)]="showSuccessModal"
+  [modal]="true"
+  header="Message Sent"
+  [style]="{ width: '400px' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+      <i class="pi pi-check text-3xl text-green-600"></i>
+    </div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">Thank You!</h3>
+    <p class="text-slate-500 mb-6">
+      We have received your message. Our team will get back to you shortly.
+    </p>
+    <button
+      (click)="showSuccessModal = false"
+      class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+    >
+      Close
+    </button>
+  </div>
+</p-dialog>

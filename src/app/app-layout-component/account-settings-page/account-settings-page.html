@@ -337,85 +337,151 @@
             <p class="text-sm text-slate-500 mt-1">Manage your plan and billing details.</p>
           </header>
           <div class="p-6">
+            @if (authService.currentUser | async; as user) {
+            <!-- PRO ACTIVE STATE -->
+            @if (user.is_pro_active) {
             <div
-              class="flex flex-col sm:flex-row justify-between items-start bg-indigo-50 border border-indigo-200 rounded-lg p-6"
+              class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-xl"
             >
-              <!-- Check if user is logged in and get user data in one go -->
-              @if (authService.currentUser | async; as user) {
-              <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-100">
-                <!-- Header -->
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-                  Your Current Plan
-                </h3>
+              <!-- Decorative Circles -->
+              <div
+                class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"
+              ></div>
+              <div
+                class="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-white opacity-10 rounded-full blur-2xl"
+              ></div>
 
-                <!-- Plan Details Container -->
-                <div class="flex items-center justify-between">
-                  <!-- Left: Plan Name -->
-                  <div class="flex items-center gap-2">
-                    <span
-                      class="text-xl font-bold"
-                      [ngClass]="user.is_pro_active ? 'text-indigo-600' : 'text-slate-700'"
+              <div class="relative z-10 p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                  <div>
+                    <div
+                      class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-white/10"
                     >
-                      {{ user.is_pro_active ? 'Pro Access' : 'Free Starter' }}
-                    </span>
-
-                    <!-- Status Tag -->
-                    <span
-                      class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border"
-                      [ngClass]="
-                        user.is_pro_active
-                          ? 'bg-green-50 text-green-700 border-green-200'
-                          : 'bg-slate-100 text-slate-500 border-slate-200'
-                      "
-                    >
-                      {{ user.is_pro_active ? 'Active' : 'Basic' }}
-                    </span>
+                      <i class="pi pi-star-fill text-amber-300"></i>
+                      <span>Pro Active</span>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-2">My Subscription</h3>
+                    <p class="text-indigo-100 max-w-lg">
+                      You have full access to all premium features, including unlimited tests,
+                      detailed AI analysis, and exclusive study material.
+                    </p>
                   </div>
-
-                  <!-- Right: Action (Upgrade Button for Free users) -->
-                  @if (!user.is_pro_active) {
-                  <button
-                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+                  <div
+                    class="mt-6 md:mt-0 bg-white/10 backdrop-blur-md rounded-xl p-4 text-center border border-white/10"
                   >
-                    Upgrade
-                  </button>
-                  }
+                    <p class="text-xs text-indigo-200 uppercase tracking-wide mb-1">Renews On</p>
+                    <p class="text-xl font-bold">
+                      {{ user['pro_expiry_date'] | date : 'd MMM, yyyy' }}
+                    </p>
+                  </div>
                 </div>
 
-                <!-- Renewal Info (Mock Data for now) -->
-                @if (user.is_pro_active) {
-                <div class="mt-2 flex items-center text-xs text-slate-500">
-                  <i class="pi pi-calendar mr-1.5"></i>
-                  <span
-                    >Renews on:
-                    <span class="font-medium text-slate-700">{{
-                      user['pro_expiry_date'] | date : 'dd MMM yyyy'
-                    }}</span></span
-                  >
+                <div class="mt-8 border-t border-white/10 pt-6 flex flex-wrap gap-6">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+                    >
+                      <i class="pi pi-shield text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold">Premium Support</p>
+                      <p class="text-xs text-indigo-200">Priority assistance</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+                    >
+                      <i class="pi pi-bolt text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold">AI Analytics</p>
+                      <p class="text-xs text-indigo-200">Deep performance insights</p>
+                    </div>
+                  </div>
                 </div>
-                } @else {
-                <p class="text-xs text-slate-400 mt-2">
-                  Upgrade to unlock unlimited tests and detailed analysis.
-                </p>
-                }
               </div>
-              }
-              <button
-                pButton
-                label="View Pricing"
-                class="p-button-outlined mt-4 sm:mt-0"
-                routerLink="/pricing"
-              ></button>
             </div>
-            <!-- <div class="mt-6">
-              <a href="#" class="text-sm font-medium text-slate-600 hover:text-indigo-600"
-                >View billing history</a
-              >
-              <span class="mx-2 text-slate-300">|</span>
-              <a href="#" class="text-sm font-medium text-red-600 hover:text-red-800"
-                >Cancel subscription</a
-              >
-            </div> -->
+
+            <div class="mt-8">
+              <h4 class="font-bold text-slate-800 mb-4">Manage Subscription</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  class="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all group"
+                >
+                  <div class="flex items-center gap-3">
+                    <i class="pi pi-receipt text-slate-400 group-hover:text-indigo-600 text-xl"></i>
+                    <span class="font-medium text-slate-700 group-hover:text-indigo-900"
+                      >Billing History</span
+                    >
+                  </div>
+                  <i class="pi pi-angle-right text-slate-300 group-hover:text-indigo-500"></i>
+                </button>
+                <button
+                  class="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-red-300 hover:bg-red-50 transition-all group"
+                >
+                  <div class="flex items-center gap-3">
+                    <i
+                      class="pi pi-times-circle text-slate-400 group-hover:text-red-500 text-xl"
+                    ></i>
+                    <span class="font-medium text-slate-700 group-hover:text-red-900"
+                      >Cancel Subscription</span
+                    >
+                  </div>
+                  <i class="pi pi-angle-right text-slate-300 group-hover:text-red-500"></i>
+                </button>
+              </div>
+            </div>
+
+            } @else {
+            <!-- FREE USER STATE (Upgrade Prompt) -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+              <div class="p-8 text-center bg-slate-50 border-b border-slate-100">
+                <div
+                  class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4"
+                >
+                  <i class="pi pi-user text-3xl text-slate-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800">Free Starter Plan</h3>
+                <p class="text-slate-500 mt-2">You are currently on the basic free tier.</p>
+              </div>
+
+              <div class="p-8">
+                <div
+                  class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100 relative overflow-hidden"
+                >
+                  <div
+                    class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10"
+                  >
+                    <div class="text-center md:text-left">
+                      <h4 class="text-xl font-bold text-indigo-900 mb-2">Upgrade to Pro</h4>
+                      <p class="text-indigo-700 text-sm mb-4">
+                        Unlock the full potential of your preparation.
+                      </p>
+                      <ul class="space-y-2 text-left">
+                        <li class="flex items-center gap-2 text-sm text-indigo-800">
+                          <i class="pi pi-check-circle text-green-500"></i> Unlimited Mock Tests
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-indigo-800">
+                          <i class="pi pi-check-circle text-green-500"></i> Advanced AI Analysis
+                        </li>
+                        <li class="flex items-center gap-2 text-sm text-indigo-800">
+                          <i class="pi pi-check-circle text-green-500"></i> Ad-free Experience
+                        </li>
+                      </ul>
+                    </div>
+                    <button
+                      pButton
+                      label="View Plans & Pricing"
+                      icon="pi pi-sparkles"
+                      routerLink="/app/prices"
+                      class="p-button-rounded p-button-lg bg-indigo-600 border-none shadow-lg shadow-indigo-200 hover:scale-105 transition-transform"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            } }
           </div>
         </div>
         }

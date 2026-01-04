@@ -192,6 +192,15 @@
                 selectedLanguage === 'hi' ? q.question_text_hi || q.question_text : q.question_text
               }}
             </h3>
+            @if (q.image) {
+            <div class="mb-6">
+              <img
+                [src]="q.image"
+                alt="Question Diagram"
+                class="max-w-full h-auto max-h-[300px] rounded-lg border border-slate-200 shadow-sm"
+              />
+            </div>
+            }
             <div class="space-y-2 mt-2 h-[50vh]">
               <label class="block" *ngFor="let opt of ['A', 'B', 'C', 'D']">
                 <input
